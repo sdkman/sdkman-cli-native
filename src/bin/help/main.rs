@@ -2,11 +2,8 @@ extern crate clap;
 
 use clap::{App, SubCommand};
 
-const VERSION: &str = "0.0.1";
-
 fn main() {
     let args = App::new("help")
-        .version(VERSION)
         .help(MAIN_HELP)
         .subcommand(SubCommand::with_name("install").alias("i"))
         .subcommand(SubCommand::with_name("uninstall").alias("rm"))
@@ -24,9 +21,7 @@ fn main() {
 }
 
 const MAIN_HELP: &str = "\
-sdk
-
-The command line interface (CLI) for SDKMAN!
+sdk - The command line interface (CLI) for SDKMAN!
 
 USAGE:
     sdk <SUBCOMMAND> [CANDIDATE] [VERSION]
@@ -56,7 +51,6 @@ SUBCOMMANDS:
     flush             [ARCHIVE|TMP|BROADCAST|METADATA|VERSION]
 
 EXAMPLES:
-
     $ sdk install java 17.0.0-tem
     $ sdk help install
 ";
@@ -84,7 +78,6 @@ subcommand will return a non-zero return code if the directory does not exist.
 The shorthand mnemonic 'i' is provided in the place of the install subcommand.
 
 EXAMPLES:
-
     $ sdk install java
     $ sdk install java 17.0.0-tem
     $ sdk install java 11-local /usr/lib/jvm/java-11-openjdk
@@ -112,7 +105,6 @@ non-zero return code.
 The alias 'rm' is provided as a shorthand alternative to uninstall.
 
 EXAMPLE:
-
     $ sdk uninstall java 17.0.0-tem
 ";
 
@@ -141,7 +133,6 @@ Java has a custom list view with vendor-specific details.
 The alias 'ls' is provided as a shorthand alternative to list.
 
 EXAMPLE:
-
     $ sdk list
     $ sdk list java
     $ sdk list groovy
