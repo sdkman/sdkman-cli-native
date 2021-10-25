@@ -16,6 +16,7 @@ jobs:
       - name: Set up Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: stable
           components: rustfmt
       - name: Check formatting
         uses: actions-rs/cargo@v1
