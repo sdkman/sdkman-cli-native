@@ -8,12 +8,14 @@ fn main() {
         .subcommand(SubCommand::with_name("install").alias("i"))
         .subcommand(SubCommand::with_name("uninstall").alias("rm"))
         .subcommand(SubCommand::with_name("list").alias("ls"))
+        .subcommand(SubCommand::with_name("use").alias("u"))
         .get_matches();
 
     let help = match args.subcommand_name() {
         Some("install") => INSTALL_HELP,
         Some("uninstall") => UNINSTALL_HELP,
         Some("list") => LIST_HELP,
+        Some("use") => USE_HELP,
         _ => MAIN_HELP,
     };
 
@@ -136,4 +138,28 @@ EXAMPLE:
     $ sdk list
     $ sdk list java
     $ sdk list groovy
+";
+
+const USE_HELP: &str = "\
+sdk use
+
+An sdk subcommand to use a specific version in the current shell.
+
+USAGE:
+    sdk use <CANDIDATE> <VERSION>
+
+The mandatory candidate and version follow the subcommand to specify what to
+use in the current shell.
+
+This subcommand only operates on the current shell. It does not affect other
+shells running different versions of the same candidate. It also does not change
+the default version set for all subsequent new shells.
+
+The subcommand will return a non-zero return code if the candidate or version
+does not exist.
+
+The shorthand mnemonic 'u' is provided in the place of the use subcommand.
+
+EXAMPLE:
+    $ sdk use java 17.0.0-tem
 ";
