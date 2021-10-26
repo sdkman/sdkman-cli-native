@@ -10,6 +10,7 @@ fn main() {
         .subcommand(SubCommand::with_name("list").alias("ls"))
         .subcommand(SubCommand::with_name("use").alias("u"))
         .subcommand(SubCommand::with_name("config"))
+        .subcommand(SubCommand::with_name("default").alias("d"))
         .get_matches();
 
     let help = match args.subcommand_name() {
@@ -18,6 +19,7 @@ fn main() {
         Some("list") => LIST_HELP,
         Some("use") => USE_HELP,
         Some("config") => CONFIG_HELP,
+        Some("default") => DEFAULT_HELP,
         _ => MAIN_HELP,
     };
 
@@ -110,6 +112,31 @@ The alias 'rm' is provided as a shorthand alternative to uninstall.
 
 EXAMPLE:
     $ sdk uninstall java 17.0.0-tem
+";
+
+const DEFAULT_HELP: &str = "\
+sdk default
+
+An sdk subcommand to set the local default version of the candidate.
+
+USAGE:
+    sdk default <CANDIDATE> [VERSION]
+
+The mandatory candidate qualifier of the subcommand specifies the candidate to
+default for all future shells.
+
+The optional version qualifier set that specific version as default for all
+subsequent shells on the local environment. Omitting the version will set the
+global SDKMAN tracked version as the default version for that candidate.
+
+The subcommand will return a non-zero return code if the candidate or version
+does not exist.
+
+The shorthand mnemonic 'd' is provided in the place of the default subcommand.
+
+EXAMPLE:
+    $ sdk default java 17.0.0-tem
+    $ sdk default java
 ";
 
 const LIST_HELP: &str = "\
