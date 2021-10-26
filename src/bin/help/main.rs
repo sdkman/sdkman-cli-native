@@ -9,6 +9,7 @@ fn main() {
         .subcommand(SubCommand::with_name("uninstall").alias("rm"))
         .subcommand(SubCommand::with_name("list").alias("ls"))
         .subcommand(SubCommand::with_name("use").alias("u"))
+        .subcommand(SubCommand::with_name("config"))
         .get_matches();
 
     let help = match args.subcommand_name() {
@@ -16,6 +17,7 @@ fn main() {
         Some("uninstall") => UNINSTALL_HELP,
         Some("list") => LIST_HELP,
         Some("use") => USE_HELP,
+        Some("config") => CONFIG_HELP,
         _ => MAIN_HELP,
     };
 
@@ -162,4 +164,21 @@ The shorthand mnemonic 'u' is provided in the place of the use subcommand.
 
 EXAMPLE:
     $ sdk use java 17.0.0-tem
+";
+
+const CONFIG_HELP: &str = "\
+sdk config
+
+An sdk subcommand to edit the SDKMAN configuration file.
+
+USAGE:
+    sdk config
+
+This subcommand opens a text editor on the configuration file located at
+${SDKMAN_DIR}/etc/config. The subcommand will infer the text editor from the
+EDITOR environment variable. If the system does not set the EDITOR environment
+variable, then vi is assumed as the default editor.
+
+EXAMPLE:
+    $ sdk config
 ";
