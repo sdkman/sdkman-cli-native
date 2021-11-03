@@ -7,3 +7,5 @@ edition = "2018"
 
 [dependencies]
 clap = "2.33.3"
+assert_cmd = "0.10"
+predicates = "1"

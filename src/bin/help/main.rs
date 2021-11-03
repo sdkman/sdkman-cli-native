@@ -11,6 +11,7 @@ fn main() {
         .subcommand(SubCommand::with_name("use").alias("u"))
         .subcommand(SubCommand::with_name("config"))
         .subcommand(SubCommand::with_name("default").alias("d"))
+        .subcommand(SubCommand::with_name("home").alias("h"))
         .get_matches();
 
     let help = match args.subcommand_name() {
@@ -20,6 +21,7 @@ fn main() {
         Some("use") => USE_HELP,
         Some("config") => CONFIG_HELP,
         Some("default") => DEFAULT_HELP,
+        Some("home") => HOME_HELP,
         _ => MAIN_HELP,
     };
 
@@ -79,7 +81,7 @@ Provide another qualifier to add an already installed local version. This
 qualifier is the absolute local path to the base directory of the SDK to be
 added. The local version will appear as an installed version of the candidate.
 The version may not conflict with an existing version, installed or not. The
-subcommand will return a non-zero return code if the directory does not exist.
+subcommand will return a non-zero exit code if the directory does not exist.
 
 The shorthand mnemonic 'i' is provided in the place of the install subcommand.
 
@@ -208,4 +210,21 @@ variable, then vi is assumed as the default editor.
 
 EXAMPLE:
     $ sdk config
+";
+
+const HOME_HELP: &str = "\
+sdk home
+
+An sdk subcommand, used in scripting to output the location of a specific
+candidate version.
+
+USAGE:
+    sdk home <CANDIDATE> <VERSION>
+
+Print the absolute home path of any candidate version installed by SDKMAN. The
+candidate and version parameters are mandatory. The subcommand will emit a
+non-zero exit code if a valid candidate version is not locally installed.
+
+EXAMPLE:
+    $ sdk home java 17.0.0-tem
 ";
