@@ -5,17 +5,19 @@ use assert_cmd::prelude::*;
 use predicates::prelude::*;
 
 #[test]
-fn help() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("help")?;
-
-    cmd.assert().success().stdout(predicate::str::starts_with(
-        "sdk - The command line interface (CLI) for SDKMAN!",
-    ));
+fn should_render_base_help() -> Result<(), Box<dyn std::error::Error>> {
+    let header = "sdk - The command line interface (CLI) for SDKMAN!";
+    Command::cargo_bin("help")?
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(header))
+        .code(0);
+    println!("Tested: {}", header);
     Ok(())
 }
 
 #[test]
-fn help_all() -> Result<(), Box<dyn std::error::Error>> {
+fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Error>> {
     let args = [
         "install",
         "uninstall",
@@ -27,12 +29,14 @@ fn help_all() -> Result<(), Box<dyn std::error::Error>> {
     ];
 
     for arg in &args {
-        let mut cmd = Command::cargo_bin("help")?;
-        cmd.arg(arg);
         let header = format!("{} {}", "sdk", &arg);
-        cmd.assert()
+        Command::cargo_bin("help")?
+            .arg(arg)
+            .assert()
             .success()
-            .stdout(predicate::str::starts_with(header));
+            .stdout(predicate::str::starts_with(&header))
+            .code(0);
+        println!("Tested: {}", header);
     }
 
     Ok(())
