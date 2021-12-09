@@ -1,22 +1,43 @@
-use std::env;
-use std::env::{VarError};
-use std::path::{PathBuf};
-
+use std::{env, io, process};
+use std::env::VarError;
+use std::path::PathBuf;
 use edit::edit_file;
 
-fn main() {
-    let config_path = match build_config_path() {
-        Ok(config_path) => config_path,
-        Err(error) => {
-            eprintln!("The environment variable `SDKMAN_DIR` is not present: {}", error);
-            std::process::exit(1);
-        }
-    };
+enum CliError {
+    EnvError,
+    EditorError,
+}
 
-    if edit_file(config_path).is_err() {
-        eprintln!("Unable to open editor.");
-        std::process::exit(1);
+fn main() {
+    process::exit(match edit_config() {
+        Ok(()) => 0,
+        Err(CliError::EnvError) => {
+            println!("SDKMAN_DIR env variable not set.");
+            1
+        },
+        Err(CliError::EditorError) => {
+            println!("Unable to open editor.");
+            1
+        }
+    });
+}
+
+impl From<VarError> for CliError {
+    fn from(_: VarError) -> Self {
+        CliError::EnvError
     }
+}
+
+impl From<io::Error> for CliError {
+    fn from(_: io::Error) -> Self {
+        CliError::EditorError
+    }
+}
+
+fn edit_config() -> Result<(), CliError> {
+    let config_path = build_config_path()?;
+
+    Ok(edit_file(config_path)?)
 }
 
 fn build_config_path() -> Result<PathBuf, VarError> {
