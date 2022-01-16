@@ -40,6 +40,51 @@ EXAMPLE:
     $ sdk default java
 ";
 
+pub const ENV_HELP: &str = "\
+sdk env
+
+An sdk subcommand to control SDKs on a project level, setting up specific
+versions for a directory.
+
+USAGE:
+    sdk env [init|install|clear]
+
+Allows the developer to manage the SDK versions used in a project directory. The
+subcommand uses a `.sdkmanrc` file to install or switch specific SDK versions in
+a project directory.
+
+It has three different qualifiers:
+`install` :     Install or switch to the SDK versions specified in `.sdkmanrc`.
+                The subcommand will use this as the default if the qualifier is
+                omitted.
+`init`    :     Allows for the creation of a default `.sdkmanrc` file with a
+                single entry for the `java` candidate. It uses the current
+                system default of `java` to prime this file.
+`clear`   :     Reset all SDK versions to their system defaults
+
+The `.sdkmanrc` file contains key-value pairs for each configurable SDK for that
+project environment. An initial file will content such as this:
+
+---
+# Enable auto-env through the sdkman_auto_env config
+# Add key=value pairs of SDKs to use below
+java=11.0.13-tem
+---
+
+You may enable a configuration option for auto-env behaviour. This setting will
+automatically switch versions when stepping into a directory on the presence of
+a `.sdkmanrc` descriptor. When enabled, you no longer need to issue the
+`install` qualifier explicitly. This behaviour is disabled by default.
+
+EXAMPLE:
+    $ sdk env
+    $ sdk env install
+
+    $ sdk env init
+
+    $ sdk env clear
+";
+
 pub const HOME_HELP: &str = "\
 sdk home
 

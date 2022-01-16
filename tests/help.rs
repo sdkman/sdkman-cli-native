@@ -21,6 +21,7 @@ fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Er
     let args = [
         "config",
         "default",
+        "env",
         "home",
         "install",
         "list",
