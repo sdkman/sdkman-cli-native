@@ -4,6 +4,7 @@ use clap::{App, SubCommand};
 
 use help_messages::CONFIG_HELP;
 use help_messages::DEFAULT_HELP;
+use help_messages::ENV_HELP;
 use help_messages::HOME_HELP;
 use help_messages::INSTALL_HELP;
 use help_messages::LIST_HELP;
@@ -16,6 +17,7 @@ fn main() {
         .help(MAIN_HELP)
         .subcommand(SubCommand::with_name("config"))
         .subcommand(SubCommand::with_name("default").alias("d"))
+        .subcommand(SubCommand::with_name("env").alias("e"))
         .subcommand(SubCommand::with_name("home").alias("h"))
         .subcommand(SubCommand::with_name("install").alias("i"))
         .subcommand(SubCommand::with_name("list").alias("ls"))
@@ -26,6 +28,7 @@ fn main() {
     let help = match args.subcommand_name() {
         Some("config") => CONFIG_HELP,
         Some("default") => DEFAULT_HELP,
+        Some("env") => ENV_HELP,
         Some("home") => HOME_HELP,
         Some("install") => INSTALL_HELP,
         Some("list") => LIST_HELP,
