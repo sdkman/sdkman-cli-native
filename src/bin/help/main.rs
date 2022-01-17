@@ -1,6 +1,6 @@
 extern crate clap;
 
-use clap::{App, SubCommand};
+use clap::App;
 
 use help_messages::CONFIG_HELP;
 use help_messages::DEFAULT_HELP;
@@ -14,15 +14,15 @@ use help_messages::USE_HELP;
 
 fn main() {
     let args = App::new("help")
-        .help(MAIN_HELP)
-        .subcommand(SubCommand::with_name("config"))
-        .subcommand(SubCommand::with_name("default").alias("d"))
-        .subcommand(SubCommand::with_name("env").alias("e"))
-        .subcommand(SubCommand::with_name("home").alias("h"))
-        .subcommand(SubCommand::with_name("install").alias("i"))
-        .subcommand(SubCommand::with_name("list").alias("ls"))
-        .subcommand(SubCommand::with_name("uninstall").alias("rm"))
-        .subcommand(SubCommand::with_name("use").alias("u"))
+        .override_help(MAIN_HELP)
+        .subcommand(App::new("config"))
+        .subcommand(App::new("default").alias("d"))
+        .subcommand(App::new("env").alias("e"))
+        .subcommand(App::new("home").alias("h"))
+        .subcommand(App::new("install").alias("i"))
+        .subcommand(App::new("list").alias("ls"))
+        .subcommand(App::new("uninstall").alias("rm"))
+        .subcommand(App::new("use").alias("u"))
         .get_matches();
 
     let help = match args.subcommand_name() {
