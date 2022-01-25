@@ -53,8 +53,11 @@ Allows the developer to manage the SDK versions used in a project directory. The
 subcommand uses a `.sdkmanrc` file to install or switch specific SDK versions in
 a project directory.
 
-It has three different qualifiers:
-`install` :     Install or switch to the SDK versions specified in `.sdkmanrc`.
+The absence of a qualifier will switch to the versions specified in `.sdkmanrc`
+and emits warnings for versions not present on the system. In addition, it has
+three optional qualifiers:
+
+`install` :     Install and switch to the SDK versions specified in `.sdkmanrc`.
                 The subcommand will use this as the default if the qualifier is
                 omitted.
 `init`    :     Allows for the creation of a default `.sdkmanrc` file with a
