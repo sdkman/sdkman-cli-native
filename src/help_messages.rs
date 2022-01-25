@@ -82,9 +82,7 @@ a `.sdkmanrc` descriptor. When enabled, you no longer need to issue the
 EXAMPLE:
     $ sdk env
     $ sdk env install
-
     $ sdk env init
-
     $ sdk env clear
 ";
 
