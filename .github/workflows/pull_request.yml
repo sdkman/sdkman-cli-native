@@ -1,8 +1,5 @@
 name: ci
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -28,11 +25,11 @@ jobs:
         with:
           command: fmt
           args: --all -- --check
+      - name: Check compilation
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
       - name: Test
         uses: actions-rs/cargo@v1
         with:
           command: test
-      - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
