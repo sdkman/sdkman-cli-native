@@ -1,6 +1,6 @@
 # SDKMAN! Native CLI components
 
-[![ci](https://github.com/sdkman/sdkman-cli-native/actions/workflows/ci.yml/badge.svg)](https://github.com/sdkman/sdkman-cli-native/actions/workflows/ci.yml)
+[![release](https://github.com/sdkman/sdkman-cli-native/actions/workflows/release.yml/badge.svg)](https://github.com/sdkman/sdkman-cli-native/actions/workflows/release.yml)
 
 Native CLI subcommand components for SDKMAN! written in [Rust](https://www.rust-lang.org/). Use the binaries generated
 by this project in the `sdk` wrapper shell function from the [sdkman-cli](https://github.com/sdkman/sdkman-cli) project.
