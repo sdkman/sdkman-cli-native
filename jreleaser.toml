@@ -20,7 +20,6 @@ linux-aarch_64 = "aarch64-unknown-linux-gnu"
 windows-x86_64 = "x86_64-pc-windows-msvc"
 
 [release.github]
-name = "sdkman-native-cli"
 overwrite = true
 
 [release.github.changelog]
