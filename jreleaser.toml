@@ -8,6 +8,7 @@ longDescription = "Supplementary native extension binaries to replace SDKMAN! ba
 website = "https://github.com/sdkman/sdkman-native-cli"
 authors = ["Marco Vermeulen", "Oliver Weiler"]
 license = "Apache 2.0"
+licenseUrl = "https://spdx.org/licenses/Apache-2.0.html"
 
 [project.extraProperties]
 inceptionYear = 2021
