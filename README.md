@@ -14,9 +14,13 @@ Initial setup:
 
 ```bash
 $ sdk help
+$ sdk help config
+$ sdk help default
+$ sdk help env
+$ sdk help home
 $ sdk help install
-$ sdk help uninstall
 $ sdk help list
+$ sdk help uninstall
 $ sdk help use
 ```
 
