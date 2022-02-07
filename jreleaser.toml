@@ -38,12 +38,9 @@ attachPlatform = true
 
 [[assemble.archive.sdkman.fileSets]]
 input = "target/{{ osPlatformReplaced }}/release"
-output = "bin"
-includes = ["sdkman{.exe,}"]
-
-[[assemble.archive.sdkman.fileSets]]
-input = "."
-includes = ["LICENSE"]
+output = "libexec"
+includes = ["help{.exe,}"]
+excludes = ["LICENSE"]
 
 [distributions.sdkman]
 type = "BINARY"
