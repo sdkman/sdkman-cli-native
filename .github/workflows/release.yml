@@ -1,15 +1,9 @@
 name: Release
 
-on:
-  pull_request:
-    branches-ignore:
-      - master
-  push:
-    branches:
-      - master
+on: workflow_dispatch
 
 jobs:
-  precheck:
+  prerelease:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
@@ -24,7 +18,7 @@ jobs:
           version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
           echo ::set-output name=VERSION::$(echo "$version")
   build:
-    needs: [ precheck ]
+    needs: [ prerelease ]
     name: 'Build ${{ matrix.job.target }}'
     strategy:
       fail-fast: true
@@ -60,7 +54,7 @@ jobs:
           version: early-access
           arguments: assemble
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_PLATFORM_OVERRIDE: ${{ matrix.job.jreleaser_platform }}
 
@@ -81,7 +75,7 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
   release:
-    needs: [ precheck, build ]
+    needs: [ prerelease, build ]
     runs-on: ubuntu-latest
 
     steps:
@@ -99,7 +93,7 @@ jobs:
           version: early-access
           arguments: release -PartifactsDir=artifacts -PskipArchiveResolver
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: JReleaser output

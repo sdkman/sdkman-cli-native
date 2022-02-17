@@ -1,8 +1,6 @@
-name: ci
-on:
-  pull_request:
-    branches:
-      - master
+name: Pull Requests
+
+on: pull_request_target
 
 jobs:
   build:
