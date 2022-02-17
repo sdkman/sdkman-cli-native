@@ -11,6 +11,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Cargo release
+        uses: actions-rs/cargo@v1
+        with:
+          command: release
+          args: patch --execute
+
       - name: Version
         id: vars
         shell: bash

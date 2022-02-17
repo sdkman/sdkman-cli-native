@@ -2,6 +2,7 @@
 name = "sdkman-cli-native"
 version = "0.0.1"
 edition = "2018"
+publish = false
 
 [lib]
 name = "help_messages"
@@ -11,3 +12,4 @@ path = "src/help_messages.rs"
 clap = "3.0.14"
 assert_cmd = "2.0"
 predicates = "2"
+cargo-release = "0.20.2"
