@@ -18,7 +18,13 @@ jobs:
           override: true
           profile: minimal
 
-      - name: Cargo release
+      - name: Cargo install cargo-release
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-release
+
+      - name: Perform Cargo release
         uses: actions-rs/cargo@v1
         with:
           command: release
