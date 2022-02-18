@@ -119,6 +119,7 @@ jobs:
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_SKIP_TAG: true
 
       - name: JReleaser output
         if: always()
