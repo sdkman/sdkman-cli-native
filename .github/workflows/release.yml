@@ -130,3 +130,10 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+      - name: Update MongoDB
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          RELEASE_TAG: ${{ github.event.inputs.version }}
+        run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "${{ needs.prerelease.outputs.VERSION }}"
