@@ -1,6 +1,16 @@
 name: Release
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: "Release level"
+        required: true
+        options:
+          - "patch"
+          - "minor"
+          - "major"
+        default: "patch"
 
 jobs:
   prerelease:
@@ -33,7 +43,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: release
-          args: patch --execute --no-confirm
+          args: ${{ github.event.inputs.level }} --execute --no-confirm
 
       - name: Version
         id: vars
