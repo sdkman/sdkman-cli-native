@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       level:
+        type: choice
         description: "Release level"
         required: true
         options:
