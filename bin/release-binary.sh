@@ -9,12 +9,12 @@ echo "Mongo URL: $MONGO_URL"
 
 if [[ -z "$MONGO_USERNAME" || -z "$MONGO_PASSWORD" ]]; then
 	echo "No mongo credentials so doing nothing..."
-	return 1
+	exit 1
 fi
 
 if [[ -z "$RELEASE_VERSION" ]]; then
 	echo "No release version set..."
-	return 1
+	exit 1
 fi
 
 echo "Release: stableNativeCliVersion as $RELEASE_VERSION"
