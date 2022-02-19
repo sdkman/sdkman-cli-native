@@ -5,21 +5,13 @@ MONGO_USERNAME="$2"
 MONGO_PASSWORD="$3"
 RELEASE_VERSION="$4"
 
-echo "Mongo URL: $MONGO_URL"
-
-if [[ -z "$MONGO_USERNAME" || -z "$MONGO_PASSWORD" ]]; then
-	echo "No mongo credentials so doing nothing..."
-	exit 1
+if [[ -z "$MONGO_URL" || -z "$MONGO_USERNAME" || -z "$MONGO_PASSWORD" || -z "$RELEASE_VERSION" ]]; then
+  echo "Cannot release stableNativeCliVersion: $RELEASE_VERSION"
+	echo "Missing parameters..."
+else
+  echo "Releasing stableNativeCliVersion: $RELEASE_VERSION"
+  mongo "${MONGO_URL}" \
+    --username="${MONGO_USERNAME}" \
+    --password="${MONGO_PASSWORD}" \
+    --eval "db.application.updateOne({}, {\$set: { \"stableNativeCliVersion\": \"$RELEASE_VERSION\"}});"
 fi
-
-if [[ -z "$RELEASE_VERSION" ]]; then
-	echo "No release version set..."
-	exit 1
-fi
-
-echo "Release: stableNativeCliVersion as $RELEASE_VERSION"
-
-mongo "${MONGO_URL}" \
-  --username="${MONGO_USERNAME}" \
-  --password="${MONGO_PASSWORD}" \
-  --eval "db.application.updateOne({}, {\$set: { \"stableNativeCliVersion\": \"$RELEASE_VERSION\"}});"
