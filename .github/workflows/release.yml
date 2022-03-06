@@ -99,7 +99,7 @@ jobs:
           retention-days: 1
           name: artifacts
           path: |
-            out/jreleaser/assemble/sdkman/archive/*.zip
+            out/jreleaser/assemble/sdkman-cli-native/archive/*.zip
       - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v2
