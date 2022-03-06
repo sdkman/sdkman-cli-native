@@ -1,6 +1,6 @@
 environment:
   properties:
-    artifactsDir: out/jreleaser/assemble/sdkman/archive
+    artifactsDir: out/jreleaser/assemble/sdkman-cli-native/archive
 project:
   name: sdkman
   description: SDKMAN! native extensions
