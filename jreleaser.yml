@@ -33,7 +33,7 @@ release:
           ({{.}}){{/contributorUsernameAsLink}}
 assemble:
   archive:
-    sdkman:
+    sdkman-cli-native:
       active: ALWAYS
       formats:
         - ZIP
@@ -46,7 +46,7 @@ assemble:
           excludes:
             - LICENSE
 distributions:
-  sdkman:
+  sdkman-cli-native:
     type: BINARY
     executable:
       windowsExtension: exe
