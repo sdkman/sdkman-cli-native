@@ -11,6 +11,7 @@ use help_messages::INSTALL_HELP;
 use help_messages::LIST_HELP;
 use help_messages::MAIN_HELP;
 use help_messages::UNINSTALL_HELP;
+use help_messages::UPGRADE_HELP;
 use help_messages::USE_HELP;
 
 fn main() {

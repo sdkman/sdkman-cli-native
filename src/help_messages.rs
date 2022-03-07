@@ -239,6 +239,32 @@ EXAMPLE:
     $ sdk uninstall java 17.0.0-tem
 ";
 
+pub const UPGRADE_HELP: &str = "\
+sdk upgrade
+
+An sdk command to upgrade all installed candidate versions or a single candidate
+version.
+
+USAGE:
+    sdk upgrade [CANDIDATE]
+
+The optional candidate qualifier can be applied to specify the candidate you
+want to upgrade. If the candidate qualifier is omitted from the command, it will
+attempt an upgrade of all outdated candidates.
+
+Candidates that do not require an upgrade will be omitted, and a notification
+will be displayed that the candidates are up to date.
+
+The subcommand will return a non-zero return code if the candidate does not
+exist.
+
+The shorthand mnemonic 'ug' is provided in the place of the use subcommand.
+
+EXAMPLE:
+    $ sdk upgrade
+    $ sdk upgrade java
+";
+
 pub const USE_HELP: &str = "\
 sdk use
 
