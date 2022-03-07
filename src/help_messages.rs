@@ -15,6 +15,24 @@ EXAMPLE:
     $ sdk config
 ";
 
+pub const CURRENT_HELP: &str = "\
+sdk current
+
+An sdk command to display the current default installed versions of candidates
+on the system.
+
+USAGE:
+    sdk current [CANDIDATE]
+
+This command will display a list of candidates with their default version
+installed on the system. It is also possible to qualify the candidate when
+running the command to display only that candidate's default version.
+
+EXAMPLE:
+    $ sdk current
+    $ sdk current java
+";
+
 pub const DEFAULT_HELP: &str = "\
 sdk default
 
