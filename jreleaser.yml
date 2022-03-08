@@ -28,9 +28,7 @@ release:
       format: '- {{commitShortHash}} {{commitTitle}}'
       preset: conventional-commits
       contributors:
-        format: >-
-          - {{contributorName}}{{#contributorUsernameAsLink}}
-          ({{.}}){{/contributorUsernameAsLink}}
+        format: '- {{contributorName}} ({{contributorUsernameAsLink}})'
 assemble:
   archive:
     sdkman-cli-native:
