@@ -25,6 +25,7 @@ fn main() {
         .subcommand(Command::new("install").alias("i"))
         .subcommand(Command::new("list").alias("ls"))
         .subcommand(Command::new("uninstall").alias("rm"))
+        .subcommand(Command::new("upgrade").alias("rm"))
         .subcommand(Command::new("use").alias("u"))
         .get_matches();
 
@@ -37,6 +38,7 @@ fn main() {
         Some("install") => INSTALL_HELP,
         Some("list") => LIST_HELP,
         Some("uninstall") => UNINSTALL_HELP,
+        Some("upgrade") => UPGRADE_HELP,
         Some("use") => USE_HELP,
         _ => MAIN_HELP,
     };
