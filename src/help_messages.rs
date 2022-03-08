@@ -1,3 +1,38 @@
+pub const MAIN_HELP: &str = "\
+sdk - The command line interface (CLI) for SDKMAN!
+
+USAGE:
+    sdk <SUBCOMMAND> [CANDIDATE] [VERSION]
+
+SDKMAN! is a tool for managing parallel versions of multiple Software
+Development Kits on most Unix based systems. It provides a convenient Command
+Line Interface (CLI) and API for installing, switching, removing and listing
+Candidates.
+
+SUBCOMMANDS:
+    help              [SUBCOMMAND]
+    install   or i    <CANDIDATE> [VERSION] [LOCAL_PATH]
+    uninstall or rm   <CANDIDATE> <VERSION>
+    list      or ls   [CANDIDATE]
+    use       or u    <CANDIDATE> <VERSION>
+    config
+    default   or d    <CANDIDATE> [VERSION]
+    home      or h    <CANDIDATE> <VERSION>
+    env       or e    [INIT|INSTALL|CLEAR]
+    current   or c    [CANDIDATE]
+    upgrade   or ug   [CANDIDATE]
+    version   or v
+    broadcast or b
+    offline           [ENABLE|DISABLE]
+    selfupdate        [FORCE]
+    update
+    flush             [ARCHIVE|TMP|BROADCAST|METADATA|VERSION]
+
+EXAMPLES:
+    $ sdk install java 17.0.0-tem
+    $ sdk help install
+";
+
 pub const CONFIG_HELP: &str = "\
 sdk config
 
@@ -177,41 +212,6 @@ EXAMPLE:
     $ sdk list
     $ sdk list java
     $ sdk list groovy
-";
-
-pub const MAIN_HELP: &str = "\
-sdk - The command line interface (CLI) for SDKMAN!
-
-USAGE:
-    sdk <SUBCOMMAND> [CANDIDATE] [VERSION]
-
-SDKMAN! is a tool for managing parallel versions of multiple Software
-Development Kits on most Unix based systems. It provides a convenient Command
-Line Interface (CLI) and API for installing, switching, removing and listing
-Candidates.
-
-SUBCOMMANDS:
-    help              [SUBCOMMAND]
-    install   or i    <CANDIDATE> [VERSION] [LOCAL_PATH]
-    uninstall or rm   <CANDIDATE> <VERSION>
-    list      or ls   [CANDIDATE]
-    use       or u    <CANDIDATE> <VERSION>
-    config
-    default   or d    <CANDIDATE> [VERSION]
-    home      or h    <CANDIDATE> <VERSION>
-    env       or e    [INIT|INSTALL|CLEAR]
-    current   or c    [CANDIDATE]
-    upgrade   or ug   [CANDIDATE]
-    version   or v
-    broadcast or b
-    offline           [ENABLE|DISABLE]
-    selfupdate        [FORCE]
-    update
-    flush             [ARCHIVE|TMP|BROADCAST|METADATA|VERSION]
-
-EXAMPLES:
-    $ sdk install java 17.0.0-tem
-    $ sdk help install
 ";
 
 pub const UNINSTALL_HELP: &str = "\
