@@ -29,6 +29,9 @@ release:
       preset: conventional-commits
       contributors:
         format: '- {{contributorName}} ({{contributorUsernameAsLink}})'
+      hide:
+        contributors:
+          - 'github-actions'
 assemble:
   archive:
     sdkman-cli-native:
