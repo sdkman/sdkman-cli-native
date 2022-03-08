@@ -2,22 +2,15 @@ extern crate clap;
 
 use clap::Command;
 
-use help_messages::CONFIG_HELP;
-use help_messages::CURRENT_HELP;
-use help_messages::DEFAULT_HELP;
-use help_messages::ENV_HELP;
-use help_messages::HOME_HELP;
-use help_messages::INSTALL_HELP;
-use help_messages::LIST_HELP;
-use help_messages::MAIN_HELP;
-use help_messages::UNINSTALL_HELP;
-use help_messages::UPGRADE_HELP;
-use help_messages::USE_HELP;
-use help_messages::VERSION_HELP;
+use help_messages::{
+    BROADCAST_HELP, CONFIG_HELP, CURRENT_HELP, DEFAULT_HELP, ENV_HELP, HOME_HELP, INSTALL_HELP,
+    LIST_HELP, MAIN_HELP, UNINSTALL_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP,
+};
 
 fn main() {
     let args = Command::new("help")
         .override_help(MAIN_HELP)
+        .subcommand(Command::new("broadcast").alias("b"))
         .subcommand(Command::new("config"))
         .subcommand(Command::new("current"))
         .subcommand(Command::new("default").alias("d"))
@@ -32,6 +25,7 @@ fn main() {
         .get_matches();
 
     let help = match args.subcommand_name() {
+        Some("broadcast") => BROADCAST_HELP,
         Some("config") => CONFIG_HELP,
         Some("current") => CURRENT_HELP,
         Some("default") => DEFAULT_HELP,

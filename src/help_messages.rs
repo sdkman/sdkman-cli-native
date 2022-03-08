@@ -33,6 +33,24 @@ EXAMPLES:
     $ sdk help install
 ";
 
+pub const BROADCAST_HELP: &str = "\
+sdk broadcast
+
+The sdk subcommand to display the latest announcements on SDKMAN.
+
+USAGE:
+    sdk broadcast
+
+This subcommand displays the latest three vendor announcements about SDK
+releases on SDKMAN. Each entry shows the release date and broadcast message
+issued by a vendor.
+
+The shorthand mnemonic 'b' is provided in place of the broadcast subcommand.
+
+EXAMPLE:
+    $ sdk broadcast
+";
+
 pub const CONFIG_HELP: &str = "\
 sdk config
 
