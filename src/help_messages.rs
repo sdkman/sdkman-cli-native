@@ -36,7 +36,7 @@ EXAMPLES:
 pub const CONFIG_HELP: &str = "\
 sdk config
 
-An sdk subcommand to edit the SDKMAN configuration file.
+The sdk subcommand to edit the SDKMAN configuration file.
 
 USAGE:
     sdk config
@@ -71,7 +71,7 @@ EXAMPLE:
 pub const DEFAULT_HELP: &str = "\
 sdk default
 
-An sdk subcommand to set the local default version of the candidate.
+The sdk subcommand to set the local default version of the candidate.
 
 USAGE:
     sdk default <CANDIDATE> [VERSION]
@@ -96,7 +96,7 @@ EXAMPLE:
 pub const ENV_HELP: &str = "\
 sdk env
 
-An sdk subcommand to control SDKs on a project level, setting up specific
+The sdk subcommand to control SDKs on a project level, setting up specific
 versions for a directory.
 
 USAGE:
@@ -142,7 +142,7 @@ EXAMPLE:
 pub const HOME_HELP: &str = "\
 sdk home
 
-An sdk subcommand, used in scripting to output the location of a specific
+The sdk subcommand, used in scripting to output the location of a specific
 candidate version.
 
 USAGE:
@@ -242,8 +242,8 @@ EXAMPLE:
 pub const UPGRADE_HELP: &str = "\
 sdk upgrade
 
-An sdk command to upgrade all installed candidate versions or a single candidate
-version.
+The sdk subcommand to upgrade all installed candidate versions or a single
+candidate version.
 
 USAGE:
     sdk upgrade [CANDIDATE]
@@ -268,7 +268,7 @@ EXAMPLE:
 pub const USE_HELP: &str = "\
 sdk use
 
-An sdk subcommand to use a specific version in the current shell.
+The sdk subcommand to use a specific version in the current shell.
 
 USAGE:
     sdk use <CANDIDATE> <VERSION>
