@@ -288,3 +288,21 @@ The shorthand mnemonic 'u' is provided in the place of the use subcommand.
 EXAMPLE:
     $ sdk use java 17.0.0-tem
 ";
+
+pub const VERSION_HELP: &str = "\
+sdk version
+
+The sdk subcommand to display the installed SDKMAN version.
+
+USAGE:
+    sdk version
+
+This subcommand displays the version of the bash and native constituents of
+SDKMAN on this system. The versions of the bash and native libraries evolve
+independently from each other and so will not be the same.
+
+The alias 'v' is provided as a shorthand alternative to version.
+
+EXAMPLE:
+    $ sdk version
+";

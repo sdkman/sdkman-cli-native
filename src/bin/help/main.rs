@@ -13,6 +13,7 @@ use help_messages::MAIN_HELP;
 use help_messages::UNINSTALL_HELP;
 use help_messages::UPGRADE_HELP;
 use help_messages::USE_HELP;
+use help_messages::VERSION_HELP;
 
 fn main() {
     let args = Command::new("help")
@@ -27,6 +28,7 @@ fn main() {
         .subcommand(Command::new("uninstall").alias("rm"))
         .subcommand(Command::new("upgrade").alias("rm"))
         .subcommand(Command::new("use").alias("u"))
+        .subcommand(Command::new("version").alias("v"))
         .get_matches();
 
     let help = match args.subcommand_name() {
@@ -40,6 +42,7 @@ fn main() {
         Some("uninstall") => UNINSTALL_HELP,
         Some("upgrade") => UPGRADE_HELP,
         Some("use") => USE_HELP,
+        Some("version") => VERSION_HELP,
         _ => MAIN_HELP,
     };
 

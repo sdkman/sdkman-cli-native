@@ -29,6 +29,7 @@ fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Er
         "uninstall",
         "upgrade",
         "use",
+        "version",
     ];
 
     for arg in &args {
