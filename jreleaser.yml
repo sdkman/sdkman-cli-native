@@ -28,7 +28,7 @@ release:
       format: '- {{commitShortHash}} {{commitTitle}}'
       preset: conventional-commits
       contributors:
-        format: '- {{contributorName}} ({{contributorUsernameAsLink}})'
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
       hide:
         contributors:
           - 'github-actions'
