@@ -9,6 +9,6 @@ name = "help_messages"
 path = "src/help_messages.rs"
 
 [dependencies]
-clap = "3.1.6"
+clap = "3.1.7"
 assert_cmd = "2.0"
 predicates = "2"
