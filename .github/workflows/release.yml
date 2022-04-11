@@ -94,7 +94,7 @@ jobs:
           JRELEASER_PLATFORM_OVERRIDE: ${{ matrix.job.jreleaser_platform }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           retention-days: 1
           name: artifacts
@@ -102,7 +102,7 @@ jobs:
             out/jreleaser/assemble/sdkman-cli-native/archive/*.zip
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           retention-days: 1
           name: jreleaser-${{ matrix.job.target }}
@@ -139,7 +139,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           retention-days: 1
           name: jreleaser-release
