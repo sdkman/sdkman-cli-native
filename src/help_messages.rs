@@ -18,15 +18,15 @@ SUBCOMMANDS:
     config
     default   or d    <CANDIDATE> [VERSION]
     home      or h    <CANDIDATE> <VERSION>
-    env       or e    [INIT|INSTALL|CLEAR]
+    env       or e    [init|install|clear]
     current   or c    [CANDIDATE]
     upgrade   or ug   [CANDIDATE]
     version   or v
     broadcast or b
-    offline           [ENABLE|DISABLE]
-    selfupdate        [FORCE]
+    offline           [enable|disable]
+    selfupdate        [force]
     update
-    flush             [ARCHIVE|TMP|BROADCAST|METADATA|VERSION]
+    flush             [tmp|broadcast|metadata|version]
 
 EXAMPLES:
     $ sdk install java 17.0.0-tem
