@@ -260,8 +260,7 @@ EXAMPLE:
 pub const UPGRADE_HELP: &str = "\
 sdk upgrade
 
-The sdk subcommand to upgrade all installed candidate versions or a single
-candidate version.
+The sdk subcommand to upgrade installed candidate versions.
 
 USAGE:
     sdk upgrade [CANDIDATE]

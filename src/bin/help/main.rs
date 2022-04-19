@@ -12,7 +12,7 @@ fn main() {
         .override_help(MAIN_HELP)
         .subcommand(Command::new("broadcast").alias("b"))
         .subcommand(Command::new("config"))
-        .subcommand(Command::new("current"))
+        .subcommand(Command::new("current").alias("c"))
         .subcommand(Command::new("default").alias("d"))
         .subcommand(Command::new("env").alias("e"))
         .subcommand(Command::new("home").alias("h"))
