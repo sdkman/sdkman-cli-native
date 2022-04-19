@@ -128,13 +128,12 @@ The absence of a qualifier will switch to the versions specified in `.sdkmanrc`
 and emits warnings for versions not present on the system. In addition, it has
 three optional qualifiers:
 
-`install` :     Install and switch to the SDK versions specified in `.sdkmanrc`.
-                The subcommand will use this as the default if the qualifier is
-                omitted.
-`init`    :     Allows for the creation of a default `.sdkmanrc` file with a
-                single entry for the `java` candidate. It uses the current
-                system default of `java` to prime this file.
-`clear`   :     Reset all SDK versions to their system defaults
+ install  :  install and switch to the SDK versions specified in `.sdkmanrc`
+             (used as default if the qualifier is omitted)
+ init     :  allows for the creation of a default `.sdkmanrc` file with a
+             single entry for the `java` candidate, set to the current default
+             value
+ clear    :  reset all SDK versions to their system defaults
 
 The `.sdkmanrc` file contains key-value pairs for each configurable SDK for that
 project environment. An initial file will content such as this:
