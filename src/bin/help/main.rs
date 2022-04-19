@@ -4,7 +4,7 @@ use clap::Command;
 
 use help_messages::{
     BROADCAST_HELP, CONFIG_HELP, CURRENT_HELP, DEFAULT_HELP, ENV_HELP, HOME_HELP, INSTALL_HELP,
-    LIST_HELP, MAIN_HELP, UNINSTALL_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP,
+    LIST_HELP, MAIN_HELP, SELFUPDATE_HELP, UNINSTALL_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP,
 };
 
 fn main() {
@@ -18,6 +18,7 @@ fn main() {
         .subcommand(Command::new("home").alias("h"))
         .subcommand(Command::new("install").alias("i"))
         .subcommand(Command::new("list").alias("ls"))
+        .subcommand(Command::new("selfupdate"))
         .subcommand(Command::new("uninstall").alias("rm"))
         .subcommand(Command::new("upgrade").alias("rm"))
         .subcommand(Command::new("use").alias("u"))
@@ -33,6 +34,7 @@ fn main() {
         Some("home") => HOME_HELP,
         Some("install") => INSTALL_HELP,
         Some("list") => LIST_HELP,
+        Some("selfupdate") => SELFUPDATE_HELP,
         Some("uninstall") => UNINSTALL_HELP,
         Some("upgrade") => UPGRADE_HELP,
         Some("use") => USE_HELP,
