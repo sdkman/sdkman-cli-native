@@ -2,10 +2,7 @@ extern crate clap;
 
 use clap::Command;
 
-use help_messages::{
-    BROADCAST_HELP, CONFIG_HELP, CURRENT_HELP, DEFAULT_HELP, ENV_HELP, HOME_HELP, INSTALL_HELP,
-    LIST_HELP, MAIN_HELP, SELFUPDATE_HELP, UNINSTALL_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP,
-};
+use help_messages::{BROADCAST_HELP, CONFIG_HELP, CURRENT_HELP, DEFAULT_HELP, ENV_HELP, HOME_HELP, INSTALL_HELP, LIST_HELP, MAIN_HELP, SELFUPDATE_HELP, UNINSTALL_HELP, UPDATE_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP};
 
 fn main() {
     let args = Command::new("help")
@@ -20,6 +17,7 @@ fn main() {
         .subcommand(Command::new("list").alias("ls"))
         .subcommand(Command::new("selfupdate"))
         .subcommand(Command::new("uninstall").alias("rm"))
+        .subcommand(Command::new("update"))
         .subcommand(Command::new("upgrade").alias("rm"))
         .subcommand(Command::new("use").alias("u"))
         .subcommand(Command::new("version").alias("v"))
@@ -36,6 +34,7 @@ fn main() {
         Some("list") => LIST_HELP,
         Some("selfupdate") => SELFUPDATE_HELP,
         Some("uninstall") => UNINSTALL_HELP,
+        Some("update") => UPDATE_HELP,
         Some("upgrade") => UPGRADE_HELP,
         Some("use") => USE_HELP,
         Some("version") => VERSION_HELP,

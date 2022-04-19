@@ -277,6 +277,26 @@ EXAMPLE:
     $ sdk uninstall java 17.0.0-tem
 ";
 
+pub const UPDATE_HELP: &str = "\
+sdk update
+
+The sdk command to update the local state of SDKMAN.
+
+USAGE:
+    sdk update
+
+This command is used to download information about all candidates and versions.
+Other commands operate on this data to perform version installations and
+upgrades or search and display details about all packages available for
+installation.
+
+Run this command often to ensure that all candidates are up to date and that the
+latest versions will be visible and installed.
+
+EXAMPLE:
+   sdk update
+";
+
 pub const UPGRADE_HELP: &str = "\
 sdk upgrade
 
