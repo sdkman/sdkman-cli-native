@@ -235,13 +235,13 @@ EXAMPLE:
 pub const SELFUPDATE_HELP: &str = "\
 sdk selfupdate
 
-The sdk command to upgrade the core of SDKMAN!
+The sdk command to upgrade the core of SDKMAN.
 
 USAGE:
     sdk selfupdate [FORCE]
 
 Invoke this command to upgrade the core script and native components of the
-SDKMAN! command-line interface. The command will only upgrade the native
+SDKMAN command-line interface. The command will only upgrade the native
 components if the detected platform is supported.
 
 The command will refuse to upgrade the core if no new version is available. A
