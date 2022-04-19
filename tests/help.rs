@@ -24,6 +24,7 @@ fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Er
         "current",
         "default",
         "env",
+        "flush",
         "home",
         "install",
         "list",

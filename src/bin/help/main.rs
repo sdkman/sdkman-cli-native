@@ -2,7 +2,7 @@ extern crate clap;
 
 use clap::Command;
 
-use help_messages::{BROADCAST_HELP, CONFIG_HELP, CURRENT_HELP, DEFAULT_HELP, ENV_HELP, HOME_HELP, INSTALL_HELP, LIST_HELP, MAIN_HELP, SELFUPDATE_HELP, UNINSTALL_HELP, UPDATE_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP};
+use help_messages::{BROADCAST_HELP, CONFIG_HELP, CURRENT_HELP, DEFAULT_HELP, ENV_HELP, FLUSH_HELP, HOME_HELP, INSTALL_HELP, LIST_HELP, MAIN_HELP, SELFUPDATE_HELP, UNINSTALL_HELP, UPDATE_HELP, UPGRADE_HELP, USE_HELP, VERSION_HELP};
 
 fn main() {
     let args = Command::new("help")
@@ -12,6 +12,7 @@ fn main() {
         .subcommand(Command::new("current").alias("c"))
         .subcommand(Command::new("default").alias("d"))
         .subcommand(Command::new("env").alias("e"))
+        .subcommand(Command::new("flush"))
         .subcommand(Command::new("home").alias("h"))
         .subcommand(Command::new("install").alias("i"))
         .subcommand(Command::new("list").alias("ls"))
@@ -29,6 +30,7 @@ fn main() {
         Some("current") => CURRENT_HELP,
         Some("default") => DEFAULT_HELP,
         Some("env") => ENV_HELP,
+        Some("flush") => FLUSH_HELP,
         Some("home") => HOME_HELP,
         Some("install") => INSTALL_HELP,
         Some("list") => LIST_HELP,

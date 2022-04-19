@@ -157,6 +157,34 @@ EXAMPLE:
     $ sdk env clear
 ";
 
+pub const FLUSH_HELP: &str = "\
+sdk flush
+
+The sdk command used for flushing out the local temporal state of SDKMAN.
+
+USAGE:
+    sdk flush [tmp|broadcast|metadata|version]
+
+This command cleans temporary storage under the `tmp` and `var` folders,
+removing broadcast, metadata, and version caches. It also removes any residual
+download artifacts. It is possible to flush specific targets by providing a
+qualifier. Omission of the qualifier results in a full flush of all targets.
+The following qualifiers apply to this command:
+
+ tmp         :  cleans out pre/post hooks and residual archives from
+                the `.sdkman/tmp` folder
+ broadcast   :  wipes cached broadcast messages
+ metadata    :  removes any header metadata
+ version     :  flushes the SDKMAN version file
+
+EXAMPLE:
+    $ sdk flush
+    $ sdk flush tmp
+    $ sdk flush broadcast
+    $ sdk flush metadata
+    $ sdk flush version
+";
+
 pub const HOME_HELP: &str = "\
 sdk home
 
