@@ -4,11 +4,9 @@ version = "0.0.13"
 edition = "2018"
 publish = false
 
-[lib]
-name = "help_messages"
-path = "src/help_messages.rs"
-
 [dependencies]
 clap = "3.1.11"
 assert_cmd = "2.0"
 predicates = "2"
+colored = "2.0.0"
+textwrap = "0.15.0"
