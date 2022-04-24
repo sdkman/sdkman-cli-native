@@ -61,9 +61,13 @@ struct Help {
     examples: &'static str,
 }
 
+const TAB_WIDTH: usize = 4;
+const TERMINAL_WIDTH: usize = 80;
+const TEXT_WIDTH: usize = TERMINAL_WIDTH - TAB_WIDTH;
+
 fn render(help: Help) -> String {
     let nameline = format!("{} - {}", help.cmd.italic(), help.tagline);
-    let wrapped_nameline = fill(&nameline, 80);
+    let wrapped_nameline = fill(&nameline, TEXT_WIDTH);
     let name = format!("\n{}\n{}\n\n", "NAME".bold(), indent(&wrapped_nameline, "\t"));
 
     let synopsis = format!(
@@ -75,7 +79,7 @@ fn render(help: Help) -> String {
     let description = format!(
         "{}\n{}\n\n",
         "DESCRIPTION".bold(),
-        indent(&fill(help.description, 80), "\t")
+        indent(&fill(help.description, TEXT_WIDTH), "\t")
     );
 
     let subcommands = help
@@ -138,9 +142,9 @@ offline           [enable|disable]
 selfupdate        [force]
 update
 flush             [tmp|broadcast|metadata|version]"),
+    examples: "sdk install java 17.0.0-tem\nsdk help install",
     mnemonic: None,
     exit_code: None,
-    examples: "sdk install java 17.0.0-tem\nsdk help install",
 };
 
 const BROADCAST_HELP: Help = Help {
@@ -148,10 +152,10 @@ const BROADCAST_HELP: Help = Help {
     tagline: "sdk subcommand to display the latest announcements",
     synopsis: "sdk broadcast",
     description: "This subcommand displays the latest three vendor announcements about SDK releases on SDKMAN. Each entry shows the release date and broadcast message issued by a vendor.",
-    subcommands: None,
     mnemonic: Some(("b", "broadcast")),
-    exit_code: None,
     examples: "sdk broadcast",
+    subcommands: None,
+    exit_code: None,
 };
 
 const CONFIG_HELP: Help = Help {
@@ -159,10 +163,10 @@ const CONFIG_HELP: Help = Help {
     tagline: "sdk subcommand to edit the SDKMAN configuration file",
     synopsis: "sdk config",
     description: "This subcommand opens a text editor on the configuration file located at ${SDKMAN_DIR}/etc/config. The subcommand will infer the text editor from the EDITOR environment variable. If the system does not set the EDITOR environment variable, then vi is assumed as the default editor.",
+    examples: "sdk config",
     subcommands: None,
     mnemonic: None,
     exit_code: None,
-    examples: "sdk config",
 };
 
 const CURRENT_HELP: Help = Help {
@@ -170,10 +174,10 @@ const CURRENT_HELP: Help = Help {
     tagline: "sdk subcommand to display the current default installed versions",
     synopsis: "sdk current [candidate]",
     description: "This command will display a list of candidates with their default version installed on the system. It is also possible to qualify the candidate when running the command to display only that candidate's default version.",
-    subcommands: None,
     mnemonic: Some(("c", "current")),
-    exit_code: None,
     examples: "sdk current\nsdk current java",
+    subcommands: None,
+    exit_code: None,
 };
 
 const DEFAULT_HELP: Help = Help {
@@ -183,10 +187,10 @@ const DEFAULT_HELP: Help = Help {
     description: "\
 The mandatory candidate qualifier of the subcommand specifies the candidate to default for all future shells.\n
 The optional version qualifier set that specific version as default for all subsequent shells on the local environment. Omitting the version will set the global SDKMAN tracked version as the default version for that candidate.",
-    subcommands: None,
     mnemonic: Some(("d", "default")),
     exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist."),
     examples: "sdk default java 17.0.0-tem\nsdk default java",
+    subcommands: None,
 };
 
 const ENV_HELP: Help = Help {
@@ -213,10 +217,10 @@ java=11.0.13-tem
 ---
 
 You may enable a configuration option for auto-env behaviour. This setting will automatically switch versions when stepping into a directory on the presence of a `.sdkmanrc` descriptor. When enabled, you no longer need to issue the `install` qualifier explicitly. This behaviour is disabled by default.",
+    examples: "sdk env\nsdk env install\nsdk env init\nsdk env clear",
     subcommands: None,
     mnemonic: None,
     exit_code: None,
-    examples: "sdk env\nsdk env install\nsdk env init\nsdk env clear",
 };
 
 const FLUSH_HELP: Help = Help {
@@ -232,9 +236,9 @@ tmp         :  cleans out pre/post hooks and residual archives from`.sdkman/tmp`
 broadcast   :  wipes cached broadcast messages
 metadata    :  removes any header metadata
 version     :  flushes the SDKMAN version file"),
+    examples: "sdk flush\nsdk flush tmp\nsdk flush broadcast\nsdk flush metadata\nsdk flush version",
     mnemonic: None,
     exit_code: None,
-    examples: "sdk flush\nsdk flush tmp\nsdk flush broadcast\nsdk flush metadata\nsdk flush version",
 };
 
 const HOME_HELP: Help = Help {
@@ -242,10 +246,10 @@ const HOME_HELP: Help = Help {
     tagline: "sdk subcommand to output the path of a specific candidate version",
     synopsis: "sdk home <candidate> <version>",
     description: "Print the absolute home path of any candidate version installed by SDKMAN. The candidate and version parameters are mandatory. Often used for scripting, so does not append a newline character.",
-    subcommands: None,
-    mnemonic: None,
     exit_code: Some("The subcommand will emit a non-zero exit code if a valid candidate version is not locally installed."),
     examples: "sdk home java 17.0.0-tem",
+    subcommands: None,
+    mnemonic: None,
 };
 
 const INSTALL_HELP: Help = Help {
@@ -256,10 +260,10 @@ const INSTALL_HELP: Help = Help {
 Invoking this subcommand with only the candidate as a parameter will install the currently known default version for that candidate.\n
 Provide a subsequent qualifier to install a specific non-default version.\n
 Provide another qualifier to add an already installed local version. This qualifier is the absolute local path to the base directory of the SDK to be added. The local version will appear as an installed version of the candidate. The version may not conflict with an existing version, installed or not.",
-    subcommands: None,
     mnemonic: Some(("i", "install")),
     exit_code: Some("The subcommand will return a non-zero exit code for unfound versions or if the path does not exist."),
     examples: "sdk install java\nsdk install java 17.0.0-tem\nsdk install java 11-local /usr/lib/jvm/java-11-openjdk",
+    subcommands: None,
 };
 
 const LIST_HELP: Help = Help {
@@ -275,10 +279,10 @@ They appear as follows:\n
 > - currently in use
 
 Java has a custom list view with vendor-specific details.",
-    subcommands: None,
     mnemonic: Some(("ls", "list")),
-    exit_code: None,
     examples: "sdk list\nsdk list java\nsdk list groovy",
+    subcommands: None,
+    exit_code: None,
 };
 
 const SELFUPDATE_HELP: Help = Help {
@@ -288,10 +292,10 @@ const SELFUPDATE_HELP: Help = Help {
     description: "\
 Invoke this command to upgrade the core script and native components of the SDKMAN command-line interface. The command will only upgrade the native components if the detected platform is supported.\n
 The command will refuse to upgrade the core if no new version is available. A qualifier may be added to the selfupdate command to force an upgrade.",
+    examples: "sdk selfupdate\nsdk selfupdate force",
     subcommands: None,
     mnemonic: None,
     exit_code: None,
-    examples: "sdk selfupdate\nsdk selfupdate force",
 };
 
 const UNINSTALL_HELP: Help = Help {
@@ -301,10 +305,10 @@ const UNINSTALL_HELP: Help = Help {
     description: "\
 Always follow the subcommand with two qualifiers, the candidate and version to be uninstalled.\n
 The specified version will be removed from the candidate directory in $SDKMAN_DIR/candidates and will no longer be available for use on the system.",
-    subcommands: None,
     mnemonic: Some(("rm", "uninstall")),
     exit_code: Some("An invalid candidate or version supplied to the subcommand will result in a non-zero return code."),
     examples: "sdk uninstall java 17.0.0-tem",
+    subcommands: None,
 };
 
 const UPDATE_HELP: Help = Help {
@@ -314,10 +318,10 @@ const UPDATE_HELP: Help = Help {
     description: "\
 This command is used to download information about all candidates and versions. Other commands operate on this data to perform version installations and upgrades or search and display details about all packages available for installation.\n
 Run this command often to ensure that all candidates are up to date and that the latest versions will be visible and installed.",
+    examples: "sdk update",
     subcommands: None,
     mnemonic: None,
     exit_code: None,
-    examples: "sdk update",
 };
 
 const UPGRADE_HELP: Help = Help {
@@ -327,10 +331,10 @@ const UPGRADE_HELP: Help = Help {
     description: "\
 The optional candidate qualifier can be applied to specify the candidate you want to upgrade. If the candidate qualifier is omitted from the command, it will attempt an upgrade of all outdated candidates.\n
 Candidates that do not require an upgrade will be omitted, and a notification will be displayed that the candidates are up to date.",
-    subcommands: None,
     mnemonic: Some(("ug", "upgrade")),
     exit_code: Some("The subcommand will return a non-zero return code if the candidate does not exist."),
     examples: "sdk upgrade\nsdk upgrade java",
+    subcommands: None,
 };
 
 const USE_HELP: Help = Help {
@@ -340,10 +344,10 @@ const USE_HELP: Help = Help {
     description: "\
 The mandatory candidate and version follow the subcommand to specify what to use in the current shell.\n
 This subcommand only operates on the current shell. It does not affect other shells running different versions of the same candidate. It also does not change the default version set for all subsequent new shells.",
-    subcommands: None,
     mnemonic: Some(("u", "use")),
     exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist."),
     examples: "sdk use java 17.0.0-tem",
+    subcommands: None,
 };
 
 const VERSION_HELP: Help = Help {
@@ -352,8 +356,8 @@ const VERSION_HELP: Help = Help {
     synopsis: "sdk version",
     description: "\
 This subcommand displays the version of the bash and native constituents of SDKMAN on this system. The versions of the bash and native libraries evolve independently from each other and so will not be the same.",
-    subcommands: None,
     mnemonic: Some(("v", "version")),
-    exit_code: None,
     examples: "sdk version",
+    subcommands: None,
+    exit_code: None,
 };
