@@ -379,3 +379,53 @@ This subcommand displays the version of the bash and native constituents of SDKM
         ..Default::default()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{main_help, render};
+
+    #[test]
+    fn render_main_help() {
+        let help_text = "
+NAME
+	sdk - The command line interface (CLI) for SDKMAN!
+
+SYNOPSIS
+	sdk <subcommand> [candidate] [version]
+
+DESCRIPTION
+	SDKMAN! is a tool for managing parallel versions of multiple Software
+	Development Kits on most Unix based systems. It provides a convenient
+	Command Line Interface (CLI) and API for installing, switching, removing and
+	listing Candidates.
+
+SUBCOMMANDS
+	The following subcommands are available:
+
+	help              [subcommand]
+	install   or i    <candidate> [version] [path]
+	uninstall or rm   <candidate> <version>
+	list      or ls   [candidate]
+	use       or u    <candidate> <version>
+	config
+	default   or d    <candidate> [version]
+	home      or h    <candidate> <version>
+	env       or e    [init|install|clear]
+	current   or c    [candidate]
+	upgrade   or ug   [candidate]
+	version   or v
+	broadcast or b
+	offline           [enable|disable]
+	selfupdate        [force]
+	update
+	flush             [tmp|broadcast|metadata|version]
+
+EXAMPLES
+	$ sdk install java 17.0.0-tem
+	$ sdk help install
+
+";
+        colored::control::set_override(false);
+        assert_eq!(help_text, render(main_help()));
+    }
+}
