@@ -125,8 +125,6 @@ fn main_help() -> Help {
         description: "\
 SDKMAN! is a tool for managing parallel versions of multiple Software Development Kits on most Unix based systems. It provides a convenient Command Line Interface (CLI) and API for installing, switching, removing and listing Candidates.",
         subcommands: Some("\
-The following subcommands are available:
-
 help              [subcommand]
 install   or i    <candidate> [version] [path]
 uninstall or rm   <candidate> <version>
@@ -400,8 +398,6 @@ DESCRIPTION
 	listing Candidates.
 
 SUBCOMMANDS
-	The following subcommands are available:
-
 	help              [subcommand]
 	install   or i    <candidate> [version] [path]
 	uninstall or rm   <candidate> <version>
