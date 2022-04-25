@@ -62,30 +62,32 @@ struct Help {
     examples: &'static str,
 }
 
-const TAB_WIDTH: usize = 4;
+const INDENTATION_WIDTH: usize = 4;
 const TERMINAL_WIDTH: usize = 80;
-const TEXT_WIDTH: usize = TERMINAL_WIDTH - TAB_WIDTH;
+const TEXT_WIDTH: usize = TERMINAL_WIDTH - INDENTATION_WIDTH;
 
 fn render(help: Help) -> String {
+    let spaced_tab = format!("{:width$}", " ", width = INDENTATION_WIDTH);
+    let indentation = spaced_tab.as_str();
     let nameline = format!("{} - {}", help.cmd.italic(), help.tagline);
     let wrapped_nameline = fill(&nameline, TEXT_WIDTH);
-    let name = format!("\n{}\n{}\n\n", "NAME".bold(), indent(&wrapped_nameline, "\t"));
+    let name = format!("\n{}\n{}\n\n", "NAME".bold(), indent(&wrapped_nameline, indentation));
 
     let synopsis = format!(
         "{}\n{}\n\n",
         "SYNOPSIS".bold(),
-        indent(&format!("{}", help.synopsis.italic()), "\t")
+        indent(&format!("{}", help.synopsis.italic()), indentation)
     );
 
     let description = format!(
         "{}\n{}\n\n",
         "DESCRIPTION".bold(),
-        indent(&fill(help.description, TEXT_WIDTH), "\t")
+        indent(&fill(help.description, TEXT_WIDTH), indentation)
     );
 
     let subcommands = help
         .subcommands
-        .map(|sc| format!("{}\n{}\n\n", "SUBCOMMANDS".bold(), indent(sc, "\t")))
+        .map(|sc| format!("{}\n{}\n\n", "SUBCOMMANDS".bold(), indent(sc, indentation)))
         .unwrap_or_else(|| String::new());
 
     let mnemonic = help
@@ -96,19 +98,19 @@ fn render(help: Help) -> String {
                 &mnemonic.bold(),
                 &command.bold()
             );
-            format!("{}\n{}\n\n", "MNEMONIC".bold(), indent(&text, "\t"))
+            format!("{}\n{}\n\n", "MNEMONIC".bold(), indent(&text, indentation))
         })
         .unwrap_or_else(|| String::new());
 
     let exit_code = help
         .exit_code
-        .map(|m| format!("{}\n{}\n\n", "EXIT CODE".bold(), indent(&fill(&m, 80), "\t")))
+        .map(|m| format!("{}\n{}\n\n", "EXIT CODE".bold(), indent(&fill(&m, 80), indentation)))
         .unwrap_or_else(|| String::new());
 
     let examples = format!(
         "{}\n{}\n\n",
         "EXAMPLES".bold(),
-        indent(&format!("{}", help.examples.italic()), "\t$ ")
+        indent(&format!("{}", help.examples.italic()), indentation)
     );
 
     format!(
@@ -386,39 +388,39 @@ mod tests {
     fn render_main_help() {
         let help_text = "
 NAME
-	sdk - The command line interface (CLI) for SDKMAN!
+    sdk - The command line interface (CLI) for SDKMAN!
 
 SYNOPSIS
-	sdk <subcommand> [candidate] [version]
+    sdk <subcommand> [candidate] [version]
 
 DESCRIPTION
-	SDKMAN! is a tool for managing parallel versions of multiple Software
-	Development Kits on most Unix based systems. It provides a convenient
-	Command Line Interface (CLI) and API for installing, switching, removing and
-	listing Candidates.
+    SDKMAN! is a tool for managing parallel versions of multiple Software
+    Development Kits on most Unix based systems. It provides a convenient
+    Command Line Interface (CLI) and API for installing, switching, removing and
+    listing Candidates.
 
 SUBCOMMANDS
-	help              [subcommand]
-	install   or i    <candidate> [version] [path]
-	uninstall or rm   <candidate> <version>
-	list      or ls   [candidate]
-	use       or u    <candidate> <version>
-	config
-	default   or d    <candidate> [version]
-	home      or h    <candidate> <version>
-	env       or e    [init|install|clear]
-	current   or c    [candidate]
-	upgrade   or ug   [candidate]
-	version   or v
-	broadcast or b
-	offline           [enable|disable]
-	selfupdate        [force]
-	update
-	flush             [tmp|broadcast|metadata|version]
+    help              [subcommand]
+    install   or i    <candidate> [version] [path]
+    uninstall or rm   <candidate> <version>
+    list      or ls   [candidate]
+    use       or u    <candidate> <version>
+    config
+    default   or d    <candidate> [version]
+    home      or h    <candidate> <version>
+    env       or e    [init|install|clear]
+    current   or c    [candidate]
+    upgrade   or ug   [candidate]
+    version   or v
+    broadcast or b
+    offline           [enable|disable]
+    selfupdate        [force]
+    update
+    flush             [tmp|broadcast|metadata|version]
 
 EXAMPLES
-	$ sdk install java 17.0.0-tem
-	$ sdk help install
+    sdk install java 17.0.0-tem
+    sdk help install
 
 ";
         colored::control::set_override(false);
