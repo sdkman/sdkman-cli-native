@@ -382,7 +382,7 @@ This subcommand displays the version of the bash and native constituents of SDKM
 
 #[cfg(test)]
 mod tests {
-    use crate::{main_help, render};
+    use crate::{broadcast_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -425,5 +425,30 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(help_text, render(main_help()));
+    }
+
+    #[test]
+    fn render_broadcast_help() {
+        let broadcast_text = "
+NAME
+    sdk broadcast - sdk subcommand to display the latest announcements
+
+SYNOPSIS
+    sdk broadcast
+
+DESCRIPTION
+    This subcommand displays the latest three vendor announcements about SDK
+    releases on SDKMAN. Each entry shows the release date and broadcast message
+    issued by a vendor.
+
+MNEMONIC
+    b - may be used in place of the broadcast subcommand.
+
+EXAMPLES
+    sdk broadcast
+
+";
+        colored::control::set_override(false);
+        assert_eq!(broadcast_text, render(broadcast_help()));
     }
 }
