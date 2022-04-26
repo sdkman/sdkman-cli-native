@@ -382,7 +382,7 @@ This subcommand displays the version of the bash and native constituents of SDKM
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, main_help, render};
+    use crate::{broadcast_help, config_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -450,5 +450,28 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(broadcast_text, render(broadcast_help()));
+    }
+
+    #[test]
+    fn render_config_help() {
+        let config_text = "
+NAME
+    sdk config - sdk subcommand to edit the SDKMAN configuration file
+
+SYNOPSIS
+    sdk config
+
+DESCRIPTION
+    This subcommand opens a text editor on the configuration file located at
+    ${SDKMAN_DIR}/etc/config. The subcommand will infer the text editor from
+    the EDITOR environment variable. If the system does not set the EDITOR
+    environment variable, then vi is assumed as the default editor.
+
+EXAMPLES
+    sdk config
+
+";
+        colored::control::set_override(false);
+        assert_eq!(config_text, render(config_help()));
     }
 }
