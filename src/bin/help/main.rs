@@ -177,7 +177,7 @@ fn current_help() -> Help {
         cmd: "sdk current",
         tagline: "sdk subcommand to display the current default installed versions",
         synopsis: "sdk current [candidate]",
-        description: "This command will display a list of candidates with their default version installed on the system. It is also possible to qualify the candidate when running the command to display only that candidate's default version.",
+        description: "This subcommand will display a list of candidates with their default version installed on the system. It is also possible to qualify the candidate when running the subcommand to display only that candidate's default version.",
         mnemonic: Some(("c", "current")),
         examples: "sdk current\nsdk current java",
         ..Default::default()
@@ -382,7 +382,7 @@ This subcommand displays the version of the bash and native constituents of SDKM
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, main_help, render};
+    use crate::{broadcast_help, config_help, current_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -473,5 +473,32 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(config_text, render(config_help()));
+    }
+
+    #[test]
+    fn render_current_help() {
+        let current_text = "
+NAME
+    sdk current - sdk subcommand to display the current default installed
+    versions
+
+SYNOPSIS
+    sdk current [candidate]
+
+DESCRIPTION
+    This subcommand will display a list of candidates with their default version
+    installed on the system. It is also possible to qualify the candidate when
+    running the subcommand to display only that candidate's default version.
+
+MNEMONIC
+    c - may be used in place of the current subcommand.
+
+EXAMPLES
+    sdk current
+    sdk current java
+
+";
+        colored::control::set_override(false);
+        assert_eq!(current_text, render(current_help()));
     }
 }
