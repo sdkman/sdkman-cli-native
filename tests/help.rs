@@ -44,8 +44,7 @@ fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Er
             .success()
             .stdout(predicate::str::starts_with(&header))
             .code(0);
-        println!("Tested: {}", header);
+        println!("Success: sdk {}", arg);
     }
-
     Ok(())
 }
