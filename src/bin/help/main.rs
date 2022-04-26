@@ -104,7 +104,7 @@ fn render(help: Help) -> String {
 
     let exit_code = help
         .exit_code
-        .map(|m| format!("{}\n{}\n\n", "EXIT CODE".bold(), indent(&fill(&m, 80), indentation)))
+        .map(|m| format!("{}\n{}\n\n", "EXIT CODE".bold(), indent(&fill(&m, TEXT_WIDTH), indentation)))
         .unwrap_or_else(|| String::new());
 
     let examples = format!(
@@ -190,7 +190,7 @@ fn default_help() -> Help {
         synopsis: "sdk default <candidate> [version]",
         description: "\
 The mandatory candidate qualifier of the subcommand specifies the candidate to default for all future shells.\n
-The optional version qualifier set that specific version as default for all subsequent shells on the local environment. Omitting the version will set the global SDKMAN tracked version as the default version for that candidate.",
+The optional version qualifier sets that specific version as default for all subsequent shells on the local environment. Omitting the version will set the global SDKMAN tracked version as the default version for that candidate.",
         mnemonic: Some(("d", "default")),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist."),
         examples: "sdk default java 17.0.0-tem\nsdk default java",
@@ -379,7 +379,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, main_help, render};
+    use crate::{broadcast_help, config_help, current_help, default_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -497,5 +497,39 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(current_text, render(current_help()));
+    }
+
+    #[test]
+    fn render_default_help() {
+        let default_text = "
+NAME
+    sdk default - sdk subcommand to set the local default version of the
+    candidate
+
+SYNOPSIS
+    sdk default <candidate> [version]
+
+DESCRIPTION
+    The mandatory candidate qualifier of the subcommand specifies the candidate
+    to default for all future shells.
+
+    The optional version qualifier sets that specific version as default for all
+    subsequent shells on the local environment. Omitting the version will set
+    the global SDKMAN tracked version as the default version for that candidate.
+
+EXIT CODE
+    The subcommand will return a non-zero return code if the candidate or
+    version does not exist.
+
+MNEMONIC
+    d - may be used in place of the default subcommand.
+
+EXAMPLES
+    sdk default java 17.0.0-tem
+    sdk default java
+
+";
+        colored::control::set_override(false);
+        assert_eq!(default_text, render(default_help()));
     }
 }
