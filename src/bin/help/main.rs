@@ -50,6 +50,11 @@ fn main() {
     println!("{}", &render(help));
 }
 
+struct Mnemonic {
+    shorthand: String,
+    command: String,
+}
+
 #[derive(Default)]
 struct Help {
     cmd: String,
@@ -57,7 +62,7 @@ struct Help {
     synopsis: String,
     description: String,
     subcommands: Option<String>,
-    mnemonic: Option<(String, String)>,
+    mnemonic: Option<Mnemonic>,
     exit_code: Option<String>,
     examples: String,
 }
@@ -92,11 +97,11 @@ fn render(help: Help) -> String {
 
     let mnemonic = help
         .mnemonic
-        .map(|(mnemonic, command)| {
+        .map(|mnemonic| {
             let text = format!(
                 "{} - may be used in place of the {} subcommand.",
-                &mnemonic.bold(),
-                &command.bold()
+                &mnemonic.shorthand.bold(),
+                &mnemonic.command.bold()
             );
             format!("{}\n{}\n\n", "MNEMONIC".bold(), indent(&text, indentation))
         })
@@ -154,7 +159,7 @@ fn broadcast_help() -> Help {
         tagline: "sdk subcommand to display the latest announcements".to_string(),
         synopsis: "sdk broadcast".to_string(),
         description: "This subcommand displays the latest three vendor announcements about SDK releases on SDKMAN. Each entry shows the release date and broadcast message issued by a vendor.".to_string(),
-        mnemonic: Some(("b".to_string(), "broadcast".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "b".to_string(), command: "broadcast".to_string() }),
         examples: "sdk broadcast".to_string(),
         ..Default::default()
     }
@@ -177,7 +182,7 @@ fn current_help() -> Help {
         tagline: "sdk subcommand to display the current default installed versions".to_string(),
         synopsis: "sdk current [candidate]".to_string(),
         description: "This subcommand will display a list of candidates with their default version installed on the system. It is also possible to qualify the candidate when running the subcommand to display only that candidate's default version.".to_string(),
-        mnemonic: Some(("c".to_string(), "current".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "c".to_string(), command: "current".to_string() }),
         examples: "sdk current\nsdk current java".to_string(),
         ..Default::default()
     }
@@ -191,7 +196,7 @@ fn default_help() -> Help {
         description: "\
 The mandatory candidate qualifier of the subcommand specifies the candidate to default for all future shells.\n
 The optional version qualifier sets that specific version as default for all subsequent shells on the local environment. Omitting the version will set the global SDKMAN tracked version as the default version for that candidate.".to_string(),
-        mnemonic: Some(("d".to_string(), "default".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "d".to_string(), command: "default".to_string() }),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist.".to_string()),
         examples: "sdk default java 17.0.0-tem\nsdk default java".to_string(),
         ..Default::default()
@@ -267,7 +272,7 @@ fn install_help() -> Help {
 Invoking this subcommand with only the candidate as a parameter will install the currently known default version for that candidate.\n
 Provide a subsequent qualifier to install a specific non-default version.\n
 Provide another qualifier to add an already installed local version. This qualifier is the absolute local path to the base directory of the SDK to be added. The local version will appear as an installed version of the candidate. The version may not conflict with an existing version, installed or not.".to_string(),
-        mnemonic: Some(("i".to_string(), "install".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "i".to_string(), command: "install".to_string() }),
         exit_code: Some("The subcommand will return a non-zero exit code for unfound versions or if the path does not exist.".to_string()),
         examples: "sdk install java\nsdk install java 17.0.0-tem\nsdk install java 11-local /usr/lib/jvm/java-11-openjdk".to_string(),
         ..Default::default()
@@ -288,7 +293,7 @@ They appear as follows:\n
 > - currently in use
 
 Java has a custom list view with vendor-specific details.".to_string(),
-        mnemonic: Some(("ls".to_string(), "list".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "ls".to_string(), command: "list".to_string() }),
         examples: "sdk list\nsdk list java\nsdk list groovy".to_string(),
         ..Default::default()
     }
@@ -315,7 +320,7 @@ fn uninstall_help() -> Help {
         description: "\
 Always follow the subcommand with two qualifiers, the candidate and version to be uninstalled.\n
 The specified version will be removed from the candidate directory in $SDKMAN_DIR/candidates and will no longer be available for use on the system.".to_string(),
-        mnemonic: Some(("rm".to_string(), "uninstall".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "rm".to_string(), command: "uninstall".to_string() }),
         exit_code: Some("An invalid candidate or version supplied to the subcommand will result in a non-zero return code.".to_string()),
         examples: "sdk uninstall java 17.0.0-tem".to_string(),
         ..Default::default()
@@ -343,7 +348,7 @@ fn upgrade_help() -> Help {
         description: "\
 The optional candidate qualifier can be applied to specify the candidate you want to upgrade. If the candidate qualifier is omitted from the command, it will attempt an upgrade of all outdated candidates.\n
 Candidates that do not require an upgrade will be omitted, and a notification will be displayed that the candidates are up to date.".to_string(),
-        mnemonic: Some(("ug".to_string(), "upgrade".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "ug".to_string(), command: "upgrade".to_string() }),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate does not exist.".to_string()),
         examples: "sdk upgrade\nsdk upgrade java".to_string(),
         ..Default::default()
@@ -358,7 +363,7 @@ fn use_help() -> Help {
         description: "\
 The mandatory candidate and version follow the subcommand to specify what to use in the current shell.\n
 This subcommand only operates on the current shell. It does not affect other shells running different versions of the same candidate. It also does not change the default version set for all subsequent new shells.".to_string(),
-        mnemonic: Some(("u".to_string(), "use".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "u".to_string(), command: "use".to_string() }),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist.".to_string()),
         examples: "sdk use java 17.0.0-tem".to_string(),
         ..Default::default()
@@ -371,7 +376,7 @@ fn version_help() -> Help {
         tagline: "sdk subcommand to display the installed SDKMAN version".to_string(),
         synopsis: "sdk version".to_string(),
         description: "This subcommand displays the version of the bash and native constituents of SDKMAN on this system. The versions of the bash and native libraries evolve independently from each other and so will not be the same.".to_string(),
-        mnemonic: Some(("v".to_string(), "version".to_string())),
+        mnemonic: Some(Mnemonic { shorthand: "v".to_string(), command: "version".to_string() }),
         examples: "sdk version".to_string(),
         ..Default::default()
     }
