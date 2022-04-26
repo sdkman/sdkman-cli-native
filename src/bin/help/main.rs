@@ -124,8 +124,7 @@ fn main_help() -> Help {
         cmd: "sdk",
         tagline: "The command line interface (CLI) for SDKMAN!",
         synopsis: "sdk <subcommand> [candidate] [version]",
-        description: "\
-SDKMAN! is a tool for managing parallel versions of multiple JVM related Software Development Kits on most Unix based systems. It provides a convenient Command Line Interface (CLI) and API for installing, switching, removing and listing Candidates.",
+        description: "SDKMAN! is a tool for managing parallel versions of multiple JVM related Software Development Kits on most Unix based systems. It provides a convenient Command Line Interface (CLI) and API for installing, switching, removing and listing Candidates.",
         subcommands: Some("\
 help              [subcommand]
 install   or i    <candidate> [version] [path]
@@ -234,8 +233,7 @@ fn flush_help() -> Help {
         cmd: "sdk flush",
         tagline: "sdk subcommand used for flushing local temporal state of SDKMAN",
         synopsis: "sdk flush [tmp|broadcast|metadata|version]",
-        description: "\
-This command cleans temporary storage under the `tmp` and `var` folders, removing broadcast, metadata, and version caches. It also removes any residual download artifacts. It is possible to flush specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all targets.",
+        description: "This command cleans temporary storage under the `tmp` and `var` folders, removing broadcast, metadata, and version caches. It also removes any residual download artifacts. It is possible to flush specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all targets.",
         subcommands: Some("\
 The following qualifiers apply to this command:
 
@@ -372,8 +370,7 @@ fn version_help() -> Help {
         cmd: "sdk version",
         tagline: "sdk subcommand to display the installed SDKMAN version",
         synopsis: "sdk version",
-        description: "\
-This subcommand displays the version of the bash and native constituents of SDKMAN on this system. The versions of the bash and native libraries evolve independently from each other and so will not be the same.",
+        description: "This subcommand displays the version of the bash and native constituents of SDKMAN on this system. The versions of the bash and native libraries evolve independently from each other and so will not be the same.",
         mnemonic: Some(("v", "version")),
         examples: "sdk version",
         ..Default::default()
