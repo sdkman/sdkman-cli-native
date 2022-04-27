@@ -204,30 +204,47 @@ The optional version qualifier sets that specific version as default for all sub
 }
 
 fn env_help() -> Help {
-    Help {
-        cmd: "sdk env".to_string(),
-        tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory".to_string(),
-        synopsis: "sdk env [init|install|clear]".to_string(),
-        description: "\
-Allows the developer to manage the SDK versions used in a project directory. The subcommand uses a `.sdkmanrc` file to install or switch specific SDK versions in a project directory.\n
-The absence of a qualifier will switch to the versions specified in `.sdkmanrc` and emits warnings for versions not present on the system. In addition, it has three optional qualifiers:
-
-install  :  install and switch to the SDK versions specified in `.sdkmanrc`
-            (used as default if the qualifier is omitted)
-init     :  allows for the creation of a default `.sdkmanrc` file with a
-            single entry for the `java` candidate, set to the current default
-            value
-clear    :  reset all SDK versions to their system defaults
-
-The `.sdkmanrc` file contains key-value pairs for each configurable SDK for that project environment. An initial file will content such as this:
-
+    let config_file = ".sdkmanrc".underline();
+    let config_file_content = "\
 ---
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
 java=11.0.13-tem
----
+---".italic();
+    Help {
+        cmd: "sdk env".to_string(),
+        tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory".to_string(),
+        synopsis: "sdk env [init|install|clear]".to_string(),
+        description: format!("\
+Allows the developer to manage the SDK versions used in a project directory. The subcommand uses an {} file to install or switch specific SDK versions in a project directory.\n
+When issuing the subcommand without a qualifier, it will switch to the versions specified in {} and emit warnings for versions not present on the system. In addition, the subcommand has three optional qualifiers:
 
-You may enable a configuration option for auto-env behaviour. This setting will automatically switch versions when stepping into a directory on the presence of a `.sdkmanrc` descriptor. When enabled, you no longer need to issue the `install` qualifier explicitly. This behaviour is disabled by default.".to_string(),
+{}  :  install and switch to the SDK versions specified in {}
+            (used as default if the qualifier is omitted)
+{}     :  allows for the creation of a default {} file with a
+            single entry for the {} candidate, set to the current
+            default value
+{}    :  reset all SDK versions to their system defaults
+
+The {} file contains key-value pairs for each configurable SDK for that project environment. An initial file will have content such as this:
+
+{}
+
+You may enable a configuration option for auto-env behaviour by setting {} in the {} file. This setting will automatically switch versions when stepping into a directory on the presence of a {} descriptor. When enabled, you no longer need to issue the {} qualifier explicitly. This behaviour is disabled by default.",
+                             config_file,
+                             config_file,
+                             "install".italic(),
+                             config_file,
+                             "init".italic(),
+                             config_file,
+                             "java".italic(),
+                             "clear".italic(),
+                             config_file,
+                             config_file_content,
+                             "sdkman_auto_env=true".italic(),
+                             "$SDKMAN/etc/config".underline(),
+                             config_file,
+                             "install".italic()),
         examples: "sdk env\nsdk env install\nsdk env init\nsdk env clear".to_string(),
         ..Default::default()
     }
@@ -384,7 +401,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, main_help, render};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -536,5 +553,57 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(default_text, render(default_help()));
+    }
+
+    #[test]
+    fn render_env_help() {
+        let env_text = "
+NAME
+    sdk env - sdk subcommand to control SDKs on a project level, setting up
+    specific versions for a directory
+
+SYNOPSIS
+    sdk env [init|install|clear]
+
+DESCRIPTION
+    Allows the developer to manage the SDK versions used in a project directory.
+    The subcommand uses an .sdkmanrc file to install or switch specific SDK
+    versions in a project directory.
+
+    When issuing the subcommand without a qualifier, it will switch to the
+    versions specified in .sdkmanrc and emit warnings for versions not present
+    on the system. In addition, the subcommand has three optional qualifiers:
+
+    install  :  install and switch to the SDK versions specified in .sdkmanrc
+                (used as default if the qualifier is omitted)
+    init     :  allows for the creation of a default .sdkmanrc file with a
+                single entry for the java candidate, set to the current
+                default value
+    clear    :  reset all SDK versions to their system defaults
+
+    The .sdkmanrc file contains key-value pairs for each configurable SDK for
+    that project environment. An initial file will have content such as this:
+
+    ---
+    # Enable auto-env through the sdkman_auto_env config
+    # Add key=value pairs of SDKs to use below
+    java=11.0.13-tem
+    ---
+
+    You may enable a configuration option for auto-env behaviour by setting
+    sdkman_auto_env=true in the $SDKMAN/etc/config file. This setting will
+    automatically switch versions when stepping into a directory on the presence
+    of a .sdkmanrc descriptor. When enabled, you no longer need to issue the
+    install qualifier explicitly. This behaviour is disabled by default.
+
+EXAMPLES
+    sdk env
+    sdk env install
+    sdk env init
+    sdk env clear
+
+";
+        colored::control::set_override(false);
+        assert_eq!(env_text, render(env_help()));
     }
 }
