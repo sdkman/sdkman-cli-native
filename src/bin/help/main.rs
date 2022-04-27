@@ -76,7 +76,11 @@ fn render(help: Help) -> String {
     let indentation = spaced_tab.as_str();
     let nameline = format!("{} - {}", help.cmd.italic(), help.tagline);
     let wrapped_nameline = fill(&nameline, TEXT_WIDTH);
-    let name = format!("\n{}\n{}\n\n", "NAME".bold(), indent(&wrapped_nameline, indentation));
+    let name = format!(
+        "\n{}\n{}\n\n",
+        "NAME".bold(),
+        indent(&wrapped_nameline, indentation)
+    );
 
     let synopsis = format!(
         "{}\n{}\n\n",
@@ -92,7 +96,13 @@ fn render(help: Help) -> String {
 
     let subcommands = help
         .subcommands
-        .map(|sc| format!("{}\n{}\n\n", "SUBCOMMANDS & QUALIFIERS".bold(), indent(sc.as_str(), indentation)))
+        .map(|sc| {
+            format!(
+                "{}\n{}\n\n",
+                "SUBCOMMANDS & QUALIFIERS".bold(),
+                indent(sc.as_str(), indentation)
+            )
+        })
         .unwrap_or_else(|| String::new());
 
     let mnemonic = help
@@ -109,7 +119,13 @@ fn render(help: Help) -> String {
 
     let exit_code = help
         .exit_code
-        .map(|m| format!("{}\n{}\n\n", "EXIT CODE".bold(), indent(&fill(&m, TEXT_WIDTH), indentation)))
+        .map(|m| {
+            format!(
+                "{}\n{}\n\n",
+                "EXIT CODE".bold(),
+                indent(&fill(&m, TEXT_WIDTH), indentation)
+            )
+        })
         .unwrap_or_else(|| String::new());
 
     let examples = format!(
@@ -210,7 +226,8 @@ fn env_help() -> Help {
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
 java=11.0.13-tem
----".italic();
+---"
+    .italic();
     Help {
         cmd: "sdk env".to_string(),
         tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory".to_string(),
@@ -406,7 +423,9 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, main_help, render};
+    use crate::{
+        broadcast_help, config_help, current_help, default_help, env_help, main_help, render,
+    };
 
     #[test]
     fn render_main_help() {
