@@ -92,7 +92,7 @@ fn render(help: Help) -> String {
 
     let subcommands = help
         .subcommands
-        .map(|sc| format!("{}\n{}\n\n", "SUBCOMMANDS".bold(), indent(sc.as_str(), indentation)))
+        .map(|sc| format!("{}\n{}\n\n", "SUBCOMMANDS & QUALIFIERS".bold(), indent(sc.as_str(), indentation)))
         .unwrap_or_else(|| String::new());
 
     let mnemonic = help
@@ -217,7 +217,9 @@ java=11.0.13-tem
         synopsis: "sdk env [init|install|clear]".to_string(),
         description: format!("\
 Allows the developer to manage the SDK versions used in a project directory. The subcommand uses an {} file to install or switch specific SDK versions in a project directory.\n
-When issuing the subcommand without a qualifier, it will switch to the versions specified in {} and emit warnings for versions not present on the system. In addition, the subcommand has three optional qualifiers:
+When issuing the subcommand without a qualifier, it will switch to the versions specified in {} and emit warnings for versions not present on the system.", config_file, config_file),
+        subcommands: Some(format!("\
+In addition, the subcommand has three optional qualifiers:
 
 {}  :  install and switch to the SDK versions specified in {}
             (used as default if the qualifier is omitted)
@@ -226,25 +228,28 @@ When issuing the subcommand without a qualifier, it will switch to the versions 
             default value
 {}    :  reset all SDK versions to their system defaults
 
-The {} file contains key-value pairs for each configurable SDK for that project environment. An initial file will have content such as this:
+The {} file contains key-value pairs for each configurable SDK for
+that project environment. An initial file will have content such as this:
 
 {}
 
-You may enable a configuration option for auto-env behaviour by setting {} in the {} file. This setting will automatically switch versions when stepping into a directory on the presence of a {} descriptor. When enabled, you no longer need to issue the {} qualifier explicitly. This behaviour is disabled by default.",
-                             config_file,
-                             config_file,
-                             "install".italic(),
-                             config_file,
-                             "init".italic(),
-                             config_file,
-                             "java".italic(),
-                             "clear".italic(),
-                             config_file,
-                             config_file_content,
-                             "sdkman_auto_env=true".italic(),
-                             "$SDKMAN/etc/config".underline(),
-                             config_file,
-                             "install".italic()),
+You may enable a configuration option for auto-env behaviour by setting
+{} in the {} file. This setting will
+automatically switch versions when stepping into a directory on the presence
+of a {} descriptor. When enabled, you no longer need to issue the
+{} qualifier explicitly. This behaviour is disabled by default.",
+                                  "install".italic(),
+                                  config_file,
+                                  "init".italic(),
+                                  config_file,
+                                  "java".italic(),
+                                  "clear".italic(),
+                                  config_file,
+                                  config_file_content,
+                                  "sdkman_auto_env=true".italic(),
+                                  "$SDKMAN/etc/config".underline(),
+                                  config_file,
+                                  "install".italic())),
         examples: "sdk env\nsdk env install\nsdk env init\nsdk env clear".to_string(),
         ..Default::default()
     }
@@ -418,7 +423,7 @@ DESCRIPTION
     convenient Command Line Interface (CLI) and API for installing, switching,
     removing and listing Candidates.
 
-SUBCOMMANDS
+SUBCOMMANDS & QUALIFIERS
     help              [subcommand]
     install   or i    <candidate> [version] [path]
     uninstall or rm   <candidate> <version>
@@ -572,7 +577,10 @@ DESCRIPTION
 
     When issuing the subcommand without a qualifier, it will switch to the
     versions specified in .sdkmanrc and emit warnings for versions not present
-    on the system. In addition, the subcommand has three optional qualifiers:
+    on the system.
+
+SUBCOMMANDS & QUALIFIERS
+    In addition, the subcommand has three optional qualifiers:
 
     install  :  install and switch to the SDK versions specified in .sdkmanrc
                 (used as default if the qualifier is omitted)
