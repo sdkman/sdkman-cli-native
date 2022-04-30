@@ -412,19 +412,22 @@ fn install_help() -> Help {
 }
 
 fn list_help() -> Help {
+    let legend = "\
+    + - local version
+    * - installed
+    > - currently in use
+    ";
     Help {
         cmd: "sdk list".to_string(),
         tagline: "sdk subcommand to list all candidates or candidate versions".to_string(),
         synopsis: "sdk list [candidate]".to_string(),
-        description: "Invoke the subcommand without a candidate to see a comprehensive list of all candidates with \
+        description: format!("Invoke the subcommand without a candidate to see a comprehensive list of all candidates with \
         name, URL, detailed description and an installation command.\nIf the candidate qualifier is specified, the \
         subcommand will display a list of all available and local versions for that candidate. In addition, the \
         version list view marks all versions that are local, installed or currently in use. They appear as follows:\n
-+ - local version
-* - installed
-> - currently in use
+{}
 
-Java has a custom list view with vendor-specific details.".to_string(),
+Java has a custom list view with vendor-specific details.", legend.italic()),
         mnemonic: Some(Mnemonic { shorthand: "ls".to_string(), command: "list".to_string() }),
         examples: "sdk list\nsdk list java\nsdk list groovy".to_string(),
         ..Default::default()
