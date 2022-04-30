@@ -50,14 +50,19 @@ fn main() {
     println!("{}", &render(help));
 }
 
-struct Mnemonic {
-    shorthand: String,
+struct Subcommand {
     command: String,
+    description: String,
 }
 
 struct Configuration {
     content: String,
     snippet: String,
+}
+
+struct Mnemonic {
+    shorthand: String,
+    command: String,
 }
 
 #[derive(Default)]
@@ -66,7 +71,7 @@ struct Help {
     tagline: String,
     synopsis: String,
     description: String,
-    subcommands: Option<String>,
+    subcommands: Option<Vec<Subcommand>>,
     configuration: Option<Configuration>,
     mnemonic: Option<Mnemonic>,
     exit_code: Option<String>,
@@ -100,16 +105,25 @@ fn render(help: Help) -> String {
         indent(&fill(help.description.as_str(), TEXT_WIDTH), indentation)
     );
 
-    let subcommands = help
-        .subcommands
-        .map(|sc| {
-            format!(
-                "{}\n{}\n\n",
-                "SUBCOMMANDS & QUALIFIERS".bold(),
-                indent(sc.as_str(), indentation)
-            )
-        })
-        .unwrap_or_else(|| String::new());
+    let subcommands: String =
+        help.subcommands.iter()
+            .map(|subs| {
+                let lines: String = subs.iter()
+                    .map(|sub| {
+                        let desc_depth = 17;
+                        let desc_indent = format!("{:width$}", " ", width = desc_depth);
+                        let command = indent(
+                            &fill(&sub.command, desc_depth),
+                            indentation,
+                        );
+                        let description = &indent(
+                            &fill(&sub.description, TEXT_WIDTH - desc_depth),
+                            &desc_indent,
+                        )[command.len()..];
+                        format!("{}{}\n", command.to_string(), description)
+                    }).collect();
+                return format!("{}\n{}\n", "SUBCOMMANDS & QUALIFIERS".bold(), lines);
+            }).collect();
 
     let configuration = help
         .configuration
@@ -166,24 +180,25 @@ fn main_help() -> Help {
         description: "SDKMAN! is a tool for managing parallel versions of multiple JVM related Software Development \
         Kits on most Unix based systems. It provides a convenient Command Line Interface (CLI) and API for installing, \
         switching, removing and listing Candidates.".to_string(),
-        subcommands: Some("\
-help              [subcommand]
-install   or i    <candidate> [version] [path]
-uninstall or rm   <candidate> <version>
-list      or ls   [candidate]
-use       or u    <candidate> <version>
-config
-default   or d    <candidate> [version]
-home      or h    <candidate> <version>
-env       or e    [init|install|clear]
-current   or c    [candidate]
-upgrade   or ug   [candidate]
-version   or v
-broadcast or b
-offline           [enable|disable]
-selfupdate        [force]
-update
-flush             [tmp|broadcast|metadata|version]".to_string()),
+        subcommands: Some(vec![
+            Subcommand { command: "help".to_string(), description: "[subcommand]".italic().to_string() },
+            Subcommand { command: "install".to_string(), description: "<candidate> [version] [path]".italic().to_string() },
+            Subcommand { command: "uninstall".to_string(), description: "<candidate> <version>".italic().to_string() },
+            Subcommand { command: "list".to_string(), description: "[candidate]".italic().to_string() },
+            Subcommand { command: "use".to_string(), description: "<candidate> <version>".italic().to_string() },
+            Subcommand { command: "config".to_string(), description: "no qualifier".to_string() },
+            Subcommand { command: "default".to_string(), description: "<candidate> [version]".italic().to_string() },
+            Subcommand { command: "home".to_string(), description: "<candidate> <version>".italic().to_string() },
+            Subcommand { command: "env".to_string(), description: "[init|install|clear]".italic().to_string() },
+            Subcommand { command: "current".to_string(), description: "[candidate]".italic().to_string() },
+            Subcommand { command: "upgrade".to_string(), description: "[candidate]".italic().to_string() },
+            Subcommand { command: "version".to_string(), description: "no qualifier".to_string() },
+            Subcommand { command: "broadcast".to_string(), description: "no qualifier".to_string() },
+            Subcommand { command: "offline".to_string(), description: "[enable|disable]".italic().to_string() },
+            Subcommand { command: "selfupdate".to_string(), description: "[force]".italic().to_string() },
+            Subcommand { command: "update".to_string(), description: "no qualifier".to_string() },
+            Subcommand { command: "flush".to_string(), description: "[tmp|broadcast|metadata|version]".italic().to_string() },
+        ]),
         examples: "sdk install java 17.0.0-tem\nsdk help install".to_string(),
         ..Default::default()
     }
@@ -287,23 +302,29 @@ java=11.0.13-tem
         description: format!("Allows the developer to manage the SDK versions used in a project directory. The \
         subcommand uses an {} file to install or switch specific SDK versions in a project directory.\n\nWhen \
         issuing the subcommand without a qualifier, it will switch to the versions specified in {} and emit \
-        warnings for versions not present on the system.", ".sdkmanrc".underline(), ".sdkmanrc".underline()),
-        subcommands: Some(format!("In addition, the subcommand has three optional qualifiers:
-
-{}  :  install and switch to the SDK versions specified in {}
-            (used as default if the qualifier is omitted)
-{}  :  allows for the creation of a default {} file with a
-            single entry for the {} candidate, set to the current
-            default value
-{}  :  reset all SDK versions to their system defaults",
-                                  "install".italic(),
-                                  ".sdkmanrc".underline(),
-                                  "init   ".italic(),
-                                  ".sdkmanrc".underline(),
-                                  "java".italic(),
-                                  "clear  ".italic())),
+        warnings for versions not present on the system. In addition, the subcommand has three optional qualifiers.",
+                             ".sdkmanrc".underline(),
+                             ".sdkmanrc".underline()),
+        subcommands: Some(
+            vec![
+                Subcommand {
+                    command: "install".to_string(),
+                    description: format!("install and switch to the SDK versions specified in {} (used as default if \
+                    the qualifier is omitted)", ".sdkmanrc".underline()),
+                },
+                Subcommand {
+                    command: "init".to_string(),
+                    description: format!("allows for the creation of a default {} file with a single entry for the {} \
+                    candidate, set to the current default value)", ".sdkmanrc".underline(), "java".italic()),
+                },
+                Subcommand {
+                    command: "clear".to_string(),
+                    description: "reset all SDK versions to their system defaults".to_string(),
+                },
+            ]),
         configuration: Some(
-            Configuration {
+            Configuration
+            {
                 content: format!("The {} file contains key-value pairs for each configurable SDK for that project \
                 environment. You may enable a configuration option for auto-env behaviour by setting {} in the {} \
                 file. This setting will automatically switch versions when stepping into a directory on the presence \
@@ -331,12 +352,28 @@ fn flush_help() -> Help {
         metadata, and version caches. It also removes any residual download artifacts. It is possible to flush \
         specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all targets."
             .to_string(),
-        subcommands: Some("The following qualifiers apply to this command:
-
-tmp         :  cleans out pre/post hooks and residual archives from`.sdkman/tmp`
-broadcast   :  wipes cached broadcast messages
-metadata    :  removes any header metadata
-version     :  flushes the SDKMAN version file".to_string()),
+        subcommands: Some(vec![
+            Subcommand {
+                command: "tmp".to_string(),
+                description: format!("cleans out pre/post hooks and residual archives from {}", "$SDKMAN_DIR/tmp".underline()),
+            },
+            Subcommand {
+                command: "broadcast".to_string(),
+                description: format!("wipes cached broadcast messages"),
+            },
+            Subcommand {
+                command: "metadata".to_string(),
+                description: format!("removes any header metadata"),
+            },
+            Subcommand {
+                command: "version".to_string(),
+                description: format!(
+                    "flushes the {} and {} version files",
+                    "$SDKMAN_DIR/var/version".underline(),
+                    "$SDKMAN_DIR/var/version_native".underline()
+                ),
+            },
+        ]),
         examples: "sdk flush\nsdk flush tmp\nsdk flush broadcast\nsdk flush metadata\nsdk flush version".to_string(),
         ..Default::default()
     }
@@ -507,23 +544,23 @@ DESCRIPTION
     removing and listing Candidates.
 
 SUBCOMMANDS & QUALIFIERS
-    help              [subcommand]
-    install   or i    <candidate> [version] [path]
-    uninstall or rm   <candidate> <version>
-    list      or ls   [candidate]
-    use       or u    <candidate> <version>
-    config
-    default   or d    <candidate> [version]
-    home      or h    <candidate> <version>
-    env       or e    [init|install|clear]
-    current   or c    [candidate]
-    upgrade   or ug   [candidate]
-    version   or v
-    broadcast or b
-    offline           [enable|disable]
-    selfupdate        [force]
-    update
-    flush             [tmp|broadcast|metadata|version]
+    help         [subcommand]
+    install      <candidate> [version] [path]
+    uninstall    <candidate> <version>
+    list         [candidate]
+    use          <candidate> <version>
+    config       no qualifier
+    default      <candidate> [version]
+    home         <candidate> <version>
+    env          [init|install|clear]
+    current      [candidate]
+    upgrade      [candidate]
+    version      no qualifier
+    broadcast    no qualifier
+    offline      [enable|disable]
+    selfupdate   [force]
+    update       no qualifier
+    flush        [tmp|broadcast|metadata|version]
 
 EXAMPLES
     sdk install java 17.0.0-tem
@@ -681,17 +718,15 @@ DESCRIPTION
 
     When issuing the subcommand without a qualifier, it will switch to the
     versions specified in .sdkmanrc and emit warnings for versions not present
-    on the system.
+    on the system. In addition, the subcommand has three optional qualifiers.
 
 SUBCOMMANDS & QUALIFIERS
-    In addition, the subcommand has three optional qualifiers:
-
-    install  :  install and switch to the SDK versions specified in .sdkmanrc
-                (used as default if the qualifier is omitted)
-    init     :  allows for the creation of a default .sdkmanrc file with a
-                single entry for the java candidate, set to the current
-                default value
-    clear    :  reset all SDK versions to their system defaults
+    install      install and switch to the SDK versions specified
+                 in .sdkmanrc (used as default if the qualifier is omitted)
+    init         allows for the creation of a default .sdkmanrc file with
+                 a single entry for the java candidate, set to the current
+                 default value)
+    clear        reset all SDK versions to their system defaults
 
 CONFIGURATION
     The .sdkmanrc file contains key-value pairs for each configurable SDK for
