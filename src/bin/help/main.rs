@@ -311,7 +311,7 @@ java=11.0.13-tem
                 behaviour is disabled by default. An initial file will have content such as this:",
                                  ".sdkmanrc".underline(),
                                  "sdkman_auto_env=true".italic(),
-                                 "$SDKMAN_HOME/etc/config".underline(),
+                                 "$SDKMAN_DIR/etc/config".underline(),
                                  ".sdkmanrc".underline(),
                                  "install".italic()),
                 snippet: config_file_content.italic().to_string(),
@@ -413,9 +413,9 @@ fn uninstall_help() -> Help {
         cmd: "sdk uninstall".to_string(),
         tagline: "sdk subcommand to uninstall a candidate version".to_string(),
         synopsis: "sdk uninstall <candidate> <version>".to_string(),
-        description: "Always follow the subcommand with two qualifiers, the candidate and version to be \
-        uninstalled.\n\nThe specified version will be removed from the candidate directory in $SDKMAN_DIR/candidates \
-        and will no longer be available for use on the system.".to_string(),
+        description: format!("Always follow the subcommand with two qualifiers, the candidate and version to be \
+        uninstalled.\n\nThe specified version will be removed from the candidate directory in {} and will no longer \
+        be available for use on the system.", "$SDKMAN_DIR/candidates".underline()),
         mnemonic: Some(Mnemonic { shorthand: "rm".to_string(), command: "uninstall".to_string() }),
         exit_code: Some("An invalid candidate or version supplied to the subcommand will result in a non-zero \
         return code.".to_string()),
@@ -696,7 +696,7 @@ SUBCOMMANDS & QUALIFIERS
 CONFIGURATION
     The .sdkmanrc file contains key-value pairs for each configurable SDK for
     that project environment. You may enable a configuration option for auto-
-    env behaviour by setting sdkman_auto_env=true in the $SDKMAN_HOME/etc/config
+    env behaviour by setting sdkman_auto_env=true in the $SDKMAN_DIR/etc/config
     file. This setting will automatically switch versions when stepping into a
     directory on the presence of a .sdkmanrc descriptor. When enabled, you no
     longer need to issue the install qualifier explicitly. This behaviour is
