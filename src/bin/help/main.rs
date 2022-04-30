@@ -55,6 +55,11 @@ struct Mnemonic {
     command: String,
 }
 
+struct Configuration {
+    content: String,
+    snippet: String,
+}
+
 #[derive(Default)]
 struct Help {
     cmd: String,
@@ -62,6 +67,7 @@ struct Help {
     synopsis: String,
     description: String,
     subcommands: Option<String>,
+    configuration: Option<Configuration>,
     mnemonic: Option<Mnemonic>,
     exit_code: Option<String>,
     examples: String,
@@ -105,6 +111,18 @@ fn render(help: Help) -> String {
         })
         .unwrap_or_else(|| String::new());
 
+    let configuration = help
+        .configuration
+        .map(|config| {
+            format!(
+                "{}\n{}\n\n{}\n\n",
+                "CONFIGURATION".bold(),
+                indent(&fill(&config.content, TEXT_WIDTH), indentation),
+                indent(&config.snippet, indentation)
+            )
+        })
+        .unwrap_or_else(|| String::new());
+
     let mnemonic = help
         .mnemonic
         .map(|mnemonic| {
@@ -135,8 +153,8 @@ fn render(help: Help) -> String {
     );
 
     format!(
-        "{}{}{}{}{}{}{}",
-        name, synopsis, description, subcommands, exit_code, mnemonic, examples
+        "{}{}{}{}{}{}{}{}",
+        name, synopsis, description, subcommands, configuration, exit_code, mnemonic, examples
     )
 }
 
@@ -145,7 +163,9 @@ fn main_help() -> Help {
         cmd: "sdk".to_string(),
         tagline: "The command line interface (CLI) for SDKMAN!".to_string(),
         synopsis: "sdk <subcommand> [candidate] [version]".to_string(),
-        description: "SDKMAN! is a tool for managing parallel versions of multiple JVM related Software Development Kits on most Unix based systems. It provides a convenient Command Line Interface (CLI) and API for installing, switching, removing and listing Candidates.".to_string(),
+        description: "SDKMAN! is a tool for managing parallel versions of multiple JVM related Software Development \
+        Kits on most Unix based systems. It provides a convenient Command Line Interface (CLI) and API for installing, \
+        switching, removing and listing Candidates.".to_string(),
         subcommands: Some("\
 help              [subcommand]
 install   or i    <candidate> [version] [path]
@@ -174,7 +194,8 @@ fn broadcast_help() -> Help {
         cmd: "sdk broadcast".to_string(),
         tagline: "sdk subcommand to display the latest announcements".to_string(),
         synopsis: "sdk broadcast".to_string(),
-        description: "This subcommand displays the latest three vendor announcements about SDK releases on SDKMAN. Each entry shows the release date and broadcast message issued by a vendor.".to_string(),
+        description: "This subcommand displays the latest three vendor announcements about SDK releases on SDKMAN. \
+        Each entry shows the release date and broadcast message issued by a vendor.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "b".to_string(), command: "broadcast".to_string() }),
         examples: "sdk broadcast".to_string(),
         ..Default::default()
@@ -182,11 +203,38 @@ fn broadcast_help() -> Help {
 }
 
 fn config_help() -> Help {
+    let config_file = "${SDKMAN_DIR}/etc/config";
+    let default_config = "\
+---
+sdkman_auto_answer=false
+sdkman_auto_complete=true
+sdkman_auto_env=false
+sdkman_auto_update=true
+sdkman_beta_channel=false
+sdkman_checksum_enable=true
+sdkman_colour_enable=true
+sdkman_curl_connect_timeout=7
+sdkman_curl_max_time=10
+sdkman_debug_mode=false
+sdkman_insecure_ssl=false
+sdkman_rosetta2_compatible=false
+sdkman_selfupdate_feature=true
+---";
     Help {
         cmd: "sdk config".to_string(),
         tagline: "sdk subcommand to edit the SDKMAN configuration file".to_string(),
         synopsis: "sdk config".to_string(),
-        description: "This subcommand opens a text editor on the configuration file located at ${SDKMAN_DIR}/etc/config. The subcommand will infer the text editor from the EDITOR environment variable. If the system does not set the EDITOR environment variable, then vi is assumed as the default editor.".to_string(),
+        description: format!("This subcommand opens a text editor on the configuration file located at {}. \
+        The subcommand will infer the text editor from the {} environment variable. If the system does \
+        not set the {} environment variable, then vi is assumed as the default editor.", config_file.underline(),
+                             "EDITOR".italic(), "EDITOR".italic()),
+        configuration: Some(
+            Configuration {
+                content: format!("The {} file contains the following default configuration. A new shell should be \
+                opened for any configuration changes to take effect.", config_file.underline()),
+                snippet: default_config.italic().to_string(),
+            }
+        ),
         examples: "sdk config".to_string(),
         ..Default::default()
     }
@@ -197,7 +245,9 @@ fn current_help() -> Help {
         cmd: "sdk current".to_string(),
         tagline: "sdk subcommand to display the current default installed versions".to_string(),
         synopsis: "sdk current [candidate]".to_string(),
-        description: "This subcommand will display a list of candidates with their default version installed on the system. It is also possible to qualify the candidate when running the subcommand to display only that candidate's default version.".to_string(),
+        description: "This subcommand will display a list of candidates with their default version installed on the \
+        system. It is also possible to qualify the candidate when running the subcommand to display only that \
+        candidate's default version.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "c".to_string(), command: "current".to_string() }),
         examples: "sdk current\nsdk current java".to_string(),
         ..Default::default()
@@ -209,64 +259,64 @@ fn default_help() -> Help {
         cmd: "sdk default".to_string(),
         tagline: "sdk subcommand to set the local default version of the candidate".to_string(),
         synopsis: "sdk default <candidate> [version]".to_string(),
-        description: "\
-The mandatory candidate qualifier of the subcommand specifies the candidate to default for all future shells.\n
-The optional version qualifier sets that specific version as default for all subsequent shells on the local environment. Omitting the version will set the global SDKMAN tracked version as the default version for that candidate.".to_string(),
+        description: "The mandatory candidate qualifier of the subcommand specifies the candidate to default for all \
+        future shells.\n\nThe optional version qualifier sets that specific version as default for all subsequent \
+        shells on the local environment. Omitting the version will set the global SDKMAN tracked version as the \
+        default version for that candidate.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "d".to_string(), command: "default".to_string() }),
-        exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist.".to_string()),
+        exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist."
+            .to_string()),
         examples: "sdk default java 17.0.0-tem\nsdk default java".to_string(),
         ..Default::default()
     }
 }
 
 fn env_help() -> Help {
-    let config_file = ".sdkmanrc".underline();
     let config_file_content = "\
 ---
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
 java=11.0.13-tem
 ---"
-    .italic();
+        .italic();
     Help {
         cmd: "sdk env".to_string(),
-        tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory".to_string(),
+        tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory"
+            .to_string(),
         synopsis: "sdk env [init|install|clear]".to_string(),
-        description: format!("\
-Allows the developer to manage the SDK versions used in a project directory. The subcommand uses an {} file to install or switch specific SDK versions in a project directory.\n
-When issuing the subcommand without a qualifier, it will switch to the versions specified in {} and emit warnings for versions not present on the system.", config_file, config_file),
-        subcommands: Some(format!("\
-In addition, the subcommand has three optional qualifiers:
+        description: format!("Allows the developer to manage the SDK versions used in a project directory. The \
+        subcommand uses an {} file to install or switch specific SDK versions in a project directory.\n\nWhen \
+        issuing the subcommand without a qualifier, it will switch to the versions specified in {} and emit \
+        warnings for versions not present on the system.", ".sdkmanrc".underline(), ".sdkmanrc".underline()),
+        subcommands: Some(format!("In addition, the subcommand has three optional qualifiers:
 
 {}  :  install and switch to the SDK versions specified in {}
             (used as default if the qualifier is omitted)
-{}     :  allows for the creation of a default {} file with a
+{}  :  allows for the creation of a default {} file with a
             single entry for the {} candidate, set to the current
             default value
-{}    :  reset all SDK versions to their system defaults
-
-The {} file contains key-value pairs for each configurable SDK for
-that project environment. An initial file will have content such as this:
-
-{}
-
-You may enable a configuration option for auto-env behaviour by setting
-{} in the {} file. This setting will
-automatically switch versions when stepping into a directory on the presence
-of a {} descriptor. When enabled, you no longer need to issue the
-{} qualifier explicitly. This behaviour is disabled by default.",
+{}  :  reset all SDK versions to their system defaults",
                                   "install".italic(),
-                                  config_file,
-                                  "init".italic(),
-                                  config_file,
+                                  ".sdkmanrc".underline(),
+                                  "init   ".italic(),
+                                  ".sdkmanrc".underline(),
                                   "java".italic(),
-                                  "clear".italic(),
-                                  config_file,
-                                  config_file_content,
-                                  "sdkman_auto_env=true".italic(),
-                                  "$SDKMAN/etc/config".underline(),
-                                  config_file,
-                                  "install".italic())),
+                                  "clear  ".italic())),
+        configuration: Some(
+            Configuration {
+                content: format!("The {} file contains key-value pairs for each configurable SDK for that project \
+                environment. You may enable a configuration option for auto-env behaviour by setting {} in the {} \
+                file. This setting will automatically switch versions when stepping into a directory on the presence \
+                of a {} descriptor. When enabled, you no longer need to issue the {} qualifier explicitly. This \
+                behaviour is disabled by default. An initial file will have content such as this:",
+                                 ".sdkmanrc".underline(),
+                                 "sdkman_auto_env=true".italic(),
+                                 "$SDKMAN_HOME/etc/config".underline(),
+                                 ".sdkmanrc".underline(),
+                                 "install".italic()),
+                snippet: config_file_content.italic().to_string(),
+            }
+        ),
         examples: "sdk env\nsdk env install\nsdk env init\nsdk env clear".to_string(),
         ..Default::default()
     }
@@ -277,9 +327,11 @@ fn flush_help() -> Help {
         cmd: "sdk flush".to_string(),
         tagline: "sdk subcommand used for flushing local temporal state of SDKMAN".to_string(),
         synopsis: "sdk flush [tmp|broadcast|metadata|version]".to_string(),
-        description: "This command cleans temporary storage under the `tmp` and `var` folders, removing broadcast, metadata, and version caches. It also removes any residual download artifacts. It is possible to flush specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all targets.".to_string(),
-        subcommands: Some("\
-The following qualifiers apply to this command:
+        description: "This command cleans temporary storage under the `tmp` and `var` folders, removing broadcast, \
+        metadata, and version caches. It also removes any residual download artifacts. It is possible to flush \
+        specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all targets."
+            .to_string(),
+        subcommands: Some("The following qualifiers apply to this command:
 
 tmp         :  cleans out pre/post hooks and residual archives from`.sdkman/tmp`
 broadcast   :  wipes cached broadcast messages
@@ -295,8 +347,10 @@ fn home_help() -> Help {
         cmd: "sdk home".to_string(),
         tagline: "sdk subcommand to output the path of a specific candidate version".to_string(),
         synopsis: "sdk home <candidate> <version>".to_string(),
-        description: "Print the absolute home path of any candidate version installed by SDKMAN. The candidate and version parameters are mandatory. Often used for scripting, so does not append a newline character.".to_string(),
-        exit_code: Some("The subcommand will emit a non-zero exit code if a valid candidate version is not locally installed.".to_string()),
+        description: "Print the absolute home path of any candidate version installed by SDKMAN. The candidate and \
+        version parameters are mandatory. Often used for scripting, so does not append a newline character.".to_string(),
+        exit_code: Some("The subcommand will emit a non-zero exit code if a valid candidate version is not locally \
+        installed.".to_string()),
         examples: "sdk home java 17.0.0-tem".to_string(),
         ..Default::default()
     }
@@ -307,12 +361,14 @@ fn install_help() -> Help {
         cmd: "sdk install".to_string(),
         tagline: "sdk subcommand to install a candidate version".to_string(),
         synopsis: "sdk install <candidate> [version] [path]".to_string(),
-        description: "\
-Invoking this subcommand with only the candidate as a parameter will install the currently known default version for that candidate.\n
-Provide a subsequent qualifier to install a specific non-default version.\n
-Provide another qualifier to add an already installed local version. This qualifier is the absolute local path to the base directory of the SDK to be added. The local version will appear as an installed version of the candidate. The version may not conflict with an existing version, installed or not.".to_string(),
+        description: "Invoking this subcommand with only the candidate as a parameter will install the currently \
+        known default version for that candidate.\nProvide a subsequent qualifier to install a specific non-default \
+        version.\nProvide another qualifier to add an already installed local version. This qualifier is the absolute \
+        local path to the base directory of the SDK to be added. The local version will appear as an installed version \
+        of the candidate. The version may not conflict with an existing version, installed or not.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "i".to_string(), command: "install".to_string() }),
-        exit_code: Some("The subcommand will return a non-zero exit code for unfound versions or if the path does not exist.".to_string()),
+        exit_code: Some("The subcommand will return a non-zero exit code for unfound versions or if the path does \
+        not exist.".to_string()),
         examples: "sdk install java\nsdk install java 17.0.0-tem\nsdk install java 11-local /usr/lib/jvm/java-11-openjdk".to_string(),
         ..Default::default()
     }
@@ -323,10 +379,10 @@ fn list_help() -> Help {
         cmd: "sdk list".to_string(),
         tagline: "sdk subcommand to list all candidates or candidate versions".to_string(),
         synopsis: "sdk list [candidate]".to_string(),
-        description: "\
-Invoke the subcommand without a candidate to see a comprehensive list of all candidates with name, URL, detailed description and an installation command.\n
-If the candidate qualifier is specified, the subcommand will display a list of all available and local versions for that candidate. In addition, the version list view marks all versions that are local, installed or currently in use.
-They appear as follows:\n
+        description: "Invoke the subcommand without a candidate to see a comprehensive list of all candidates with \
+        name, URL, detailed description and an installation command.\nIf the candidate qualifier is specified, the \
+        subcommand will display a list of all available and local versions for that candidate. In addition, the \
+        version list view marks all versions that are local, installed or currently in use. They appear as follows:\n
 + - local version
 * - installed
 > - currently in use
@@ -343,9 +399,10 @@ fn selfupdate_help() -> Help {
         cmd: "sdk selfupdate".to_string(),
         tagline: "sdk subcommand to upgrade the SDKMAN core".to_string(),
         synopsis: "sdk selfupdate [force]".to_string(),
-        description: "\
-Invoke this command to upgrade the core script and native components of the SDKMAN command-line interface. The command will only upgrade the native components if the detected platform is supported.\n
-The command will refuse to upgrade the core if no new version is available. A qualifier may be added to the selfupdate command to force an upgrade.".to_string(),
+        description: "Invoke this command to upgrade the core script and native components of the SDKMAN command-line \
+        interface. The command will only upgrade the native components if the detected platform is supported.\nThe \
+        command will refuse to upgrade the core if no new version is available. A qualifier may be added to the \
+        selfupdate command to force an upgrade.".to_string(),
         examples: "sdk selfupdate\nsdk selfupdate force".to_string(),
         ..Default::default()
     }
@@ -356,11 +413,12 @@ fn uninstall_help() -> Help {
         cmd: "sdk uninstall".to_string(),
         tagline: "sdk subcommand to uninstall a candidate version".to_string(),
         synopsis: "sdk uninstall <candidate> <version>".to_string(),
-        description: "\
-Always follow the subcommand with two qualifiers, the candidate and version to be uninstalled.\n
-The specified version will be removed from the candidate directory in $SDKMAN_DIR/candidates and will no longer be available for use on the system.".to_string(),
+        description: "Always follow the subcommand with two qualifiers, the candidate and version to be \
+        uninstalled.\n\nThe specified version will be removed from the candidate directory in $SDKMAN_DIR/candidates \
+        and will no longer be available for use on the system.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "rm".to_string(), command: "uninstall".to_string() }),
-        exit_code: Some("An invalid candidate or version supplied to the subcommand will result in a non-zero return code.".to_string()),
+        exit_code: Some("An invalid candidate or version supplied to the subcommand will result in a non-zero \
+        return code.".to_string()),
         examples: "sdk uninstall java 17.0.0-tem".to_string(),
         ..Default::default()
     }
@@ -371,9 +429,10 @@ fn update_help() -> Help {
         cmd: "sdk update".to_string(),
         tagline: "sdk subcommand to update the local state of SDKMAN".to_string(),
         synopsis: "sdk update".to_string(),
-        description: "\
-This command is used to download information about all candidates and versions. Other commands operate on this data to perform version installations and upgrades or search and display details about all packages available for installation.\n
-Run this command often to ensure that all candidates are up to date and that the latest versions will be visible and installed.".to_string(),
+        description: "This command is used to download information about all candidates and versions. Other \
+        commands operate on this data to perform version installations and upgrades or search and display details \
+        about all packages available for installation.\nRun this command often to ensure that all candidates are \
+        up to date and that the latest versions will be visible and installed.".to_string(),
         examples: "sdk update".to_string(),
         ..Default::default()
     }
@@ -384,9 +443,10 @@ fn upgrade_help() -> Help {
         cmd: "sdk upgrade".to_string(),
         tagline: "sdk subcommand to upgrade installed candidate versions".to_string(),
         synopsis: "sdk upgrade [candidate]".to_string(),
-        description: "\
-The optional candidate qualifier can be applied to specify the candidate you want to upgrade. If the candidate qualifier is omitted from the command, it will attempt an upgrade of all outdated candidates.\n
-Candidates that do not require an upgrade will be omitted, and a notification will be displayed that the candidates are up to date.".to_string(),
+        description: "The optional candidate qualifier can be applied to specify the candidate you want to upgrade. \
+        If the candidate qualifier is omitted from the command, it will attempt an upgrade of all outdated \
+        candidates.\nCandidates that do not require an upgrade will be omitted, and a notification will be displayed \
+        that the candidates are up to date.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "ug".to_string(), command: "upgrade".to_string() }),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate does not exist.".to_string()),
         examples: "sdk upgrade\nsdk upgrade java".to_string(),
@@ -399,11 +459,13 @@ fn use_help() -> Help {
         cmd: "sdk use".to_string(),
         tagline: "sdk subcommand to use a specific version in the current shell".to_string(),
         synopsis: "sdk use <candidate> <version>".to_string(),
-        description: "\
-The mandatory candidate and version follow the subcommand to specify what to use in the current shell.\n
-This subcommand only operates on the current shell. It does not affect other shells running different versions of the same candidate. It also does not change the default version set for all subsequent new shells.".to_string(),
+        description: "The mandatory candidate and version follow the subcommand to specify what to use in the \
+        current shell.\nThis subcommand only operates on the current shell. It does not affect other shells \
+        running different versions of the same candidate. It also does not change the default version set for \
+        all subsequent new shells.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "u".to_string(), command: "use".to_string() }),
-        exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist.".to_string()),
+        exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist."
+            .to_string()),
         examples: "sdk use java 17.0.0-tem".to_string(),
         ..Default::default()
     }
@@ -414,7 +476,9 @@ fn version_help() -> Help {
         cmd: "sdk version".to_string(),
         tagline: "sdk subcommand to display the installed SDKMAN version".to_string(),
         synopsis: "sdk version".to_string(),
-        description: "This subcommand displays the version of the bash and native constituents of SDKMAN on this system. The versions of the bash and native libraries evolve independently from each other and so will not be the same.".to_string(),
+        description: "This subcommand displays the version of the bash and native constituents of SDKMAN on this \
+        system. The versions of the bash and native libraries evolve independently from each other and so will not \
+        be the same.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "v".to_string(), command: "version".to_string() }),
         examples: "sdk version".to_string(),
         ..Default::default()
@@ -509,6 +573,27 @@ DESCRIPTION
     ${SDKMAN_DIR}/etc/config. The subcommand will infer the text editor from
     the EDITOR environment variable. If the system does not set the EDITOR
     environment variable, then vi is assumed as the default editor.
+
+CONFIGURATION
+    The ${SDKMAN_DIR}/etc/config file contains the following default
+    configuration. A new shell should be opened for any configuration changes to
+    take effect.
+
+    ---
+    sdkman_auto_answer=false
+    sdkman_auto_complete=true
+    sdkman_auto_env=false
+    sdkman_auto_update=true
+    sdkman_beta_channel=false
+    sdkman_checksum_enable=true
+    sdkman_colour_enable=true
+    sdkman_curl_connect_timeout=7
+    sdkman_curl_max_time=10
+    sdkman_debug_mode=false
+    sdkman_insecure_ssl=false
+    sdkman_rosetta2_compatible=false
+    sdkman_selfupdate_feature=true
+    ---
 
 EXAMPLES
     sdk config
@@ -608,20 +693,20 @@ SUBCOMMANDS & QUALIFIERS
                 default value
     clear    :  reset all SDK versions to their system defaults
 
+CONFIGURATION
     The .sdkmanrc file contains key-value pairs for each configurable SDK for
-    that project environment. An initial file will have content such as this:
+    that project environment. You may enable a configuration option for auto-
+    env behaviour by setting sdkman_auto_env=true in the $SDKMAN_HOME/etc/config
+    file. This setting will automatically switch versions when stepping into a
+    directory on the presence of a .sdkmanrc descriptor. When enabled, you no
+    longer need to issue the install qualifier explicitly. This behaviour is
+    disabled by default. An initial file will have content such as this:
 
     ---
     # Enable auto-env through the sdkman_auto_env config
     # Add key=value pairs of SDKs to use below
     java=11.0.13-tem
     ---
-
-    You may enable a configuration option for auto-env behaviour by setting
-    sdkman_auto_env=true in the $SDKMAN/etc/config file. This setting will
-    automatically switch versions when stepping into a directory on the presence
-    of a .sdkmanrc descriptor. When enabled, you no longer need to issue the
-    install qualifier explicitly. This behaviour is disabled by default.
 
 EXAMPLES
     sdk env
