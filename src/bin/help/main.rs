@@ -387,7 +387,8 @@ fn home_help() -> Help {
         tagline: "sdk subcommand to output the path of a specific candidate version".to_string(),
         synopsis: "sdk home <candidate> <version>".to_string(),
         description: "Print the absolute home path of any candidate version installed by SDKMAN. The candidate and \
-        version parameters are mandatory. Often used for scripting, so does not append a newline character.".to_string(),
+        version parameters are mandatory. This subcommand is usually used for scripting, so does not append a newline \
+        character.".to_string(),
         exit_code: Some("The subcommand will emit a non-zero exit code if a valid candidate version is not locally \
         installed.".to_string()),
         examples: "sdk home java 17.0.0-tem".to_string(),
@@ -528,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, main_help, render};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -790,5 +791,31 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(flush_text, render(flush_help()));
+    }
+
+    #[test]
+    fn render_home_help() {
+        let home_text = "
+NAME
+    sdk home - sdk subcommand to output the path of a specific candidate version
+
+SYNOPSIS
+    sdk home <candidate> <version>
+
+DESCRIPTION
+    Print the absolute home path of any candidate version installed by SDKMAN.
+    The candidate and version parameters are mandatory. This subcommand is
+    usually used for scripting, so does not append a newline character.
+
+EXIT CODE
+    The subcommand will emit a non-zero exit code if a valid candidate version
+    is not locally installed.
+
+EXAMPLES
+    sdk home java 17.0.0-tem
+
+";
+        colored::control::set_override(false);
+        assert_eq!(home_text, render(home_help()));
     }
 }
