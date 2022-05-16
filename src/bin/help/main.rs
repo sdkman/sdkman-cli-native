@@ -348,9 +348,10 @@ fn flush_help() -> Help {
         cmd: "sdk flush".to_string(),
         tagline: "sdk subcommand used for flushing local temporal state of SDKMAN".to_string(),
         synopsis: "sdk flush [tmp|broadcast|metadata|version]".to_string(),
-        description: "This command cleans temporary storage under the `tmp` and `var` folders, removing broadcast, \
-        metadata, and version caches. It also removes any residual download artifacts. It is possible to flush \
-        specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all targets."
+        description: format!("This command cleans temporary storage under {} in the {} and {} directories, removing \
+        broadcast, metadata, and version caches. It also removes any residual download artifacts. It is possible to \
+        flush specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all \
+        targets.", "$SDKMAN_DIR".underline(), "var".underline(), "tmp".underline())
             .to_string(),
         subcommands: Some(vec![
             Subcommand {
@@ -368,9 +369,10 @@ fn flush_help() -> Help {
             Subcommand {
                 command: "version".to_string(),
                 description: format!(
-                    "flushes the {} and {} version files",
-                    "$SDKMAN_DIR/var/version".underline(),
-                    "$SDKMAN_DIR/var/version_native".underline()
+                    "flushes the {} and {} files under {}",
+                    "version".underline(),
+                    "version_native".underline(),
+                    "$SDKMAN_DIR/var".underline()
                 ),
             },
         ]),
@@ -413,10 +415,9 @@ fn install_help() -> Help {
 
 fn list_help() -> Help {
     let legend = "\
-    + - local version
-    * - installed
-    > - currently in use
-    ";
++ - local version
+* - installed
+> - currently in use";
     Help {
         cmd: "sdk list".to_string(),
         tagline: "sdk subcommand to list all candidates or candidate versions".to_string(),
@@ -527,9 +528,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        broadcast_help, config_help, current_help, default_help, env_help, main_help, render,
-    };
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -755,5 +754,41 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(env_text, render(env_help()));
+    }
+
+    #[test]
+    fn render_flush_help() {
+        let flush_text = "
+NAME
+    sdk flush - sdk subcommand used for flushing local temporal state of SDKMAN
+
+SYNOPSIS
+    sdk flush [tmp|broadcast|metadata|version]
+
+DESCRIPTION
+    This command cleans temporary storage under $SDKMAN_DIR in the var and
+    tmp directories, removing broadcast, metadata, and version caches. It also
+    removes any residual download artifacts. It is possible to flush specific
+    targets by providing a qualifier. Omission of the qualifier results in a
+    full flush of all targets.
+
+SUBCOMMANDS & QUALIFIERS
+    tmp          cleans out pre/post hooks and residual archives from
+                 $SDKMAN_DIR/tmp
+    broadcast    wipes cached broadcast messages
+    metadata     removes any header metadata
+    version      flushes the version and version_native files under
+                 $SDKMAN_DIR/var
+
+EXAMPLES
+    sdk flush
+    sdk flush tmp
+    sdk flush broadcast
+    sdk flush metadata
+    sdk flush version
+
+";
+        colored::control::set_override(false);
+        assert_eq!(flush_text, render(flush_help()));
     }
 }
