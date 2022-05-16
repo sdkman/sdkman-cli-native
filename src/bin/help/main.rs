@@ -23,7 +23,7 @@ fn main() {
         .subcommand(Command::new("selfupdate"))
         .subcommand(Command::new("uninstall").alias("rm"))
         .subcommand(Command::new("update"))
-        .subcommand(Command::new("upgrade").alias("rm"))
+        .subcommand(Command::new("upgrade"))
         .subcommand(Command::new("use").alias("u"))
         .subcommand(Command::new("version").alias("v"))
         .get_matches();
