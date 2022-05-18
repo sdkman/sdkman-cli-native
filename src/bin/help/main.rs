@@ -105,25 +105,26 @@ fn render(help: Help) -> String {
         indent(&fill(help.description.as_str(), TEXT_WIDTH), indentation)
     );
 
-    let subcommands: String =
-        help.subcommands.iter()
-            .map(|subs| {
-                let lines: String = subs.iter()
-                    .map(|sub| {
-                        let desc_depth = 17;
-                        let desc_indent = format!("{:width$}", " ", width = desc_depth);
-                        let command = indent(
-                            &fill(&sub.command, desc_depth),
-                            indentation,
-                        );
-                        let description = &indent(
-                            &fill(&sub.description, TEXT_WIDTH - desc_depth),
-                            &desc_indent,
-                        )[command.len()..];
-                        format!("{}{}\n", command.to_string(), description)
-                    }).collect();
-                return format!("{}\n{}\n", "SUBCOMMANDS & QUALIFIERS".bold(), lines);
-            }).collect();
+    let subcommands: String = help
+        .subcommands
+        .iter()
+        .map(|subs| {
+            let lines: String = subs
+                .iter()
+                .map(|sub| {
+                    let desc_depth = 17;
+                    let desc_indent = format!("{:width$}", " ", width = desc_depth);
+                    let command = indent(&fill(&sub.command, desc_depth), indentation);
+                    let description = &indent(
+                        &fill(&sub.description, TEXT_WIDTH - desc_depth),
+                        &desc_indent,
+                    )[command.len()..];
+                    format!("{}{}\n", command.to_string(), description)
+                })
+                .collect();
+            return format!("{}\n{}\n", "SUBCOMMANDS & QUALIFIERS".bold(), lines);
+        })
+        .collect();
 
     let configuration = help
         .configuration
@@ -292,7 +293,8 @@ fn env_help() -> Help {
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
 java=11.0.13-tem
----".italic();
+---"
+    .italic();
     Help {
         cmd: "sdk env".to_string(),
         tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory"
@@ -830,12 +832,12 @@ SYNOPSIS
     sdk install <candidate> [version] [path]
 
 DESCRIPTION
-    Invoking this subcommand with only the candidate as parameter will
-    install the currently known default version for that candidate. Provide
-    a second qualifier to install a specific non-default version. Provide a
-    third optional qualifier to add an already installed local version. This
-    final qualifier is the absolute local path to the base directory of the SDK
-    to be added. The local version will appear as an installed version of the
+    Invoking this subcommand with only the candidate as parameter will install
+    the currently known default version for that candidate. Provide a second
+    qualifier to install a specific non-default version. Provide a third
+    optional qualifier to add an already installed local version. This final
+    qualifier is the absolute local path to the base directory of the SDK to
+    be added. The local version will appear as an installed version of the
     candidate. The version may not conflict with an existing version, installed
     or not.
 
