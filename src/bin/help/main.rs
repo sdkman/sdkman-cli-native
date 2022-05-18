@@ -292,8 +292,7 @@ fn env_help() -> Help {
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
 java=11.0.13-tem
----"
-        .italic();
+---".italic();
     Help {
         cmd: "sdk env".to_string(),
         tagline: "sdk subcommand to control SDKs on a project level, setting up specific versions for a directory"
@@ -401,14 +400,13 @@ fn install_help() -> Help {
         cmd: "sdk install".to_string(),
         tagline: "sdk subcommand to install a candidate version".to_string(),
         synopsis: "sdk install <candidate> [version] [path]".to_string(),
-        description: "Invoking this subcommand with only the candidate as a parameter will install the currently \
-        known default version for that candidate.\nProvide a subsequent qualifier to install a specific non-default \
-        version.\nProvide another qualifier to add an already installed local version. This qualifier is the absolute \
-        local path to the base directory of the SDK to be added. The local version will appear as an installed version \
-        of the candidate. The version may not conflict with an existing version, installed or not.".to_string(),
+        description: "Invoking this subcommand with only the candidate as parameter will install the currently \
+        known default version for that candidate. Provide a second qualifier to install a specific non-default \
+        version. Provide a third optional qualifier to add an already installed local version. This final qualifier is \
+        the absolute local path to the base directory of the SDK to be added. The local version will appear as an \
+        installed version of the candidate. The version may not conflict with an existing version, installed or not.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "i".to_string(), command: "install".to_string() }),
-        exit_code: Some("The subcommand will return a non-zero exit code for unfound versions or if the path does \
-        not exist.".to_string()),
+        exit_code: Some("The subcommand will return a non-zero exit code for versions not found or for an invalid path.".to_string()),
         examples: "sdk install java\nsdk install java 17.0.0-tem\nsdk install java 11-local /usr/lib/jvm/java-11-openjdk".to_string(),
         ..Default::default()
     }
@@ -529,7 +527,10 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, main_help, render};
+    use crate::{
+        broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help,
+        install_help, main_help, render,
+    };
 
     #[test]
     fn render_main_help() {
@@ -817,5 +818,41 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(home_text, render(home_help()));
+    }
+
+    #[test]
+    fn render_install_help() {
+        let install_text = "
+NAME
+    sdk install - sdk subcommand to install a candidate version
+
+SYNOPSIS
+    sdk install <candidate> [version] [path]
+
+DESCRIPTION
+    Invoking this subcommand with only the candidate as parameter will
+    install the currently known default version for that candidate. Provide
+    a second qualifier to install a specific non-default version. Provide a
+    third optional qualifier to add an already installed local version. This
+    final qualifier is the absolute local path to the base directory of the SDK
+    to be added. The local version will appear as an installed version of the
+    candidate. The version may not conflict with an existing version, installed
+    or not.
+
+EXIT CODE
+    The subcommand will return a non-zero exit code for versions not found or
+    for an invalid path.
+
+MNEMONIC
+    i - may be used in place of the install subcommand.
+
+EXAMPLES
+    sdk install java
+    sdk install java 17.0.0-tem
+    sdk install java 11-local /usr/lib/jvm/java-11-openjdk
+
+";
+        colored::control::set_override(false);
+        assert_eq!(install_text, render(install_help()));
     }
 }
