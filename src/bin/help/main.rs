@@ -423,9 +423,9 @@ fn list_help() -> Help {
         cmd: "sdk list".to_string(),
         tagline: "sdk subcommand to list all candidates or candidate versions".to_string(),
         synopsis: "sdk list [candidate]".to_string(),
-        description: format!("Invoke the subcommand without a candidate to see a comprehensive list of all candidates with \
-        name, URL, detailed description and an installation command.\nIf the candidate qualifier is specified, the \
-        subcommand will display a list of all available and local versions for that candidate. In addition, the \
+        description: format!("Invoke the subcommand without a candidate to see a comprehensive list of all candidates \
+        with name, URL, detailed description and an installation command.\nIf the candidate qualifier is specified, \
+        the subcommand will display a list of all available and local versions for that candidate. In addition, the \
         version list view marks all versions that are local, installed or currently in use. They appear as follows:\n
 {}
 
@@ -529,10 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help,
-        install_help, main_help, render,
-    };
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render};
 
     #[test]
     fn render_main_help() {
@@ -856,5 +853,41 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(install_text, render(install_help()));
+    }
+
+    #[test]
+    fn render_list_help() {
+        let list_text = "
+NAME
+    sdk list - sdk subcommand to list all candidates or candidate versions
+
+SYNOPSIS
+    sdk list [candidate]
+
+DESCRIPTION
+    Invoke the subcommand without a candidate to see a comprehensive list of all
+    candidates with name, URL, detailed description and an installation command.
+    If the candidate qualifier is specified, the subcommand will display a list
+    of all available and local versions for that candidate. In addition, the
+    version list view marks all versions that are local, installed or currently
+    in use. They appear as follows:
+
+    + - local version
+    * - installed
+    > - currently in use
+
+    Java has a custom list view with vendor-specific details.
+
+MNEMONIC
+    ls - may be used in place of the list subcommand.
+
+EXAMPLES
+    sdk list
+    sdk list java
+    sdk list groovy
+
+";
+        colored::control::set_override(false);
+        assert_eq!(list_text, render(list_help()));
     }
 }
