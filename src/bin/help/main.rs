@@ -442,7 +442,7 @@ fn selfupdate_help() -> Help {
         tagline: "sdk subcommand to upgrade the SDKMAN core".to_string(),
         synopsis: "sdk selfupdate [force]".to_string(),
         description: "Invoke this command to upgrade the core script and native components of the SDKMAN command-line \
-        interface. The command will only upgrade the native components if the detected platform is supported.\nThe \
+        interface. The command will only upgrade the native components if the detected platform is supported. The \
         command will refuse to upgrade the core if no new version is available. A qualifier may be added to the \
         selfupdate command to force an upgrade.".to_string(),
         examples: "sdk selfupdate\nsdk selfupdate force".to_string(),
@@ -529,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help};
 
     #[test]
     fn render_main_help() {
@@ -889,5 +889,30 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(list_text, render(list_help()));
+    }
+
+    #[test]
+    fn render_selfupdate_help() {
+        let selfupdate_text = "
+NAME
+    sdk selfupdate - sdk subcommand to upgrade the SDKMAN core
+
+SYNOPSIS
+    sdk selfupdate [force]
+
+DESCRIPTION
+    Invoke this command to upgrade the core script and native components of
+    the SDKMAN command-line interface. The command will only upgrade the native
+    components if the detected platform is supported. The command will refuse to
+    upgrade the core if no new version is available. A qualifier may be added to
+    the selfupdate command to force an upgrade.
+
+EXAMPLES
+    sdk selfupdate
+    sdk selfupdate force
+
+";
+        colored::control::set_override(false);
+        assert_eq!(selfupdate_text, render(selfupdate_help()));
     }
 }
