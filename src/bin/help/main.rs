@@ -473,7 +473,7 @@ fn update_help() -> Help {
         synopsis: "sdk update".to_string(),
         description: "This command is used to download information about all candidates and versions. Other \
         commands operate on this data to perform version installations and upgrades or search and display details \
-        about all packages available for installation.\nRun this command often to ensure that all candidates are \
+        about all packages available for installation. Run this command often to ensure that all candidates are \
         up to date and that the latest versions will be visible and installed.".to_string(),
         examples: "sdk update".to_string(),
         ..Default::default()
@@ -918,6 +918,38 @@ EXAMPLES
 
     #[test]
     fn render_uninstall_help() {
+        let uninstall_text = "
+NAME
+    sdk uninstall - sdk subcommand to uninstall a candidate version
+
+SYNOPSIS
+    sdk uninstall <candidate> <version>
+
+DESCRIPTION
+    Always follow the subcommand with two qualifiers, the candidate and version
+    to be uninstalled.
+
+    The specified version will be removed from the corresponding candidate
+    directory under $SDKMAN_DIR/candidates and will no longer be available for
+    use on the system.
+
+EXIT CODE
+    An invalid candidate or version supplied to the subcommand will result in a
+    non-zero return code.
+
+MNEMONIC
+    rm - may be used in place of the uninstall subcommand.
+
+EXAMPLES
+    sdk uninstall java 17.0.0-tem
+
+";
+        colored::control::set_override(false);
+        assert_eq!(uninstall_text, render(uninstall_help()));
+    }
+
+    #[test]
+    fn render_update_help() {
         let uninstall_text = "
 NAME
     sdk uninstall - sdk subcommand to uninstall a candidate version
