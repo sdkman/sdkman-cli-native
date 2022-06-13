@@ -1,6 +1,6 @@
 [package]
 name = "sdkman-cli-native"
-version = "0.2.2"
+version = "0.0.14"
 edition = "2018"
 publish = false
 
