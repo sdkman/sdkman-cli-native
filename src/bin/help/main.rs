@@ -529,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, upgrade_help, use_help};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, update_help, upgrade_help, use_help};
 
     #[test]
     fn render_main_help() {
@@ -950,39 +950,32 @@ EXAMPLES
 
     #[test]
     fn render_update_help() {
-        let uninstall_text = "
+        let update_text = "
 NAME
-    sdk uninstall - sdk subcommand to uninstall a candidate version
+    sdk update - sdk subcommand to update the local state of SDKMAN
 
 SYNOPSIS
-    sdk uninstall <candidate> <version>
+    sdk update
 
 DESCRIPTION
-    Always follow the subcommand with two qualifiers, the candidate and version
-    to be uninstalled.
-
-    The specified version will be removed from the corresponding candidate
-    directory under $SDKMAN_DIR/candidates and will no longer be available for
-    use on the system.
-
-EXIT CODE
-    An invalid candidate or version supplied to the subcommand will result in a
-    non-zero return code.
-
-MNEMONIC
-    rm - may be used in place of the uninstall subcommand.
+    This command is used to download information about all candidates
+    and versions. Other commands operate on this data to perform version
+    installations and upgrades or search and display details about all packages
+    available for installation. Run this command often to ensure that all
+    candidates are up to date and that the latest versions will be visible and
+    installed.
 
 EXAMPLES
-    sdk uninstall java 17.0.0-tem
+    sdk update
 
 ";
         colored::control::set_override(false);
-        assert_eq!(uninstall_text, render(uninstall_help()));
+        assert_eq!(update_text, render(update_help()));
     }
 
     #[test]
     fn render_upgrade_help() {
-        let uninstall_text = "
+        let upgrade_text = "
 NAME
     sdk upgrade - sdk subcommand to upgrade installed candidate versions
 
@@ -1009,7 +1002,7 @@ EXAMPLES
 
 ";
         colored::control::set_override(false);
-        assert_eq!(uninstall_text, render(upgrade_help()));
+        assert_eq!(upgrade_text, render(upgrade_help()));
     }
 
     #[test]
