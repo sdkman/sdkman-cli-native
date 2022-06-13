@@ -518,9 +518,9 @@ fn version_help() -> Help {
         cmd: "sdk version".to_string(),
         tagline: "sdk subcommand to display the installed SDKMAN version".to_string(),
         synopsis: "sdk version".to_string(),
-        description: "This subcommand displays the version of the bash and native constituents of SDKMAN on this \
+        description: "This subcommand displays the version of the bash and native components of SDKMAN on this \
         system. The versions of the bash and native libraries evolve independently from each other and so will not \
-        be the same.".to_string(),
+        be in sync.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "v".to_string(), command: "version".to_string() }),
         examples: "sdk version".to_string(),
         ..Default::default()
@@ -529,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, update_help, upgrade_help, use_help};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, update_help, upgrade_help, use_help, version_help};
 
     #[test]
     fn render_main_help() {
@@ -1034,5 +1034,30 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(use_text, render(use_help()));
+    }
+
+    #[test]
+    fn render_version_help() {
+        let version_text = "
+NAME
+    sdk version - sdk subcommand to display the installed SDKMAN version
+
+SYNOPSIS
+    sdk version
+
+DESCRIPTION
+    This subcommand displays the version of the bash and native components of
+    SDKMAN on this system. The versions of the bash and native libraries evolve
+    independently from each other and so will not be in sync.
+
+MNEMONIC
+    v - may be used in place of the version subcommand.
+
+EXAMPLES
+    sdk version
+
+";
+        colored::control::set_override(false);
+        assert_eq!(version_text, render(version_help()));
     }
 }
