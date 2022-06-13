@@ -86,7 +86,7 @@ jobs:
       - name: Assemble
         uses: jreleaser/release-action@v2
         with:
-          version: early-access
+          version: latest
           arguments: assemble
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
@@ -130,7 +130,7 @@ jobs:
       - name: Release
         uses: jreleaser/release-action@v2
         with:
-          version: early-access
+          version: latest
           arguments: release -PartifactsDir=artifacts -PskipArchiveResolver
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
