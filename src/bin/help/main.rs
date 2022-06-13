@@ -456,8 +456,8 @@ fn uninstall_help() -> Help {
         tagline: "sdk subcommand to uninstall a candidate version".to_string(),
         synopsis: "sdk uninstall <candidate> <version>".to_string(),
         description: format!("Always follow the subcommand with two qualifiers, the candidate and version to be \
-        uninstalled.\n\nThe specified version will be removed from the candidate directory in {} and will no longer \
-        be available for use on the system.", "$SDKMAN_DIR/candidates".underline()),
+        uninstalled.\n\nThe specified version will be removed from the corresponding candidate directory under {} and \
+        will no longer be available for use on the system.", "$SDKMAN_DIR/candidates".underline()),
         mnemonic: Some(Mnemonic { shorthand: "rm".to_string(), command: "uninstall".to_string() }),
         exit_code: Some("An invalid candidate or version supplied to the subcommand will result in a non-zero \
         return code.".to_string()),
@@ -529,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help};
 
     #[test]
     fn render_main_help() {
@@ -914,5 +914,37 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(selfupdate_text, render(selfupdate_help()));
+    }
+
+    #[test]
+    fn render_uninstall_help() {
+        let uninstall_text = "
+NAME
+    sdk uninstall - sdk subcommand to uninstall a candidate version
+
+SYNOPSIS
+    sdk uninstall <candidate> <version>
+
+DESCRIPTION
+    Always follow the subcommand with two qualifiers, the candidate and version
+    to be uninstalled.
+
+    The specified version will be removed from the corresponding candidate
+    directory under $SDKMAN_DIR/candidates and will no longer be available for
+    use on the system.
+
+EXIT CODE
+    An invalid candidate or version supplied to the subcommand will result in a
+    non-zero return code.
+
+MNEMONIC
+    rm - may be used in place of the uninstall subcommand.
+
+EXAMPLES
+    sdk uninstall java 17.0.0-tem
+
+";
+        colored::control::set_override(false);
+        assert_eq!(uninstall_text, render(uninstall_help()));
     }
 }
