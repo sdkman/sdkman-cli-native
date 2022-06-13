@@ -499,12 +499,12 @@ fn upgrade_help() -> Help {
 fn use_help() -> Help {
     Help {
         cmd: "sdk use".to_string(),
-        tagline: "sdk subcommand to use a specific version in the current shell".to_string(),
+        tagline: "sdk subcommand to use a specific version only in the current shell".to_string(),
         synopsis: "sdk use <candidate> <version>".to_string(),
         description: "The mandatory candidate and version follow the subcommand to specify what to use in the \
-        current shell.\nThis subcommand only operates on the current shell. It does not affect other shells \
+        shell. This subcommand only operates on the current shell. It does not affect other shells \
         running different versions of the same candidate. It also does not change the default version set for \
-        all subsequent new shells.".to_string(),
+        all subsequent shells.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "u".to_string(), command: "use".to_string() }),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate or version does not exist."
             .to_string()),
@@ -529,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, upgrade_help};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, upgrade_help, use_help};
 
     #[test]
     fn render_main_help() {
@@ -1010,5 +1010,36 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(uninstall_text, render(upgrade_help()));
+    }
+
+    #[test]
+    fn render_use_help() {
+        let use_text = "
+NAME
+    sdk use - sdk subcommand to use a specific version only in the current shell
+
+SYNOPSIS
+    sdk use <candidate> <version>
+
+DESCRIPTION
+    The mandatory candidate and version follow the subcommand to specify
+    what to use in the shell. This subcommand only operates on the current
+    shell. It does not affect other shells running different versions of the
+    same candidate. It also does not change the default version set for all
+    subsequent shells.
+
+EXIT CODE
+    The subcommand will return a non-zero return code if the candidate or
+    version does not exist.
+
+MNEMONIC
+    u - may be used in place of the use subcommand.
+
+EXAMPLES
+    sdk use java 17.0.0-tem
+
+";
+        colored::control::set_override(false);
+        assert_eq!(use_text, render(use_help()));
     }
 }
