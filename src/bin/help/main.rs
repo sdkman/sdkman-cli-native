@@ -488,7 +488,7 @@ fn upgrade_help() -> Help {
         description: "The optional candidate qualifier can be applied to specify the candidate you want to upgrade. \
         If the candidate qualifier is omitted from the command, it will attempt an upgrade of all outdated \
         candidates.\nCandidates that do not require an upgrade will be omitted, and a notification will be displayed \
-        that the candidates are up to date.".to_string(),
+        that these candidates are up to date.".to_string(),
         mnemonic: Some(Mnemonic { shorthand: "ug".to_string(), command: "upgrade".to_string() }),
         exit_code: Some("The subcommand will return a non-zero return code if the candidate does not exist.".to_string()),
         examples: "sdk upgrade\nsdk upgrade java".to_string(),
@@ -529,7 +529,7 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help};
+    use crate::{broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help, install_help, list_help, main_help, render, selfupdate_help, uninstall_help, upgrade_help};
 
     #[test]
     fn render_main_help() {
@@ -978,5 +978,37 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(uninstall_text, render(uninstall_help()));
+    }
+
+    #[test]
+    fn render_upgrade_help() {
+        let uninstall_text = "
+NAME
+    sdk upgrade - sdk subcommand to upgrade installed candidate versions
+
+SYNOPSIS
+    sdk upgrade [candidate]
+
+DESCRIPTION
+    The optional candidate qualifier can be applied to specify the candidate you
+    want to upgrade. If the candidate qualifier is omitted from the command, it
+    will attempt an upgrade of all outdated candidates.
+    Candidates that do not require an upgrade will be omitted, and a
+    notification will be displayed that these candidates are up to date.
+
+EXIT CODE
+    The subcommand will return a non-zero return code if the candidate does
+    not exist.
+
+MNEMONIC
+    ug - may be used in place of the upgrade subcommand.
+
+EXAMPLES
+    sdk upgrade
+    sdk upgrade java
+
+";
+        colored::control::set_override(false);
+        assert_eq!(uninstall_text, render(upgrade_help()));
     }
 }
