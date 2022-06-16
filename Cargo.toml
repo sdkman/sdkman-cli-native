@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-clap = "3.2.4"
+clap = "3.2.5"
 assert_cmd = "2.0.4"
 predicates = "2.1.1"
 colored = "2.0.0"
