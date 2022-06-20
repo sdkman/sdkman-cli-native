@@ -1,9 +1,9 @@
 extern crate core;
 
+use colored::Colorize;
 use std::ffi::OsString;
 use std::path::Path;
 use std::{env, fs};
-use colored::Colorize;
 
 const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
 const DEFAULT_SDKMAN_HOME: &str = ".sdkman";

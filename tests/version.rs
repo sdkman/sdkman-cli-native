@@ -36,10 +36,7 @@ fn should_panic_if_version_file_not_present() -> Result<(), Box<dyn std::error::
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    Command::cargo_bin("version")?
-        .assert()
-        .failure()
-        .code(78);
+    Command::cargo_bin("version")?.assert().failure().code(78);
     Ok(())
 }
 
@@ -52,9 +49,6 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    Command::cargo_bin("version")?
-        .assert()
-        .failure()
-        .code(78);
+    Command::cargo_bin("version")?.assert().failure().code(78);
     Ok(())
 }
