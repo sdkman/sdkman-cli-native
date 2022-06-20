@@ -5,12 +5,12 @@ edition = "2021"
 publish = false
 
 [dependencies]
-clap = "3.2.5"
 assert_cmd = "2.0.4"
-predicates = "2.1.1"
+clap = "3.2.5"
 colored = "2.0.0"
-textwrap = "0.15.0"
-tempfile = "3.3.0"
-exitcode = "1.1.2"
 dirs = "4.0.0"
+exitcode = "1.1.2"
+predicates = "2.1.1"
 serial_test = "0.7.0"
+tempfile = "3.3.0"
+textwrap = "0.15.0"
