@@ -3,6 +3,7 @@ extern crate core;
 use std::ffi::OsString;
 use std::path::Path;
 use std::{env, fs};
+use colored::Colorize;
 
 const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
 const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
@@ -12,7 +13,7 @@ fn main() {
     let sdkman_dir = infer_sdkman_dir();
     let version = locate_version_file(sdkman_dir).and_then(read_content);
     match version {
-        Some(content) => println!("\nSDKMAN {}", content),
+        Some(content) => println!("\n{} {}", "SDKMAN".yellow(), content.yellow()),
         None => std::process::exit(exitcode::CONFIG),
     }
 }
