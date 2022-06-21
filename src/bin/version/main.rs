@@ -7,14 +7,29 @@ use colored::Colorize;
 
 const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
 const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
-const VERSION_FILE: &str = "var/version";
+const VAR_DIR: &str = "var";
+const CLI_VERSION_FILE: &str = "version";
+const NATIVE_VERSION_FILE: &str = "version_native";
 
 fn main() {
     let sdkman_dir = infer_sdkman_dir();
-    let version = locate_version_file(sdkman_dir).and_then(read_content);
-    match version {
-        Some(content) => println!("\n{} {}", "SDKMAN".yellow(), content.yellow()),
-        None => std::process::exit(exitcode::CONFIG),
+    let var_dir = PathBuf::from(VAR_DIR);
+
+    let version_file = var_dir.join(CLI_VERSION_FILE);
+    let native_version_file = var_dir.join(NATIVE_VERSION_FILE);
+
+    let version = locate_file(sdkman_dir.to_owned(), version_file).and_then(read_content);
+    let native_version =
+        locate_file(sdkman_dir.to_owned(), native_version_file).and_then(read_content);
+
+    match (version, native_version) {
+        (Some(content), Some(native)) => println!(
+            "\n{}: cli version: {}; native extensions: {}\n",
+            "SDKMAN!".bold().yellow(),
+            content,
+            native
+        ),
+        _ => std::process::exit(exitcode::CONFIG),
     }
 }
 
@@ -31,8 +46,8 @@ fn fallback_sdkman_dir() -> PathBuf {
         .unwrap()
 }
 
-fn locate_version_file(base_dir: PathBuf) -> Option<PathBuf> {
-    Some(PathBuf::from(base_dir).join(VERSION_FILE))
+fn locate_file(base_dir: PathBuf, relative_path: PathBuf) -> Option<PathBuf> {
+    Some(PathBuf::from(base_dir).join(relative_path))
 }
 
 fn read_content(path: PathBuf) -> Option<String> {
@@ -41,6 +56,7 @@ fn read_content(path: PathBuf) -> Option<String> {
         Err(_) => None,
     }
     .filter(|s| !s.trim().is_empty())
+    .map(|s| s.trim().to_string())
 }
 
 #[cfg(test)]
