@@ -1,8 +1,9 @@
 extern crate core;
 
-use colored::Colorize;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::{env, fs};
+
+use colored::Colorize;
 
 const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
 const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
@@ -19,7 +20,7 @@ fn main() {
 
 fn infer_sdkman_dir() -> PathBuf {
     match env::var(SDKMAN_DIR_ENV_VAR) {
-        Ok(s) => Path::new(&s).to_path_buf(),
+        Ok(s) => PathBuf::from(s),
         Err(_) => fallback_sdkman_dir(),
     }
 }
@@ -31,7 +32,7 @@ fn fallback_sdkman_dir() -> PathBuf {
 }
 
 fn locate_version_file(base_dir: PathBuf) -> Option<PathBuf> {
-    Some(Path::new(&base_dir).join(VERSION_FILE))
+    Some(PathBuf::from(base_dir).join(VERSION_FILE))
 }
 
 fn read_content(path: PathBuf) -> Option<String> {
@@ -46,7 +47,7 @@ fn read_content(path: PathBuf) -> Option<String> {
 mod tests {
     use std::env;
     use std::io::Write;
-    use std::path::Path;
+    use std::path::PathBuf;
 
     use serial_test::serial;
     use tempfile::NamedTempFile;
@@ -56,8 +57,8 @@ mod tests {
     #[test]
     #[serial]
     fn should_infer_sdkman_dir_from_env_var() {
-        let sdkman_dir = Path::new("/home/someone/.sdkman");
-        env::set_var(SDKMAN_DIR_ENV_VAR, sdkman_dir);
+        let sdkman_dir = PathBuf::from("/home/someone/.sdkman");
+        env::set_var(SDKMAN_DIR_ENV_VAR, sdkman_dir.to_owned());
         assert_eq!(sdkman_dir, infer_sdkman_dir());
     }
 
