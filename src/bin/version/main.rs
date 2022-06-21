@@ -1,8 +1,7 @@
 extern crate core;
 
 use colored::Colorize;
-use std::ffi::OsString;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::{env, fs};
 
 const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
@@ -18,31 +17,24 @@ fn main() {
     }
 }
 
-fn infer_sdkman_dir() -> String {
+fn infer_sdkman_dir() -> PathBuf {
     match env::var(SDKMAN_DIR_ENV_VAR) {
-        Ok(s) => s,
+        Ok(s) => Path::new(&s).to_path_buf(),
         Err(_) => fallback_sdkman_dir(),
     }
 }
 
-fn fallback_sdkman_dir() -> String {
+fn fallback_sdkman_dir() -> PathBuf {
     dirs::home_dir()
         .map(|dir| dir.join(DEFAULT_SDKMAN_HOME))
         .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string()
 }
 
-fn locate_version_file(base_dir: String) -> Option<OsString> {
-    Some(
-        Path::new(base_dir.as_str())
-            .join(VERSION_FILE)
-            .into_os_string(),
-    )
+fn locate_version_file(base_dir: PathBuf) -> Option<PathBuf> {
+    Some(Path::new(&base_dir).join(VERSION_FILE))
 }
 
-fn read_content(path: OsString) -> Option<String> {
+fn read_content(path: PathBuf) -> Option<String> {
     match fs::read_to_string(path) {
         Ok(s) => Some(s),
         Err(_) => None,
@@ -52,9 +44,11 @@ fn read_content(path: OsString) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
-    use serial_test::serial;
     use std::env;
     use std::io::Write;
+    use std::path::Path;
+
+    use serial_test::serial;
     use tempfile::NamedTempFile;
 
     use crate::{infer_sdkman_dir, read_content, SDKMAN_DIR_ENV_VAR};
@@ -62,7 +56,7 @@ mod tests {
     #[test]
     #[serial]
     fn should_infer_sdkman_dir_from_env_var() {
-        let sdkman_dir = "/home/someone/.sdkman";
+        let sdkman_dir = Path::new("/home/someone/.sdkman");
         env::set_var(SDKMAN_DIR_ENV_VAR, sdkman_dir);
         assert_eq!(sdkman_dir, infer_sdkman_dir());
     }
@@ -71,12 +65,7 @@ mod tests {
     #[serial]
     fn should_infer_fallback_dir() {
         env::remove_var(SDKMAN_DIR_ENV_VAR);
-        let actual_sdkman_dir = dirs::home_dir()
-            .unwrap()
-            .join(".sdkman")
-            .to_str()
-            .unwrap()
-            .to_string();
+        let actual_sdkman_dir = dirs::home_dir().unwrap().join(".sdkman");
         assert_eq!(actual_sdkman_dir, infer_sdkman_dir());
     }
 
@@ -85,8 +74,8 @@ mod tests {
     fn should_read_content_from_version_file() {
         let mut file = NamedTempFile::new().unwrap();
         file.write("5.0.0".as_bytes()).unwrap();
-        let os_string = file.path().as_os_str().to_os_string();
-        let maybe_version = read_content(os_string);
+        let path = file.path().to_path_buf();
+        let maybe_version = read_content(path);
         assert_eq!(maybe_version, Some("5.0.0".to_string()));
     }
 
@@ -94,8 +83,8 @@ mod tests {
     #[serial]
     fn should_fail_reading_content_from_empty_version_file() {
         let file = NamedTempFile::new().unwrap();
-        let os_string = file.path().as_os_str().to_os_string();
-        let maybe_version = read_content(os_string);
+        let path = file.path().to_path_buf();
+        let maybe_version = read_content(path);
         assert_eq!(maybe_version, None);
     }
 }
