@@ -12,7 +12,11 @@ pub fn virtual_env(version: String, native_version: String) -> TempDir {
     write_file(sdkman_dir.path(), version_file, version.to_owned());
 
     let native_version_file = Path::new("var/version_native");
-    write_file(sdkman_dir.path(), native_version_file, native_version.to_owned());
+    write_file(
+        sdkman_dir.path(),
+        native_version_file,
+        native_version.to_owned(),
+    );
 
     return sdkman_dir;
 }

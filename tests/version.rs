@@ -1,5 +1,5 @@
 use std::env;
-use std::path::{Path};
+use std::path::Path;
 #[cfg(test)]
 use std::process::Command;
 
@@ -24,7 +24,8 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
 
     let contains_header = predicate::str::starts_with(header);
     let contains_version = predicate::str::contains(format!("cli version: {}", version));
-    let contains_native_version = predicate::str::contains(format!("native extensions: {}", native_version));
+    let contains_native_version =
+        predicate::str::contains(format!("native extensions: {}", native_version));
 
     Command::cargo_bin("version")?
         .assert()
