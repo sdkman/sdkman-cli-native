@@ -6,7 +6,7 @@ publish = false
 
 [dependencies]
 assert_cmd = "2.0.4"
-clap = "4.0.2"
+clap = "4.0.13"
 colored = "2.0.0"
 dirs = "4.0.0"
 exitcode = "1.1.2"
