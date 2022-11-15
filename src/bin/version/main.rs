@@ -18,9 +18,9 @@ fn main() {
     let version_file = var_dir.join(CLI_VERSION_FILE);
     let native_version_file = var_dir.join(NATIVE_VERSION_FILE);
 
-    let version = locate_file(sdkman_dir.to_owned(), version_file).and_then(read_content);
+    let version = locate_file(sdkman_dir.to_owned(), version_file).and_then(read_file_content);
     let native_version =
-        locate_file(sdkman_dir.to_owned(), native_version_file).and_then(read_content);
+        locate_file(sdkman_dir.to_owned(), native_version_file).and_then(read_file_content);
 
     match (version, native_version) {
         (Some(content), Some(native)) => println!(
@@ -50,7 +50,7 @@ fn locate_file(base_dir: PathBuf, relative_path: PathBuf) -> Option<PathBuf> {
     Some(PathBuf::from(base_dir).join(relative_path))
 }
 
-fn read_content(path: PathBuf) -> Option<String> {
+fn read_file_content(path: PathBuf) -> Option<String> {
     match fs::read_to_string(path) {
         Ok(s) => Some(s),
         Err(_) => None,
@@ -68,7 +68,7 @@ mod tests {
     use serial_test::serial;
     use tempfile::NamedTempFile;
 
-    use crate::{infer_sdkman_dir, read_content, SDKMAN_DIR_ENV_VAR};
+    use crate::{infer_sdkman_dir, read_file_content, SDKMAN_DIR_ENV_VAR};
 
     #[test]
     #[serial]
@@ -88,20 +88,21 @@ mod tests {
 
     #[test]
     #[serial]
-    fn should_read_content_from_version_file() {
+    fn should_read_content_from_file() {
+        let expected_version = "5.0.0";
         let mut file = NamedTempFile::new().unwrap();
-        file.write("5.0.0".as_bytes()).unwrap();
+        file.write(expected_version.as_bytes()).unwrap();
         let path = file.path().to_path_buf();
-        let maybe_version = read_content(path);
-        assert_eq!(maybe_version, Some("5.0.0".to_string()));
+        let maybe_version = read_file_content(path);
+        assert_eq!(maybe_version, Some(expected_version.to_string()));
     }
 
     #[test]
     #[serial]
-    fn should_fail_reading_content_from_empty_version_file() {
+    fn should_fail_reading_content_from_empty_file() {
         let file = NamedTempFile::new().unwrap();
         let path = file.path().to_path_buf();
-        let maybe_version = read_content(path);
+        let maybe_version = read_file_content(path);
         assert_eq!(maybe_version, None);
     }
 }
