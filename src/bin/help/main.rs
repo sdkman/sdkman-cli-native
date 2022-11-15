@@ -10,7 +10,7 @@ fn main() {
         "sdk help".italic()
     );
     let args = Command::new("help")
-        .override_help(default_error.as_str())
+        .override_help(default_error)
         .subcommand(Command::new("broadcast").alias("b"))
         .subcommand(Command::new("config"))
         .subcommand(Command::new("current").alias("c"))
