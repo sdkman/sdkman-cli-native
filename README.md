@@ -5,7 +5,19 @@
 Native CLI subcommand components for SDKMAN! written in [Rust](https://www.rust-lang.org/). Use the binaries generated
 by this project in the `sdk` wrapper shell function from the [sdkman-cli](https://github.com/sdkman/sdkman-cli) project.
 
-Initial setup:
+## Getting this on your machine
+
+Nothing needs to be done if you are using one of the following supported architectures:
+
+* aarch64-unknown-linux-gnu
+* x86_64-unknown-linux-gnu
+* aarch64-apple-darwin
+* x86_64-apple-darwin
+* x86_64-pc-windows-msvc
+
+The default installer will automatically detect your architecture and install the latest release version on your machine.
+
+## Local development setup:
 
 1. [Install the Rust toolchain](https://www.rust-lang.org/tools/install) with `rustup`.
 2. Build the project with Cargo using `cargo build`
@@ -14,14 +26,5 @@ Initial setup:
 
 ```bash
 $ sdk help
-$ sdk help config
-$ sdk help default
-$ sdk help env
-$ sdk help home
-$ sdk help install
-$ sdk help list
-$ sdk help uninstall
-$ sdk help use
+$ sdk help [subcommand]
 ```
-
-This is an initial installation process which will be automated sometime in the future.
