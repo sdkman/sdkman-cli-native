@@ -1,11 +1,11 @@
-use std::env;
-use std::path::Path;
 #[cfg(test)]
-use std::process::Command;
+use std::env;
+use std::{path::Path, process::Command};
 
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
 use serial_test::serial;
+use support::VirtualEnv;
 
 mod support;
 
@@ -13,17 +13,22 @@ mod support;
 #[serial]
 fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>> {
     let prefix = "SDKMAN";
-    let version = "5.0.0";
+    let cli_version = "5.0.0";
     let native_version = "0.1.0";
 
     let header = format!("\n{}", prefix);
+    let env = VirtualEnv {
+        cli_version: cli_version.to_string(),
+        native_version: native_version.to_string(),
+        ..Default::default()
+    };
 
-    let sdkman_dir = support::virtual_env(version.to_string(), native_version.to_string());
+    let sdkman_dir = support::virtual_env(env);
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
     let contains_header = predicate::str::starts_with(header);
-    let contains_version = predicate::str::contains(format!("cli version: {}", version));
+    let contains_version = predicate::str::contains(format!("cli version: {}", cli_version));
     let contains_native_version =
         predicate::str::contains(format!("native extensions: {}", native_version));
 
@@ -42,10 +47,14 @@ fn should_panic_if_version_file_not_present() -> Result<(), Box<dyn std::error::
     let native_version = "0.1.0".to_string();
 
     let sdkman_dir = support::prepare_sdkman_dir();
-    support::init_var_dir(sdkman_dir.path());
+    let var_path = Path::new("var");
 
-    let native_version_file = Path::new("var/version_native");
-    support::write_file(sdkman_dir.path(), native_version_file, native_version);
+    support::write_file(
+        sdkman_dir.path(),
+        var_path,
+        "version_native",
+        native_version,
+    );
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
@@ -59,10 +68,9 @@ fn should_panic_if_native_version_file_not_present() -> Result<(), Box<dyn std::
     let version = "5.0.0".to_string();
 
     let sdkman_dir = support::prepare_sdkman_dir();
-    support::init_var_dir(sdkman_dir.path());
+    let var_path = Path::new("var");
 
-    let version_file = Path::new("var/version");
-    support::write_file(sdkman_dir.path(), version_file, version);
+    support::write_file(sdkman_dir.path(), var_path, "version", version);
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
@@ -74,13 +82,11 @@ fn should_panic_if_native_version_file_not_present() -> Result<(), Box<dyn std::
 #[serial]
 fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>> {
     let sdkman_dir = support::prepare_sdkman_dir();
-    support::init_var_dir(sdkman_dir.path());
+    let var_path = Path::new("var");
 
-    let version_file = Path::new("var/version");
-    support::write_file(sdkman_dir.path(), version_file, "".to_string());
+    support::write_file(sdkman_dir.path(), var_path, "version", "".to_string());
 
-    let native_version_file = Path::new("var/version_native");
-    support::write_file(sdkman_dir.path(), native_version_file, "0.1.0".to_string());
+    support::write_file(sdkman_dir.path(), var_path, "version_native", "0.1.0".to_string());
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
@@ -92,13 +98,11 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
 #[serial]
 fn should_panic_if_native_version_file_empty() -> Result<(), Box<dyn std::error::Error>> {
     let sdkman_dir = support::prepare_sdkman_dir();
-    support::init_var_dir(sdkman_dir.path());
+    let var_path = Path::new("var");
 
-    let version_file = Path::new("var/version");
-    support::write_file(sdkman_dir.path(), version_file, "5.0.0".to_string());
+    support::write_file(sdkman_dir.path(), var_path, "version", "5.0.0".to_string());
 
-    let native_version_file = Path::new("var/version_native");
-    support::write_file(sdkman_dir.path(), native_version_file, "".to_string());
+    support::write_file(sdkman_dir.path(), var_path, "version_native", "".to_string());
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 

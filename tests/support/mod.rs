@@ -1,36 +1,73 @@
-use std::fs::{create_dir, File};
+use std::fs;
+use std::fs::{create_dir_all, File};
 use std::io::Write;
-use std::path::Path;
+use std::os::unix::prelude::PermissionsExt;
+use std::path::{Path, PathBuf};
 
 use tempfile::{Builder, TempDir};
 
-pub fn virtual_env(version: String, native_version: String) -> TempDir {
+pub struct TestCandidate {
+    pub name: String,
+    pub version: String,
+}
+
+#[derive(Default)]
+pub struct VirtualEnv {
+    pub cli_version: String,
+    pub native_version: String,
+    pub candidate: Option<TestCandidate>,
+}
+
+pub fn virtual_env(env: VirtualEnv) -> TempDir {
     let sdkman_dir = prepare_sdkman_dir();
-    init_var_dir(sdkman_dir.path());
-
-    let version_file = Path::new("var/version");
-    write_file(sdkman_dir.path(), version_file, version.to_owned());
-
-    let native_version_file = Path::new("var/version_native");
+    let var_path = Path::new("var");
+    write_file(sdkman_dir.path(), var_path, "version", env.cli_version);
     write_file(
         sdkman_dir.path(),
-        native_version_file,
-        native_version.to_owned(),
+        var_path,
+        "version_native",
+        env.native_version,
     );
+
+    env.candidate.map(|c| {
+        let location = format!("candidates/{}/{}/bin/", c.name, c.version);
+        let content = format!(
+            "\
+#!/bin/bash
+echo Running {}
+",
+            c.name
+        );
+        let file = write_file(sdkman_dir.path(), Path::new(&location), c.name.as_str(), content);
+        let mut perms = fs::metadata(file.as_path())
+            .expect("could not access file metadata")
+            .permissions();
+        perms.set_mode(0o744);
+        fs::set_permissions(file, perms).expect("could not set file permissions");
+    });
 
     return sdkman_dir;
 }
 
 pub fn prepare_sdkman_dir() -> TempDir {
-    Builder::new().prefix(".sdkman-").tempdir().unwrap()
+    Builder::new()
+        .prefix(".sdkman-")
+        .tempdir()
+        .expect("could not prepare SDKMAN_DIR")
 }
 
-pub fn init_var_dir(temp_dir: &Path) {
-    create_dir(temp_dir.join("var")).unwrap();
-}
-
-pub fn write_file(temp_dir: &Path, relative_path: &Path, content: String) {
+pub fn write_file(
+    temp_dir: &Path,
+    relative_path: &Path,
+    file_name: &str,
+    content: String,
+) -> PathBuf {
     let absolute_path = temp_dir.join(relative_path);
-    let mut version_file = File::create(absolute_path).expect("could not create file");
-    write!(version_file, "{}", content.to_string()).unwrap();
+    create_dir_all(absolute_path.to_owned()).expect("could not create nested dirs");
+
+    let file_path = absolute_path.join(file_name);
+    let mut file = File::create(&file_path).expect("could not create file");
+    write!(file, "{}", content.to_string()).expect("could not write to file");
+
+    file_path
 }
