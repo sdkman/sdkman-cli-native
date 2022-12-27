@@ -16,20 +16,25 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidate: Option<TestCandidate>,
+    pub known_candidates: Vec<String>
 }
 
-pub fn virtual_env(env: VirtualEnv) -> TempDir {
+pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
     let sdkman_dir = prepare_sdkman_dir();
     let var_path = Path::new("var");
-    write_file(sdkman_dir.path(), var_path, "version", env.cli_version);
+    write_file(sdkman_dir.path(), var_path, "version", virtual_env.cli_version);
     write_file(
         sdkman_dir.path(),
         var_path,
         "version_native",
-        env.native_version,
+        virtual_env.native_version,
     );
 
-    env.candidate.map(|c| {
+    for candidate in virtual_env.known_candidates {
+        write_file(sdkman_dir.path(), Path::new("var"), "candidates", candidate);
+    }
+
+    virtual_env.candidate.map(|c| {
         let location = format!("candidates/{}/{}/bin/", c.name, c.version);
         let content = format!(
             "\
