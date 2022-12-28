@@ -34,10 +34,10 @@ fn main() {
         process::exit(1);
     }
 
-    let candidete_home = format!("{}/candidates/{}/{}", sdkman_dir, candidate, version);
-    let candidate_path = Path::new(candidete_home.as_str());
+    let candidate_home = format!("{}/candidates/{}/{}", sdkman_dir, candidate, version);
+    let candidate_path = Path::new(candidate_home.as_str());
     if candidate_path.is_dir() {
-        println!("{}", candidete_home);
+        println!("{}", candidate_home);
     } else {
         eprintln!(
             "{} {} is not installed on your system",
