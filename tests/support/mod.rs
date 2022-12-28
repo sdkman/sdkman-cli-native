@@ -30,9 +30,8 @@ pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
         virtual_env.native_version,
     );
 
-    for candidate in virtual_env.known_candidates {
-        write_file(sdkman_dir.path(), Path::new("var"), "candidates", candidate);
-    }
+    let known_candidates = virtual_env.known_candidates.join(",");
+    write_file(sdkman_dir.path(), Path::new("var"), "candidates", known_candidates);
 
     virtual_env.candidate.map(|c| {
         let location = format!("candidates/{}/{}/bin/", c.name, c.version);

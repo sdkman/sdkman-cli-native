@@ -28,7 +28,8 @@ fn main() {
     };
 
     let candidates_file = format!("{}/var/candidates", sdkman_dir);
-    let valid_candidates = std::fs::read_to_string(candidates_file.as_str()).expect("msg");
+    let valid_candidates = std::fs::read_to_string(candidates_file.as_str())
+        .expect("panic! the candidates file is missing");
     if !valid_candidates.contains(candidate.as_str()) {
         eprint!("{} is not a valid candidate!", candidate.bold());
         process::exit(1);
