@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-assert_cmd = "2.0.6"
+assert_cmd = "2.0.7"
 proc-macro2 = "1.0.42"
 clap = { version = "4.0.26", features = ["derive"] }
 colored = "2.0.0"
