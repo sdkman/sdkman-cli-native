@@ -16,13 +16,18 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidate: Option<TestCandidate>,
-    pub known_candidates: Vec<String>
+    pub known_candidates: Vec<String>,
 }
 
 pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
     let sdkman_dir = prepare_sdkman_dir();
     let var_path = Path::new("var");
-    write_file(sdkman_dir.path(), var_path, "version", virtual_env.cli_version);
+    write_file(
+        sdkman_dir.path(),
+        var_path,
+        "version",
+        virtual_env.cli_version,
+    );
     write_file(
         sdkman_dir.path(),
         var_path,
@@ -31,7 +36,12 @@ pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
     );
 
     let known_candidates = virtual_env.known_candidates.join(",");
-    write_file(sdkman_dir.path(), Path::new("var"), "candidates", known_candidates);
+    write_file(
+        sdkman_dir.path(),
+        Path::new("var"),
+        "candidates",
+        known_candidates,
+    );
 
     virtual_env.candidate.map(|c| {
         let location = format!("candidates/{}/{}/bin/", c.name, c.version);
@@ -42,7 +52,12 @@ echo Running {}
 ",
             c.name
         );
-        let file = write_file(sdkman_dir.path(), Path::new(&location), c.name.as_str(), content);
+        let file = write_file(
+            sdkman_dir.path(),
+            Path::new(&location),
+            c.name.as_str(),
+            content,
+        );
         let mut perms = fs::metadata(file.as_path())
             .expect("could not access file metadata")
             .permissions();

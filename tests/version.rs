@@ -86,7 +86,12 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
 
     support::write_file(sdkman_dir.path(), var_path, "version", "".to_string());
 
-    support::write_file(sdkman_dir.path(), var_path, "version_native", "0.1.0".to_string());
+    support::write_file(
+        sdkman_dir.path(),
+        var_path,
+        "version_native",
+        "0.1.0".to_string(),
+    );
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
@@ -102,7 +107,12 @@ fn should_panic_if_native_version_file_empty() -> Result<(), Box<dyn std::error:
 
     support::write_file(sdkman_dir.path(), var_path, "version", "5.0.0".to_string());
 
-    support::write_file(sdkman_dir.path(), var_path, "version_native", "".to_string());
+    support::write_file(
+        sdkman_dir.path(),
+        var_path,
+        "version_native",
+        "".to_string(),
+    );
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
