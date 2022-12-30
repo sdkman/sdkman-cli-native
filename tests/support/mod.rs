@@ -1,7 +1,5 @@
-use std::fs;
 use std::fs::{create_dir_all, File};
 use std::io::Write;
-use std::os::unix::prelude::PermissionsExt;
 use std::path::{Path, PathBuf};
 
 use tempfile::{Builder, TempDir};
@@ -52,17 +50,12 @@ echo Running {}
 ",
             c.name
         );
-        let file = write_file(
+        write_file(
             sdkman_dir.path(),
             Path::new(&location),
             c.name.as_str(),
             content,
         );
-        let mut perms = fs::metadata(file.as_path())
-            .expect("could not access file metadata")
-            .permissions();
-        perms.set_mode(0o744);
-        fs::set_permissions(file, perms).expect("could not set file permissions");
     });
 
     return sdkman_dir;
