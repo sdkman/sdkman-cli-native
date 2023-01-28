@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
-          echo "VERSION=$version" >> GITHUB_OUTPUT
+          echo ::set-output name=VERSION::$(echo "$version")
   build:
     needs: [ prerelease ]
     name: 'Build ${{ matrix.job.target }}'
