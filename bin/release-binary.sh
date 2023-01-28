@@ -13,5 +13,5 @@ else
   mongo "${MONGO_URL}" \
     --username="${MONGO_USERNAME}" \
     --password="${MONGO_PASSWORD}" \
-    --eval "db.application.updateOne({}, {\$set: { \"stableNativeCliVersion\": \"$RELEASE_VERSION\"}});"
+    --eval "db.application.updateOne({}, {\$set: { \"stableNativeCliVersion\": \"$RELEASE_VERSION\", \"betaNativeCliVersion\": \"$RELEASE_VERSION\"}});"
 fi
