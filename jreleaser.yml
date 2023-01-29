@@ -44,6 +44,8 @@ assemble:
           output: libexec
           includes:
             - 'help{.exe,}'
+            - 'version{.exe,}'
+            - 'home{.exe,}'
           excludes:
             - LICENSE
 distributions:
