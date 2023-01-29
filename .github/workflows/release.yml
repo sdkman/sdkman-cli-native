@@ -114,18 +114,7 @@ jobs:
   release:
     needs: [ prerelease, build ]
     runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:3.2
-        ports:
-          - 27017:27017
-
     steps:
-      - name: Install mongo-tools
-        run: |
-          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.6.1.deb
-          sudo apt install ./mongodb-database-tools-*-100.6.1.deb
-
       - name: Checkout
         uses: actions/checkout@v3
         with:

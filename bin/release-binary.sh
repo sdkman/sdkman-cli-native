@@ -10,8 +10,10 @@ if [[ -z "$MONGO_URL" || -z "$MONGO_USERNAME" || -z "$MONGO_PASSWORD" || -z "$RE
 	echo "Missing parameters..."
 else
   echo "Releasing stableNativeCliVersion: $RELEASE_VERSION"
-  mongo "${MONGO_URL}" \
+  echo "Releasing betaNativeCliVersion: $RELEASE_VERSION"
+  docker run mongo:3.2 mongo "${MONGO_URL}" \
     --username="${MONGO_USERNAME}" \
     --password="${MONGO_PASSWORD}" \
+    --quiet \
     --eval "db.application.updateOne({}, {\$set: { \"stableNativeCliVersion\": \"$RELEASE_VERSION\", \"betaNativeCliVersion\": \"$RELEASE_VERSION\"}});"
 fi
