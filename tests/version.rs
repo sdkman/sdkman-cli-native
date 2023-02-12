@@ -29,8 +29,7 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
 
     let contains_header = predicate::str::starts_with(header);
     let contains_version = predicate::str::contains(format!("script: {}", cli_version));
-    let contains_native_version =
-        predicate::str::contains(format!("native: {}", native_version));
+    let contains_native_version = predicate::str::contains(format!("native: {}", native_version));
 
     Command::cargo_bin("version")?
         .assert()

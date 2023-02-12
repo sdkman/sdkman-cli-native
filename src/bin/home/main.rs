@@ -34,7 +34,7 @@ fn main() {
         eprint!("{} is not a valid candidate!", candidate.bold());
         process::exit(1);
     }
-    
+
     let candidate_home = format!("{}/candidates/{}/{}", sdkman_dir, candidate, version);
     let candidate_path = Path::new(candidate_home.as_str());
     if candidate_path.is_dir() {
