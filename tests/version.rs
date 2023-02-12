@@ -12,7 +12,7 @@ mod support;
 #[test]
 #[serial]
 fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>> {
-    let prefix = "SDKMAN";
+    let prefix = "SDKMAN!";
     let cli_version = "5.0.0";
     let native_version = "0.1.0";
 
@@ -28,9 +28,9 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
     let contains_header = predicate::str::starts_with(header);
-    let contains_version = predicate::str::contains(format!("cli version: {}", cli_version));
+    let contains_version = predicate::str::contains(format!("script: {}", cli_version));
     let contains_native_version =
-        predicate::str::contains(format!("native extensions: {}", native_version));
+        predicate::str::contains(format!("native: {}", native_version));
 
     Command::cargo_bin("version")?
         .assert()

@@ -24,7 +24,7 @@ fn main() {
 
     match (version, native_version) {
         (Some(content), Some(native)) => println!(
-            "\n{}: cli version: {}; native extensions: {}\n",
+            "\n{}\nscript: {}\nnative: {}\n",
             "SDKMAN!".bold().yellow(),
             content,
             native
