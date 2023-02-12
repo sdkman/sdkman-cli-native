@@ -27,9 +27,7 @@ fn should_successfully_display_current_candidate_home() -> Result<(), Box<dyn st
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = format!("{}/candidates/scala/0.0.1", dir_string);
     Command::cargo_bin("home")?
-        .arg("--candidate")
         .arg("scala")
-        .arg("--version")
         .arg("0.0.1")
         .assert()
         .success()
@@ -55,9 +53,7 @@ fn should_fail_if_candidate_home_is_not_found() -> Result<(), Box<dyn std::error
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = format!("{} {} is not installed on your system", "scala", "0.0.2");
     Command::cargo_bin("home")?
-        .arg("--candidate")
         .arg("scala")
-        .arg("--version")
         .arg("0.0.2")
         .assert()
         .failure()
@@ -86,9 +82,7 @@ fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = format!("{} is not a valid candidate!", "foobar");
     Command::cargo_bin("home")?
-        .arg("--candidate")
         .arg("foobar")
-        .arg("--version")
         .arg("0.0.1")
         .assert()
         .failure()
@@ -120,9 +114,7 @@ fn should_fail_if_candidate_file_is_missing() -> Result<(), Box<dyn std::error::
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = "panic! the candidates file is missing";
     Command::cargo_bin("home")?
-        .arg("--candidate")
         .arg("scala")
-        .arg("--version")
         .arg("0.0.1")
         .assert()
         .failure()
