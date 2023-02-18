@@ -509,9 +509,9 @@ fn version_help() -> Help {
 #[cfg(test)]
 mod tests {
     use crate::{
-        config_help, current_help, default_help, env_help, flush_help, home_help,
-        install_help, list_help, main_help, render, selfupdate_help, uninstall_help, update_help,
-        upgrade_help, use_help, version_help,
+        config_help, current_help, default_help, env_help, flush_help, home_help, install_help,
+        list_help, main_help, render, selfupdate_help, uninstall_help, update_help, upgrade_help,
+        use_help, version_help,
     };
 
     #[test]
