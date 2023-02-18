@@ -294,8 +294,7 @@ java=11.0.13-tem
             vec![
                 Subcommand {
                     command: "install".to_string(),
-                    description: format!("install and switch to the SDK versions specified in {} (used as default if \
-                    the qualifier is omitted)", ".sdkmanrc".underline()),
+                    description: format!("install and switch to the SDK versions specified in {}", ".sdkmanrc".underline()),
                 },
                 Subcommand {
                     command: "init".to_string(),
@@ -683,7 +682,7 @@ DESCRIPTION
 
 SUBCOMMANDS & QUALIFIERS
     install      install and switch to the SDK versions specified
-                 in .sdkmanrc (used as default if the qualifier is omitted)
+                 in .sdkmanrc
     init         allows for the creation of a default .sdkmanrc file with
                  a single entry for the java candidate, set to the current
                  default value)
