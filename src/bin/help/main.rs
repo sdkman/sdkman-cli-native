@@ -11,7 +11,6 @@ fn main() {
     );
     let args = Command::new("help")
         .override_help(default_error)
-        .subcommand(Command::new("broadcast").alias("b"))
         .subcommand(Command::new("config"))
         .subcommand(Command::new("current").alias("c"))
         .subcommand(Command::new("default").alias("d"))
@@ -29,7 +28,6 @@ fn main() {
         .get_matches();
 
     let help = match args.subcommand_name() {
-        Some("broadcast") => broadcast_help(),
         Some("config") => config_help(),
         Some("current") => current_help(),
         Some("default") => default_help(),
@@ -194,26 +192,12 @@ fn main_help() -> Help {
             Subcommand { command: "current".to_string(), description: "[candidate]".italic().to_string() },
             Subcommand { command: "upgrade".to_string(), description: "[candidate]".italic().to_string() },
             Subcommand { command: "version".to_string(), description: "no qualifier".to_string() },
-            Subcommand { command: "broadcast".to_string(), description: "no qualifier".to_string() },
             Subcommand { command: "offline".to_string(), description: "[enable|disable]".italic().to_string() },
             Subcommand { command: "selfupdate".to_string(), description: "[force]".italic().to_string() },
             Subcommand { command: "update".to_string(), description: "no qualifier".to_string() },
-            Subcommand { command: "flush".to_string(), description: "[tmp|broadcast|metadata|version]".italic().to_string() },
+            Subcommand { command: "flush".to_string(), description: "[tmp|metadata|version]".italic().to_string() },
         ]),
         examples: "sdk install java 17.0.0-tem\nsdk help install".to_string(),
-        ..Default::default()
-    }
-}
-
-fn broadcast_help() -> Help {
-    Help {
-        cmd: "sdk broadcast".to_string(),
-        tagline: "sdk subcommand to display the latest announcements".to_string(),
-        synopsis: "sdk broadcast".to_string(),
-        description: "This subcommand displays the latest three vendor announcements about SDK releases on SDKMAN. \
-        Each entry shows the release date and broadcast message issued by a vendor.".to_string(),
-        mnemonic: Some(Mnemonic { shorthand: "b".to_string(), command: "broadcast".to_string() }),
-        examples: "sdk broadcast".to_string(),
         ..Default::default()
     }
 }
@@ -348,9 +332,9 @@ fn flush_help() -> Help {
     Help {
         cmd: "sdk flush".to_string(),
         tagline: "sdk subcommand used for flushing local temporal state of SDKMAN".to_string(),
-        synopsis: "sdk flush [tmp|broadcast|metadata|version]".to_string(),
+        synopsis: "sdk flush [tmp|metadata|version]".to_string(),
         description: format!("This command cleans temporary storage under {} in the {} and {} directories, removing \
-        broadcast, metadata, and version caches. It also removes any residual download artifacts. It is possible to \
+        metadata and version caches. It also removes any residual download artifacts. It is possible to \
         flush specific targets by providing a qualifier. Omission of the qualifier results in a full flush of all \
         targets.", "$SDKMAN_DIR".underline(), "var".underline(), "tmp".underline())
             .to_string(),
@@ -358,10 +342,6 @@ fn flush_help() -> Help {
             Subcommand {
                 command: "tmp".to_string(),
                 description: format!("cleans out pre/post hooks and residual archives from {}", "$SDKMAN_DIR/tmp".underline()),
-            },
-            Subcommand {
-                command: "broadcast".to_string(),
-                description: format!("wipes cached broadcast messages"),
             },
             Subcommand {
                 command: "metadata".to_string(),
@@ -377,7 +357,7 @@ fn flush_help() -> Help {
                 ),
             },
         ]),
-        examples: "sdk flush\nsdk flush tmp\nsdk flush broadcast\nsdk flush metadata\nsdk flush version".to_string(),
+        examples: "sdk flush\nsdk flush tmp\nsdk flush metadata\nsdk flush version".to_string(),
         ..Default::default()
     }
 }
@@ -530,7 +510,7 @@ fn version_help() -> Help {
 #[cfg(test)]
 mod tests {
     use crate::{
-        broadcast_help, config_help, current_help, default_help, env_help, flush_help, home_help,
+        config_help, current_help, default_help, env_help, flush_help, home_help,
         install_help, list_help, main_help, render, selfupdate_help, uninstall_help, update_help,
         upgrade_help, use_help, version_help,
     };
@@ -563,11 +543,10 @@ SUBCOMMANDS & QUALIFIERS
     current      [candidate]
     upgrade      [candidate]
     version      no qualifier
-    broadcast    no qualifier
     offline      [enable|disable]
     selfupdate   [force]
     update       no qualifier
-    flush        [tmp|broadcast|metadata|version]
+    flush        [tmp|metadata|version]
 
 EXAMPLES
     sdk install java 17.0.0-tem
@@ -576,31 +555,6 @@ EXAMPLES
 ";
         colored::control::set_override(false);
         assert_eq!(help_text, render(main_help()));
-    }
-
-    #[test]
-    fn render_broadcast_help() {
-        let broadcast_text = "
-NAME
-    sdk broadcast - sdk subcommand to display the latest announcements
-
-SYNOPSIS
-    sdk broadcast
-
-DESCRIPTION
-    This subcommand displays the latest three vendor announcements about SDK
-    releases on SDKMAN. Each entry shows the release date and broadcast message
-    issued by a vendor.
-
-MNEMONIC
-    b - may be used in place of the broadcast subcommand.
-
-EXAMPLES
-    sdk broadcast
-
-";
-        colored::control::set_override(false);
-        assert_eq!(broadcast_text, render(broadcast_help()));
     }
 
     #[test]
@@ -768,19 +722,18 @@ NAME
     sdk flush - sdk subcommand used for flushing local temporal state of SDKMAN
 
 SYNOPSIS
-    sdk flush [tmp|broadcast|metadata|version]
+    sdk flush [tmp|metadata|version]
 
 DESCRIPTION
     This command cleans temporary storage under $SDKMAN_DIR in the var and
-    tmp directories, removing broadcast, metadata, and version caches. It also
-    removes any residual download artifacts. It is possible to flush specific
-    targets by providing a qualifier. Omission of the qualifier results in a
-    full flush of all targets.
+    tmp directories, removing metadata and version caches. It also removes any
+    residual download artifacts. It is possible to flush specific targets by
+    providing a qualifier. Omission of the qualifier results in a full flush of
+    all targets.
 
 SUBCOMMANDS & QUALIFIERS
     tmp          cleans out pre/post hooks and residual archives from
                  $SDKMAN_DIR/tmp
-    broadcast    wipes cached broadcast messages
     metadata     removes any header metadata
     version      flushes the version and version_native files under
                  $SDKMAN_DIR/var
@@ -788,7 +741,6 @@ SUBCOMMANDS & QUALIFIERS
 EXAMPLES
     sdk flush
     sdk flush tmp
-    sdk flush broadcast
     sdk flush metadata
     sdk flush version
 

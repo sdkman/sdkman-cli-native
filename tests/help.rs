@@ -19,7 +19,6 @@ fn should_render_base_help() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Error>> {
     let args = [
-        "broadcast",
         "config",
         "current",
         "default",
