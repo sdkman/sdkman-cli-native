@@ -28,3 +28,4 @@ The default installer will automatically detect your architecture and install th
 $ sdk help
 $ sdk help [subcommand]
 ```
+
