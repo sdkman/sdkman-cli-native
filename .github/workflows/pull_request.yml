@@ -26,6 +26,12 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt
+          override: true
+          profile: minimal
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-targets: "false"
       - name: Check formatting
         uses: actions-rs/cargo@v1
         with:
