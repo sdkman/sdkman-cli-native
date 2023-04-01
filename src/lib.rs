@@ -5,12 +5,10 @@ pub mod constants {
 }
 
 pub mod helpers {
-    use std::fs::File;
-    use std::io::{BufRead, BufReader};
     use std::path::PathBuf;
     use std::{env, fs};
 
-    use crate::constants::{DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR};
+    use crate::constants::{DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR};
 
     pub fn infer_sdkman_dir() -> PathBuf {
         match env::var(SDKMAN_DIR_ENV_VAR) {
@@ -39,20 +37,10 @@ pub mod helpers {
     }
 
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
-        let sdkman_dir_str = sdkman_dir
-            .to_str()
-            .expect("can't convert sdkman_dir to string");
-        let location = format!("{}/var/candidates", sdkman_dir_str);
-        let file = File::open(location).expect("panic! the candidates file is missing");
-        let reader = BufReader::new(file);
-
-        let line = reader
-            .lines()
-            .next()
-            .expect("panic! no lines in file")
-            .expect("panic! can't read first line");
-        let line_str: &'static str = Box::leak(line.into_boxed_str());
-
+        let location = format!("{}/candidates", VAR_DIR);
+        let relative_path = PathBuf::from(location);
+        let content = locate_and_read_file(sdkman_dir, relative_path).and_then(read_file_content).expect("panic! the candidates file is missing");
+        let line_str: &'static str = Box::leak(content.into_boxed_str());
         let mut fields = Vec::new();
         for field in line_str.split(',') {
             fields.push(field.trim());
