@@ -5,14 +5,14 @@ project:
   name: sdkman
   description: SDKMAN! native extensions
   longDescription: Supplementary native extension binaries to replace SDKMAN! bash functions.
-  website: 'https://github.com/sdkman/sdkman-native-cli'
   authors:
     - Marco Vermeulen
     - Oliver Weiler
-  license: Apache 2.0
-  licenseUrl: 'https://spdx.org/licenses/Apache-2.0.html'
-  extraProperties:
-    inceptionYear: 2021
+  license: Apache-2.0
+  links:
+    homepage: 'https://github.com/sdkman/sdkman-native-cli'
+    license: 'https://spdx.org/licenses/Apache-2.0.html'
+  inceptionYear: 2021
 platform:
   replacements:
     osx-x86_64: x86_64-apple-darwin
@@ -25,7 +25,6 @@ release:
     overwrite: true
     changelog:
       formatted: ALWAYS
-      format: '- {{commitShortHash}} {{commitTitle}}'
       preset: conventional-commits
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
@@ -66,3 +65,11 @@ distributions:
         platform: linux-x86_64
       - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64-unknown-linux-gnu.zip'
         platform: linux-aarch_64
+announce:
+  twitter:
+    active: NEVER
+    status: 'Released version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
+  mastodon:
+    active: NEVER
+    host: https://fosstodon.org
+    status: 'Released version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
