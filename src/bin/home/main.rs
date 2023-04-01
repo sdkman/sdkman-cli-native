@@ -1,8 +1,7 @@
 use clap::Parser;
 use colored::Colorize;
-use home;
-use std::env;
-use std::path::Path;
+use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
+use std::path::{Path, PathBuf};
 use std::process;
 
 #[derive(Parser, Debug)]
@@ -22,20 +21,17 @@ fn main() {
     let args = Args::parse();
     let candidate = args.candidate;
     let version = args.version;
-    let sdkman_dir = match env::var("SDKMAN_DIR") {
-        Ok(dir) => dir,
-        Err(_) => home::home_dir().unwrap().to_str().unwrap().to_string(),
-    };
+    let sdkman_dir: PathBuf = infer_sdkman_dir();
+    let os_string = sdkman_dir.to_owned().into_os_string();
+    let all_candidates = known_candidates(sdkman_dir);
 
-    let candidates_file = format!("{}/var/candidates", sdkman_dir);
-    let valid_candidates = std::fs::read_to_string(candidates_file.as_str())
-        .expect("panic! the candidates file is missing");
-    if !valid_candidates.contains(candidate.as_str()) {
+    if !all_candidates.contains(&candidate.as_str()) {
         eprint!("{} is not a valid candidate!", candidate.bold());
         process::exit(1);
     }
 
-    let candidate_home = format!("{}/candidates/{}/{}", sdkman_dir, candidate, version);
+    let os_str = os_string.to_str().expect("could not interpret os string");
+    let candidate_home = format!("{}/candidates/{}/{}", os_str, candidate, version);
     let candidate_path = Path::new(candidate_home.as_str());
     if candidate_path.is_dir() {
         println!("{}", candidate_home);
