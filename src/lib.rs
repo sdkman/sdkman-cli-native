@@ -25,6 +25,10 @@ pub mod helpers {
             .unwrap()
     }
 
+    pub fn locate_and_read_file(base_dir: PathBuf, relative_path: PathBuf) -> Option<PathBuf> {
+        Some(PathBuf::from(base_dir).join(relative_path))
+    }
+
     pub fn read_file_content(path: PathBuf) -> Option<String> {
         match fs::read_to_string(path) {
             Ok(s) => Some(s),
