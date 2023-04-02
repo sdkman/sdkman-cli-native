@@ -39,7 +39,9 @@ pub mod helpers {
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
         let location = format!("{}/candidates", VAR_DIR);
         let relative_path = PathBuf::from(location);
-        let content = locate_and_read_file(sdkman_dir, relative_path).and_then(read_file_content).expect("panic! the candidates file is missing");
+        let content = locate_and_read_file(sdkman_dir, relative_path)
+            .and_then(read_file_content)
+            .expect("panic! the candidates file is missing");
         let line_str: &'static str = Box::leak(content.into_boxed_str());
         let mut fields = Vec::new();
         for field in line_str.split(',') {
@@ -94,7 +96,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn should_fail_reading_content_from_empty_file() {
+    fn should_fail_reading_file_content_from_empty_file() {
         let file = NamedTempFile::new().unwrap();
         let path = file.path().to_path_buf();
         let maybe_version = read_file_content(path);

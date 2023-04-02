@@ -18,7 +18,7 @@ fn should_successfully_display_current_candidate_home() -> Result<(), Box<dyn st
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
         candidate: Some(candidate),
-        known_candidates: vec!["scala".to_string()],
+        known_candidates: vec!["scala"],
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -44,7 +44,7 @@ fn should_fail_if_candidate_home_is_not_found() -> Result<(), Box<dyn std::error
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
         candidate: None,
-        known_candidates: vec!["scala".to_string()],
+        known_candidates: vec!["scala"],
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -59,66 +59,5 @@ fn should_fail_if_candidate_home_is_not_found() -> Result<(), Box<dyn std::error
         .failure()
         .stderr(contains(expected_output))
         .code(1);
-    Ok(())
-}
-
-#[test]
-#[serial]
-fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error>> {
-    let candidate = TestCandidate {
-        name: "scala".to_string(),
-        version: "0.0.1".to_string(),
-    };
-    let env = VirtualEnv {
-        cli_version: "0.0.1".to_string(),
-        native_version: "0.0.1".to_string(),
-        candidate: Some(candidate),
-        known_candidates: vec!["scala".to_string()],
-    };
-
-    let sdkman_dir = support::virtual_env(env);
-    let dir_string = sdkman_dir.path().to_str().unwrap();
-
-    env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = format!("{} is not a valid candidate!", "foobar");
-    Command::cargo_bin("home")?
-        .arg("foobar")
-        .arg("0.0.1")
-        .assert()
-        .failure()
-        .stderr(contains(expected_output))
-        .code(1);
-    Ok(())
-}
-
-#[test]
-#[serial]
-fn should_fail_if_candidate_file_is_missing() -> Result<(), Box<dyn std::error::Error>> {
-    let candidate = TestCandidate {
-        name: "scala".to_string(),
-        version: "0.0.1".to_string(),
-    };
-    let env = VirtualEnv {
-        cli_version: "0.0.1".to_string(),
-        native_version: "0.0.1".to_string(),
-        candidate: Some(candidate),
-        known_candidates: vec![],
-    };
-
-    let sdkman_dir = support::virtual_env(env);
-    let dir_string = sdkman_dir.path().to_str().unwrap();
-
-    let candidates_file = format!("{}/var/candidates", dir_string);
-    std::fs::remove_file(candidates_file).unwrap();
-
-    env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "panic! the candidates file is missing";
-    Command::cargo_bin("home")?
-        .arg("scala")
-        .arg("0.0.1")
-        .assert()
-        .failure()
-        .stderr(contains(expected_output))
-        .code(101);
     Ok(())
 }

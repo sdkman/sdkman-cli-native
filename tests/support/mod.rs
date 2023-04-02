@@ -14,7 +14,7 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidate: Option<TestCandidate>,
-    pub known_candidates: Vec<String>,
+    pub known_candidates: Vec<&'static str>,
 }
 
 pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
