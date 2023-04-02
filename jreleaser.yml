@@ -46,6 +46,7 @@ assemble:
             - 'broadcast{.exe,}'
             - 'help{.exe,}'
             - 'home{.exe,}'
+            - 'uninstall{.exe}'
             - 'version{.exe,}'
           excludes:
             - LICENSE
