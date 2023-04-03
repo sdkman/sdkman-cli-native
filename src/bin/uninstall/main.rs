@@ -1,9 +1,11 @@
+use std::fs;
+use std::path::PathBuf;
+use std::process;
+
 use clap::Parser;
 use colored::Colorize;
+
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
-use std::fs;
-use std::path::{Path, PathBuf};
-use std::process;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -31,11 +33,29 @@ fn main() {
     }
 
     let os_string = sdkman_dir.into_os_string();
-    let os_str = os_string.to_str().expect("panic! could not interpret os string");
-    let candidate_home = format!("{}/candidates/{}/{}", os_str, candidate, version);
-    let candidate_path = Path::new(candidate_home.as_str());
-    if candidate_path.is_dir() {
-        fs::remove_dir_all(candidate_path).expect("panic! could not delete directory");
+    let os_str = os_string
+        .to_str()
+        .expect("panic! could not interpret os string");
+
+    let candidate_version_path =
+        PathBuf::from(format!("{}/candidates/{}/{}", os_str, candidate, version));
+    let current_link_path = PathBuf::from(format!("{}/candidates/{}/current", os_str, candidate));
+    if current_link_path.is_dir() {
+        let read_link = fs::read_link(current_link_path).expect("panic! can't read link");
+        let canonical_link =
+            PathBuf::from(format!("{}/candidates/{}", os_str, candidate)).join(read_link);
+        if candidate_version_path == canonical_link {
+            eprint!(
+                "Stop! You are trying to delete the {} version of {}.",
+                "current".bold(),
+                candidate
+            );
+            process::exit(1);
+        }
+    }
+
+    if candidate_version_path.is_dir() {
+        fs::remove_dir_all(candidate_version_path).expect("panic! could not delete directory");
         println!("Removed {} {}", candidate.bold(), version.bold());
     } else {
         eprintln!(

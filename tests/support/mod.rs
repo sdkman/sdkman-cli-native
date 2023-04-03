@@ -1,6 +1,7 @@
 use std::fs::{create_dir_all, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use symlink::symlink_dir;
 
 use tempfile::{Builder, TempDir};
 
@@ -56,6 +57,12 @@ echo Running {}
             c.name.as_str(),
             content,
         );
+
+        let version_location = PathBuf::from(format!("candidates/{}/{}", c.name, c.version));
+        let current_link_location = PathBuf::from(format!("candidates/{}/current", c.name));
+        let absolute_version = sdkman_dir.path().join(version_location.as_path());
+        let absolute_current_link = sdkman_dir.path().join(current_link_location.as_path());
+        symlink_dir(absolute_version, absolute_current_link)
     });
 
     return sdkman_dir;
