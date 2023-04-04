@@ -1,4 +1,5 @@
 #[cfg(test)]
+use crate::support::TestCandidate;
 use sdkman_cli_native::helpers::known_candidates;
 use serial_test::serial;
 use support::{prepare_sdkman_dir, VirtualEnv};
@@ -8,16 +9,20 @@ mod support;
 #[test]
 #[serial]
 fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error>> {
+    let candidate = TestCandidate {
+        name: "scala",
+        versions: vec!["0.0.1"],
+        current_version: "0.0.1",
+    };
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: None,
-        known_candidates: vec!["scala", "spark"],
+        candidate: Some(candidate),
     };
 
     let sdkman_dir = support::virtual_env(env);
     let candidates = known_candidates(sdkman_dir.into_path());
-    let expected_candidate = vec!["scala", "spark"];
+    let expected_candidate = vec!["scala"];
 
     assert_eq!(candidates, expected_candidate);
 

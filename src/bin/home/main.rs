@@ -26,7 +26,7 @@ fn main() {
     let all_candidates = known_candidates(sdkman_dir);
 
     if !all_candidates.contains(&candidate.as_str()) {
-        eprint!("{} is not a valid candidate!", candidate.bold());
+        eprint!("{} is not a valid candidate.", candidate.bold());
         process::exit(1);
     }
 
@@ -37,7 +37,7 @@ fn main() {
         println!("{}", candidate_home);
     } else {
         eprintln!(
-            "{} {} is not installed on your system",
+            "{} {} is not installed on your system.",
             candidate.bold(),
             version.bold()
         );

@@ -28,7 +28,7 @@ fn main() {
 
     let all_candidates = known_candidates(sdkman_dir.to_owned());
     if !all_candidates.contains(&candidate.as_str()) {
-        eprint!("{} is not a valid candidate!", candidate.bold());
+        eprint!("{} is not a valid candidate.", candidate.bold());
         process::exit(1);
     }
 
@@ -46,9 +46,9 @@ fn main() {
             PathBuf::from(format!("{}/candidates/{}", os_str, candidate)).join(read_link);
         if candidate_version_path == canonical_link {
             eprint!(
-                "Stop! You are trying to delete the {} version of {}.",
+                "you are not permitted to delete the {} version of {}.",
                 "current".bold(),
-                candidate
+                candidate.bold()
             );
             process::exit(1);
         }
@@ -59,7 +59,7 @@ fn main() {
         println!("Removed {} {}", candidate.bold(), version.bold());
     } else {
         eprintln!(
-            "{} {} is not installed on your system",
+            "{} {} is not installed on your system.",
             candidate.bold(),
             version.bold()
         );

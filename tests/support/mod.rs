@@ -6,8 +6,9 @@ use symlink::symlink_dir;
 use tempfile::{Builder, TempDir};
 
 pub struct TestCandidate {
-    pub name: String,
-    pub version: String,
+    pub name: &'static str,
+    pub versions: Vec<&'static str>,
+    pub current_version: &'static str,
 }
 
 #[derive(Default)]
@@ -15,18 +16,21 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidate: Option<TestCandidate>,
-    pub known_candidates: Vec<&'static str>,
 }
 
 pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
     let sdkman_dir = prepare_sdkman_dir();
     let var_path = Path::new("var");
+
+    // script version file
     write_file(
         sdkman_dir.path(),
         var_path,
         "version",
         virtual_env.cli_version,
     );
+
+    // native version file
     write_file(
         sdkman_dir.path(),
         var_path,
@@ -34,36 +38,46 @@ pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
         virtual_env.native_version,
     );
 
-    let known_candidates = virtual_env.known_candidates.join(",");
+    // candidates file
     write_file(
         sdkman_dir.path(),
         Path::new("var"),
         "candidates",
-        known_candidates,
+        virtual_env
+            .candidate
+            .as_ref()
+            .map_or_else(|| "", |c| c.name)
+            .to_string(),
     );
 
-    virtual_env.candidate.map(|c| {
-        let location = format!("candidates/{}/{}/bin/", c.name, c.version);
-        let content = format!(
-            "\
+    if let Some(candidate) = virtual_env.candidate {
+        for version in candidate.versions {
+            let location = format!("candidates/{}/{}/bin/", candidate.name, version);
+            let content = format!(
+                "\
 #!/bin/bash
-echo Running {}
+echo Running {} {}
 ",
-            c.name
-        );
-        write_file(
-            sdkman_dir.path(),
-            Path::new(&location),
-            c.name.as_str(),
-            content,
-        );
+                candidate.name, version
+            );
+            write_file(
+                sdkman_dir.path(),
+                Path::new(&location),
+                candidate.name,
+                content,
+            );
+        }
 
-        let version_location = PathBuf::from(format!("candidates/{}/{}", c.name, c.version));
-        let current_link_location = PathBuf::from(format!("candidates/{}/current", c.name));
+        let version_location = PathBuf::from(format!(
+            "candidates/{}/{}",
+            candidate.name, candidate.current_version
+        ));
+        let current_link_location = PathBuf::from(format!("candidates/{}/current", candidate.name));
         let absolute_version = sdkman_dir.path().join(version_location.as_path());
         let absolute_current_link = sdkman_dir.path().join(current_link_location.as_path());
         symlink_dir(absolute_version, absolute_current_link)
-    });
+            .expect("cannot create current symlink");
+    }
 
     return sdkman_dir;
 }
