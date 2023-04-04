@@ -56,7 +56,7 @@ fn main() {
 
     if candidate_version_path.is_dir() {
         fs::remove_dir_all(candidate_version_path).expect("panic! could not delete directory");
-        println!("Removed {} {}", candidate.bold(), version.bold());
+        println!("removed {} {}", candidate.bold(), version.bold());
     } else {
         eprintln!(
             "{} {} is not installed on your system.",

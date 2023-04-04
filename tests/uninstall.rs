@@ -25,7 +25,7 @@ fn should_successfully_remove_unused_candidate_version() -> Result<(), Box<dyn s
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "Removed scala 0.0.1";
+    let expected_output = "removed scala 0.0.1";
     Command::cargo_bin("uninstall")?
         .arg("scala")
         .arg("0.0.1")
