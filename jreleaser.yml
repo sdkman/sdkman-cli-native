@@ -68,8 +68,8 @@ distributions:
 announce:
   twitter:
     active: NEVER
-    status: 'Released version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
+    status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
   mastodon:
     active: NEVER
     host: https://fosstodon.org
-    status: 'Released version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
+    status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
