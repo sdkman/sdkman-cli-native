@@ -67,9 +67,9 @@ distributions:
         platform: linux-aarch_64
 announce:
   twitter:
-    active: ALWAYS
+    active: RELEASE
     status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
   mastodon:
-    active: ALWAYS
+    active: RELEASE
     host: https://fosstodon.org
     status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
