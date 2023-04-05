@@ -4,6 +4,7 @@ use std::process;
 
 use clap::Parser;
 use colored::Colorize;
+use symlink::remove_symlink_dir;
 
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
 
@@ -13,6 +14,9 @@ use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
     about = "sdk subcommand to remove a specific candidate version"
 )]
 struct Args {
+    #[arg(short = 'f', long = "force")]
+    force: bool,
+
     #[arg(required(true))]
     candidate: String,
 
@@ -24,6 +28,7 @@ fn main() {
     let args = Args::parse();
     let candidate = args.candidate;
     let version = args.version;
+    let force = args.force;
     let sdkman_dir: PathBuf = infer_sdkman_dir();
 
     let all_candidates = known_candidates(sdkman_dir.to_owned());
@@ -41,14 +46,22 @@ fn main() {
         PathBuf::from(format!("{}/candidates/{}/{}", os_str, candidate, version));
     let current_link_path = PathBuf::from(format!("{}/candidates/{}/current", os_str, candidate));
     if current_link_path.is_dir() {
-        let read_link = fs::read_link(current_link_path).expect("panic! can't read link");
+        let read_link =
+            fs::read_link(current_link_path.to_owned()).expect("panic! can't read link");
         let canonical_link =
             PathBuf::from(format!("{}/candidates/{}", os_str, candidate)).join(read_link);
-        if candidate_version_path == canonical_link {
+        if candidate_version_path == canonical_link && force {
+            remove_symlink_dir(current_link_path).expect("panic! can't remove current symlink");
+        } else if candidate_version_path == canonical_link && !force {
             eprint!(
-                "you are not permitted to delete the {} version of {}.",
+                "\n{} {} is the {} version and should not be removed.",
+                candidate,
+                version,
                 "current".bold(),
-                candidate.bold()
+            );
+            println!(
+                "\n\nOverride with {}, but leaves the candidate unusable!",
+                "--force".italic()
             );
             process::exit(1);
         }

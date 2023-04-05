@@ -39,7 +39,8 @@ fn should_successfully_remove_unused_candidate_version() -> Result<(), Box<dyn s
 
 #[test]
 #[serial]
-fn should_fail_if_candidate_version_is_current() -> Result<(), Box<dyn std::error::Error>> {
+fn should_successfully_remove_current_candidate_version_when_forced(
+) -> Result<(), Box<dyn std::error::Error>> {
     let candidate = TestCandidate {
         name: "scala",
         versions: vec!["0.0.1", "0.0.2"],
@@ -56,7 +57,39 @@ fn should_fail_if_candidate_version_is_current() -> Result<(), Box<dyn std::erro
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = format!("you are not permitted to delete the current version of scala.");
+    let expected_output = "removed scala 0.0.2";
+    Command::cargo_bin("uninstall")?
+        .arg("scala")
+        .arg("0.0.2")
+        .arg("--force")
+        .assert()
+        .success()
+        .stdout(contains(expected_output))
+        .code(0);
+    Ok(())
+}
+
+#[test]
+#[serial]
+fn should_fail_if_candidate_version_is_current_when_not_forced(
+) -> Result<(), Box<dyn std::error::Error>> {
+    let candidate = TestCandidate {
+        name: "scala",
+        versions: vec!["0.0.1", "0.0.2"],
+        current_version: "0.0.2",
+    };
+
+    let env = VirtualEnv {
+        cli_version: "0.0.1".to_string(),
+        native_version: "0.0.1".to_string(),
+        candidate: Some(candidate),
+    };
+
+    let sdkman_dir = support::virtual_env(env);
+    let dir_string = sdkman_dir.path().to_str().unwrap();
+
+    env::set_var("SDKMAN_DIR", dir_string);
+    let expected_output = format!("scala 0.0.2 is the current version and should not be removed.");
     Command::cargo_bin("uninstall")?
         .arg("scala")
         .arg("0.0.2")
