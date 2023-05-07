@@ -4,6 +4,7 @@ use std::process;
 
 use clap::Parser;
 use colored::Colorize;
+use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
 use symlink::remove_symlink_dir;
 
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
@@ -37,19 +38,16 @@ fn main() {
         process::exit(1);
     }
 
-    let os_string = sdkman_dir.into_os_string();
-    let os_str = os_string
-        .to_str()
-        .expect("panic! could not interpret os string");
-
-    let candidate_version_path =
-        PathBuf::from(format!("{}/candidates/{}/{}", os_str, candidate, version));
-    let current_link_path = PathBuf::from(format!("{}/candidates/{}/current", os_str, candidate));
+    let candidate_path = sdkman_dir
+        .to_owned()
+        .join(CANDIDATES_DIR)
+        .join(candidate.to_owned());
+    let candidate_version_path = candidate_path.join(version.to_owned());
+    let current_link_path = candidate_path.join(CURRENT_DIR);
     if current_link_path.is_dir() {
         let read_link =
             fs::read_link(current_link_path.to_owned()).expect("panic! can't read link");
-        let canonical_link =
-            PathBuf::from(format!("{}/candidates/{}", os_str, candidate)).join(read_link);
+        let canonical_link = candidate_path.join(read_link);
         if candidate_version_path == canonical_link && force {
             remove_symlink_dir(current_link_path).expect("panic! can't remove current symlink");
         } else if candidate_version_path == canonical_link && !force {

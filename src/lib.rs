@@ -2,6 +2,8 @@ pub mod constants {
     pub const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
     pub const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
     pub const VAR_DIR: &str = "var";
+    pub const CANDIDATES_DIR: &str = "candidates";
+    pub const CURRENT_DIR: &str = "current";
 }
 
 pub mod helpers {
@@ -43,8 +45,7 @@ pub mod helpers {
     }
 
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
-        let location = format!("{}/candidates", VAR_DIR);
-        let relative_path = PathBuf::from(location);
+        let relative_path = PathBuf::from(VAR_DIR).join(PathBuf::from("candidates"));
         let absolute_path = absolute_path(sdkman_dir, relative_path).to_owned();
         let panic = format!(
             "the candidates file is missing: {}",
