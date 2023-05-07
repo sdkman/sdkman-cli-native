@@ -5,6 +5,7 @@ pub mod constants {
 }
 
 pub mod helpers {
+    use directories::UserDirs;
     use std::path::PathBuf;
     use std::{env, fs};
 
@@ -18,13 +19,18 @@ pub mod helpers {
     }
 
     fn fallback_sdkman_dir() -> PathBuf {
-        dirs::home_dir()
-            .map(|dir| dir.join(DEFAULT_SDKMAN_HOME))
+        UserDirs::new()
+            .map(|dir| dir.home_dir().join(DEFAULT_SDKMAN_HOME))
             .unwrap()
     }
 
-    pub fn locate_and_read_file(base_dir: PathBuf, relative_path: PathBuf) -> Option<PathBuf> {
-        Some(PathBuf::from(base_dir).join(relative_path))
+    pub fn absolute_path(base_dir: PathBuf, relative_path: PathBuf) -> PathBuf {
+        let absolute_path = base_dir.join(relative_path);
+        if absolute_path.exists() && absolute_path.is_absolute() {
+            absolute_path
+        } else {
+            panic!("not a valid path: {}", absolute_path.to_str().unwrap())
+        }
     }
 
     pub fn read_file_content(path: PathBuf) -> Option<String> {
@@ -39,9 +45,12 @@ pub mod helpers {
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
         let location = format!("{}/candidates", VAR_DIR);
         let relative_path = PathBuf::from(location);
-        let content = locate_and_read_file(sdkman_dir, relative_path)
-            .and_then(read_file_content)
-            .expect("panic! the candidates file is missing");
+        let absolute_path = absolute_path(sdkman_dir, relative_path).to_owned();
+        let panic = format!(
+            "the candidates file is missing: {}",
+            absolute_path.to_str().unwrap()
+        );
+        let content = read_file_content(absolute_path).expect(&panic);
         let line_str: &'static str = Box::leak(content.into_boxed_str());
         let mut fields = Vec::new();
         for field in line_str.split(',') {
@@ -54,13 +63,11 @@ pub mod helpers {
 
 #[cfg(test)]
 mod tests {
-
-    use serial_test::serial;
     use std::env;
+    use std::io::Write;
     use std::path::PathBuf;
 
-    use std::io::Write;
-
+    use serial_test::serial;
     use tempfile::NamedTempFile;
 
     use crate::constants::SDKMAN_DIR_ENV_VAR;

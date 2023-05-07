@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use colored::Colorize;
 use sdkman_cli_native::{
     constants::VAR_DIR,
-    helpers::{infer_sdkman_dir, locate_and_read_file, read_file_content},
+    helpers::{absolute_path, infer_sdkman_dir, read_file_content},
 };
 
 const CLI_VERSION_FILE: &str = "version";
@@ -18,10 +18,11 @@ fn main() {
     let version_file = var_dir.join(CLI_VERSION_FILE);
     let native_version_file = var_dir.join(NATIVE_VERSION_FILE);
 
-    let version =
-        locate_and_read_file(sdkman_dir.to_owned(), version_file).and_then(read_file_content);
-    let native_version = locate_and_read_file(sdkman_dir.to_owned(), native_version_file)
-        .and_then(read_file_content);
+    let absolute_version = absolute_path(sdkman_dir.to_owned(), version_file);
+    let version = read_file_content(absolute_version);
+
+    let absolute_native_version = absolute_path(sdkman_dir.to_owned(), native_version_file);
+    let native_version = read_file_content(absolute_native_version);
 
     match (version, native_version) {
         (Some(content), Some(native)) => println!(

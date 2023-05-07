@@ -11,7 +11,7 @@ clap = { version = "4.2.2", features = ["derive"] }
 colored = "2.0.0"
 dirs = "5.0.0"
 exitcode = "1.1.2"
-home = "0.5.4"
+directories = "5.0.0"
 predicates = "3.0.3"
 serial_test = "2.0.0"
 symlink = "0.1.0"
