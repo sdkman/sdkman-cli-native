@@ -1,7 +1,7 @@
 extern crate core;
 
 use colored::Colorize;
-use sdkman_cli_native::helpers::verify_absolute_path;
+use sdkman_cli_native::helpers::check_exists;
 use sdkman_cli_native::{
     constants::VAR_DIR,
     helpers::{infer_sdkman_dir, read_file_content},
@@ -34,6 +34,6 @@ fn main() {
 
 fn read_version_file(file_location: String) -> Option<String> {
     let version_path = PathBuf::from(file_location);
-    let verified_path = verify_absolute_path(version_path);
+    let verified_path = check_exists(version_path);
     read_file_content(verified_path)
 }

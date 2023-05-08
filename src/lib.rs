@@ -26,11 +26,11 @@ pub mod helpers {
             .unwrap()
     }
 
-    pub fn verify_absolute_path(absolute_path: PathBuf) -> PathBuf {
-        if absolute_path.exists() && absolute_path.is_absolute() {
-            absolute_path
+    pub fn check_exists(path: PathBuf) -> PathBuf {
+        if path.exists() {
+            path
         } else {
-            panic!("not a valid path: {}", absolute_path.to_str().unwrap())
+            panic!("not a valid path: {}", path.to_str().unwrap())
         }
     }
 
@@ -45,7 +45,7 @@ pub mod helpers {
 
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
         let absolute_path = sdkman_dir.join(VAR_DIR).join(CANDIDATES_DIR);
-        let verified_path = verify_absolute_path(absolute_path);
+        let verified_path = check_exists(absolute_path);
         let panic = format!(
             "the candidates file is missing: {}",
             verified_path.to_str().unwrap()
