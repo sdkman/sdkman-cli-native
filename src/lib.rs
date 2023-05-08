@@ -11,7 +11,7 @@ pub mod helpers {
     use std::path::PathBuf;
     use std::{env, fs};
 
-    use crate::constants::{DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR};
+    use crate::constants::{CANDIDATES_DIR, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR};
 
     pub fn infer_sdkman_dir() -> PathBuf {
         match env::var(SDKMAN_DIR_ENV_VAR) {
@@ -26,8 +26,7 @@ pub mod helpers {
             .unwrap()
     }
 
-    pub fn verified_absolute_path(base_dir: PathBuf, relative_path: PathBuf) -> PathBuf {
-        let absolute_path = base_dir.join(relative_path);
+    pub fn verify_absolute_path(absolute_path: PathBuf) -> PathBuf {
         if absolute_path.exists() && absolute_path.is_absolute() {
             absolute_path
         } else {
@@ -45,13 +44,13 @@ pub mod helpers {
     }
 
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
-        let relative_path = PathBuf::from(VAR_DIR).join(PathBuf::from("candidates"));
-        let absolute_path = verified_absolute_path(sdkman_dir, relative_path).to_owned();
+        let absolute_path = sdkman_dir.join(VAR_DIR).join(CANDIDATES_DIR);
+        let verified_path = verify_absolute_path(absolute_path);
         let panic = format!(
             "the candidates file is missing: {}",
-            absolute_path.to_str().unwrap()
+            verified_path.to_str().unwrap()
         );
-        let content = read_file_content(absolute_path).expect(&panic);
+        let content = read_file_content(verified_path).expect(&panic);
         let line_str: &'static str = Box::leak(content.into_boxed_str());
         let mut fields = Vec::new();
         for field in line_str.split(',') {
