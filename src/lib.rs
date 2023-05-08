@@ -26,7 +26,7 @@ pub mod helpers {
             .unwrap()
     }
 
-    pub fn absolute_path(base_dir: PathBuf, relative_path: PathBuf) -> PathBuf {
+    pub fn verified_absolute_path(base_dir: PathBuf, relative_path: PathBuf) -> PathBuf {
         let absolute_path = base_dir.join(relative_path);
         if absolute_path.exists() && absolute_path.is_absolute() {
             absolute_path
@@ -46,7 +46,7 @@ pub mod helpers {
 
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
         let relative_path = PathBuf::from(VAR_DIR).join(PathBuf::from("candidates"));
-        let absolute_path = absolute_path(sdkman_dir, relative_path).to_owned();
+        let absolute_path = verified_absolute_path(sdkman_dir, relative_path).to_owned();
         let panic = format!(
             "the candidates file is missing: {}",
             absolute_path.to_str().unwrap()
