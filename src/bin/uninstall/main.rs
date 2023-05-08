@@ -38,19 +38,19 @@ fn main() {
         process::exit(1);
     }
 
-    let candidate_path = sdkman_dir
-        .to_owned()
-        .join(CANDIDATES_DIR)
-        .join(candidate.to_owned());
-    let candidate_version_path = candidate_path.join(version.to_owned());
-    let current_link_path = candidate_path.join(CURRENT_DIR);
+    let inferred_dir = infer_sdkman_dir();
+    let sdkman_dir = inferred_dir.to_str().unwrap();
+
+    let candidate_dir = format!("{}/{}/{}", sdkman_dir, CANDIDATES_DIR, candidate);
+    let version_dir = format!("{}/{}", candidate_dir, version);
+    let version_path = PathBuf::from(version_dir);
+    let current_link_path = PathBuf::from(format!("{}/{}", candidate_dir, CURRENT_DIR));
     if current_link_path.is_dir() {
-        let read_link =
+        let canonical_link_path =
             fs::read_link(current_link_path.to_owned()).expect("panic! can't read link");
-        let canonical_link = candidate_path.join(read_link);
-        if candidate_version_path == canonical_link && force {
+        if version_path == canonical_link_path && force {
             remove_symlink_dir(current_link_path).expect("panic! can't remove current symlink");
-        } else if candidate_version_path == canonical_link && !force {
+        } else if version_path == canonical_link_path && !force {
             eprint!(
                 "\n{} {} is the {} version and should not be removed.",
                 candidate,
@@ -65,8 +65,8 @@ fn main() {
         }
     }
 
-    if candidate_version_path.is_dir() {
-        fs::remove_dir_all(candidate_version_path).expect("panic! could not delete directory");
+    if version_path.is_dir() {
+        fs::remove_dir_all(version_path).expect("panic! could not delete directory");
         println!("removed {} {}", candidate.bold(), version.bold());
     } else {
         eprintln!(
