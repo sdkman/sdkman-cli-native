@@ -1,8 +1,10 @@
+use std::process;
+
 use clap::Parser;
 use colored::Colorize;
-use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
-use std::path::{Path, PathBuf};
-use std::process;
+
+use sdkman_cli_native::constants::CANDIDATES_DIR;
+use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -21,14 +23,9 @@ fn main() {
     let args = Args::parse();
     let candidate = args.candidate;
     let version = args.version;
-    let sdkman_dir: PathBuf = infer_sdkman_dir();
-    let os_string = sdkman_dir.to_owned().into_os_string();
-    let all_candidates = known_candidates(sdkman_dir);
+    let sdkman_dir = infer_sdkman_dir();
 
-    if !all_candidates.contains(&candidate.as_str()) {
-        eprint!("{} is not a valid candidate.", candidate.bold());
-        process::exit(1);
-    }
+    validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
 
     let os_str = os_string.to_str().expect("could not interpret os string");
     let candidate_home = format!("{}/candidates/{}/{}", os_str, candidate, version);

@@ -7,9 +7,10 @@ pub mod constants {
 }
 
 pub mod helpers {
+    use colored::Colorize;
     use directories::UserDirs;
     use std::path::PathBuf;
-    use std::{env, fs};
+    use std::{env, fs, process};
 
     use crate::constants::{CANDIDATES_DIR, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR};
 
@@ -58,6 +59,13 @@ pub mod helpers {
         }
 
         fields
+    }
+
+    pub fn validate_candidate(all_candidates: Vec<&str>, candidate: &str) {
+        if !all_candidates.contains(&candidate) {
+            eprint!("{} is not a valid candidate.", candidate.bold());
+            process::exit(1);
+        }
     }
 }
 

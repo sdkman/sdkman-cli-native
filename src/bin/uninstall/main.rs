@@ -6,7 +6,7 @@ use colored::Colorize;
 use symlink::remove_symlink_dir;
 
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
-use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates};
+use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -31,11 +31,7 @@ fn main() {
     let force = args.force;
     let sdkman_dir = infer_sdkman_dir();
 
-    let all_candidates = known_candidates(sdkman_dir.to_owned());
-    if !all_candidates.contains(&candidate.as_str()) {
-        eprint!("{} is not a valid candidate.", candidate.bold());
-        process::exit(1);
-    }
+    validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
 
     let candidate_path = sdkman_dir.join(CANDIDATES_DIR).join(&candidate);
     let version_path = sdkman_dir.join(&candidate_path).join(&version);
