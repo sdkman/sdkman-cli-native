@@ -1,8 +1,8 @@
-use std::path::PathBuf;
-use std::process;
 use clap::Parser;
 use colored::Colorize;
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
+use std::path::PathBuf;
+use std::process;
 
 #[derive(Parser, Debug)]
 #[command(
