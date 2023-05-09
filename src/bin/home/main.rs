@@ -27,12 +27,11 @@ fn main() {
 
     validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
 
-    let candidate_path = sdkman_dir
-        .join(CANDIDATES_DIR)
-        .join(&candidate)
-        .join(&version);
+    let os_str = os_string.to_str().expect("could not interpret os string");
+    let candidate_home = format!("{}/candidates/{}/{}", os_str, candidate, version);
+    let candidate_path = Path::new(candidate_home.as_str());
     if candidate_path.is_dir() {
-        candidate_path.to_str().map(|dir| println!("{}", dir));
+        println!("{}", candidate_home);
     } else {
         eprintln!(
             "{} {} is not installed on your system.",
