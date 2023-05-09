@@ -1,9 +1,7 @@
+use std::path::PathBuf;
 use std::process;
-
 use clap::Parser;
 use colored::Colorize;
-
-use sdkman_cli_native::constants::CANDIDATES_DIR;
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
 
 #[derive(Parser, Debug)]
@@ -23,13 +21,13 @@ fn main() {
     let args = Args::parse();
     let candidate = args.candidate;
     let version = args.version;
-    let sdkman_dir = infer_sdkman_dir();
+    let sdkman_path = infer_sdkman_dir();
 
-    validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
+    validate_candidate(known_candidates(sdkman_path.to_owned()), &candidate);
 
-    let os_str = os_string.to_str().expect("could not interpret os string");
-    let candidate_home = format!("{}/candidates/{}/{}", os_str, candidate, version);
-    let candidate_path = Path::new(candidate_home.as_str());
+    let sdkman_dir = sdkman_path.to_str().unwrap();
+    let candidate_home = format!("{}/candidates/{}/{}", sdkman_dir, candidate, version);
+    let candidate_path = PathBuf::from(&candidate_home);
     if candidate_path.is_dir() {
         println!("{}", candidate_home);
     } else {
