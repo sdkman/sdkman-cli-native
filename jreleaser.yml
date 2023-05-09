@@ -42,7 +42,6 @@ assemble:
         - input: 'target/{{ osPlatformReplaced }}/release'
           output: libexec
           includes:
-            - 'broadcast{.exe,}'
             - 'help{.exe,}'
             - 'home{.exe,}'
             - 'uninstall{.exe,}'
