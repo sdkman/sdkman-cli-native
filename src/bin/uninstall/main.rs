@@ -37,22 +37,28 @@ fn main() {
     let version_path = sdkman_dir.join(&candidate_path).join(&version);
     let current_link_path = candidate_path.join(CURRENT_DIR);
     if current_link_path.is_dir() {
-        let canonical_link_path =
-            fs::read_link(current_link_path.to_owned()).expect("panic! can't read link");
-        if version_path == canonical_link_path && force {
-            remove_symlink_dir(current_link_path).expect("panic! can't remove current symlink");
-        } else if version_path == canonical_link_path && !force {
-            eprint!(
-                "\n{} {} is the {} version and should not be removed.",
-                candidate,
-                version,
-                "current".bold(),
-            );
-            println!(
-                "\n\nOverride with {}, but leaves the candidate unusable!",
-                "--force".italic()
-            );
-            process::exit(1);
+        match fs::read_link(current_link_path.to_owned()) {
+            Ok(relative_resolved_dir) => {
+                let resolved_link_path = candidate_path.join(relative_resolved_dir);
+                if (version_path == resolved_link_path) && force {
+                    remove_symlink_dir(current_link_path).expect("can't remove current symlink");
+                } else if (version_path == resolved_link_path) && !force {
+                    eprintln!(
+                        "\n{} {} is the {} version and should not be removed.",
+                        candidate.bold(),
+                        version.bold(),
+                        "current".italic(),
+                    );
+                    println!(
+                        "\n\nOverride with {}, but leaves the candidate unusable!",
+                        "--force".italic()
+                    );
+                    process::exit(1);
+                }
+            }
+            Err(e) => {
+                eprintln!("current link broken, stepping over: {}", e.to_string());
+            }
         }
     }
 
