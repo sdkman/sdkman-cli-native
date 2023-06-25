@@ -34,6 +34,14 @@ fn should_successfully_remove_unused_candidate_version() -> Result<(), Box<dyn s
         .stdout(contains(expected_output))
         .code(0);
 
+    let exists = sdkman_dir
+        .path()
+        .join("candidates")
+        .join("scala")
+        .join("0.0.1")
+        .exists();
+    assert!(!exists);
+
     Ok(())
 }
 
@@ -66,6 +74,15 @@ fn should_successfully_remove_current_candidate_version_when_forced(
         .success()
         .stdout(contains(expected_output))
         .code(0);
+
+    let exists = sdkman_dir
+        .path()
+        .join("candidates")
+        .join("scala")
+        .join("0.0.2")
+        .exists();
+    assert!(!exists);
+
     Ok(())
 }
 
