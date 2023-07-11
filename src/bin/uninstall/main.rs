@@ -1,4 +1,5 @@
 use std::fs;
+use std::fs::remove_dir_all;
 use std::process;
 
 use clap::Parser;
@@ -41,7 +42,12 @@ fn main() {
             Ok(relative_resolved_dir) => {
                 let resolved_link_path = candidate_path.join(relative_resolved_dir);
                 if (version_path == resolved_link_path) && force {
-                    remove_symlink_dir(current_link_path).expect("can't remove current symlink");
+                    remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
+                        remove_dir_all(current_link_path.to_owned()).expect(&format!(
+                            "cannot remove current directory for {}",
+                            candidate
+                        ))
+                    });
                 } else if (version_path == resolved_link_path) && !force {
                     eprintln!(
                         "\n{} {} is the {} version and should not be removed.",
@@ -63,7 +69,7 @@ fn main() {
     }
 
     if version_path.is_dir() {
-        fs::remove_dir_all(version_path).expect("panic! could not delete directory");
+        remove_dir_all(version_path).expect("panic! could not delete directory");
         println!("removed {} {}", candidate.bold(), version.bold());
     } else {
         eprintln!(
