@@ -1,8 +1,10 @@
+use std::process;
+
 use clap::Parser;
 use colored::Colorize;
+
+use sdkman_cli_native::constants::CANDIDATES_DIR;
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
-use std::path::PathBuf;
-use std::process;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -21,15 +23,22 @@ fn main() {
     let args = Args::parse();
     let candidate = args.candidate;
     let version = args.version;
-    let sdkman_path = infer_sdkman_dir();
+    let sdkman_dir = infer_sdkman_dir();
 
-    validate_candidate(known_candidates(sdkman_path.to_owned()), &candidate);
+    let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
 
-    let sdkman_dir = sdkman_path.to_str().unwrap();
-    let candidate_home = format!("{}/candidates/{}/{}", sdkman_dir, candidate, version);
-    let candidate_path = PathBuf::from(&candidate_home);
-    if candidate_path.is_dir() {
-        println!("{}", candidate_home);
+    let candidate_path = sdkman_dir
+        .join(CANDIDATES_DIR)
+        .join(&candidate)
+        .join(&version);
+    if candidate_path.exists() && candidate_path.is_dir() {
+        println!(
+            "{}/{}/{}/{}",
+            sdkman_dir.to_str().unwrap(),
+            CANDIDATES_DIR,
+            &candidate,
+            &version
+        );
     } else {
         eprintln!(
             "{} {} is not installed on your system.",
