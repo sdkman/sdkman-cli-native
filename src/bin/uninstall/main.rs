@@ -7,7 +7,9 @@ use colored::Colorize;
 use symlink::remove_symlink_dir;
 
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
-use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
+use sdkman_cli_native::helpers::{
+    infer_sdkman_dir, known_candidates, validate_candidate, validate_version_path,
+};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -35,7 +37,7 @@ fn main() {
     let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
 
     let candidate_path = sdkman_dir.join(CANDIDATES_DIR).join(&candidate);
-    let version_path = sdkman_dir.join(&candidate_path).join(&version);
+    let version_path = validate_version_path(sdkman_dir, &candidate, &version);
     let current_link_path = candidate_path.join(CURRENT_DIR);
     if current_link_path.is_dir() {
         match fs::read_link(current_link_path.to_owned()) {
@@ -68,15 +70,9 @@ fn main() {
         }
     }
 
-    if version_path.is_dir() {
-        remove_dir_all(version_path).expect("panic! could not delete directory");
-        println!("removed {} {}", candidate.bold(), version.bold());
-    } else {
-        eprintln!(
-            "{} {} is not installed on your system.",
-            candidate.bold(),
-            version.bold()
-        );
-        process::exit(1);
-    }
+    remove_dir_all(version_path)
+        .map(|_| {
+            println!("removed {} {}", candidate.bold(), version.bold());
+        })
+        .expect("panic! could not delete directory");
 }

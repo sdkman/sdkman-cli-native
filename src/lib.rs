@@ -68,6 +68,22 @@ pub mod helpers {
         if !all_candidates.contains(&candidate) {
             eprint!("{} is not a valid candidate.", candidate.bold());
             process::exit(1);
+        } else {
+            candidate.to_string()
+        }
+    }
+
+    pub fn validate_version_path(base_dir: PathBuf, candidate: &str, version: &str) -> PathBuf {
+        let version_path = base_dir.join(CANDIDATES_DIR).join(candidate).join(version);
+        if version_path.exists() && version_path.is_dir() {
+            version_path
+        } else {
+            eprint!(
+                "{} {} is not installed on your system",
+                candidate.bold(),
+                version.bold()
+            );
+            process::exit(1)
         }
     }
 }
