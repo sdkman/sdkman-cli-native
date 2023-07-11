@@ -1,10 +1,7 @@
-use fs::symlink;
 use std::fs::remove_dir_all;
-use std::os::unix::fs;
-
 use clap::Parser;
 use colored::Colorize;
-use symlink::remove_symlink_dir;
+use symlink::{remove_symlink_dir, symlink_dir};
 
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
 use sdkman_cli_native::helpers::{
@@ -43,7 +40,7 @@ fn main() {
             ))
         })
     }
-    symlink(version_path, current_link_path)
+    symlink_dir(version_path, current_link_path)
         .map(|_| {
             println!(
                 "set {} {} as {} version",
