@@ -31,7 +31,7 @@ fn main() {
     let force = args.force;
     let sdkman_dir = infer_sdkman_dir();
 
-    validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
+    let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
 
     let candidate_path = sdkman_dir.join(CANDIDATES_DIR).join(&candidate);
     let version_path = sdkman_dir.join(&candidate_path).join(&version);

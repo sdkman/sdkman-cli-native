@@ -2,6 +2,7 @@ pub mod constants {
     pub const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
     pub const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
     pub const VAR_DIR: &str = "var";
+    pub const CANDIDATES_FILE: &str = "candidates";
     pub const CANDIDATES_DIR: &str = "candidates";
     pub const CURRENT_DIR: &str = "current";
 }
@@ -12,7 +13,9 @@ pub mod helpers {
     use std::path::PathBuf;
     use std::{env, fs, process};
 
-    use crate::constants::{CANDIDATES_DIR, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR};
+    use crate::constants::{
+        CANDIDATES_DIR, CANDIDATES_FILE, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR,
+    };
 
     pub fn infer_sdkman_dir() -> PathBuf {
         match env::var(SDKMAN_DIR_ENV_VAR) {
@@ -27,8 +30,8 @@ pub mod helpers {
             .unwrap()
     }
 
-    pub fn check_exists(path: PathBuf) -> PathBuf {
-        if path.exists() {
+    pub fn check_file_exists(path: PathBuf) -> PathBuf {
+        if path.exists() && path.is_file() {
             path
         } else {
             panic!("not a valid path: {}", path.to_str().unwrap())
@@ -45,8 +48,8 @@ pub mod helpers {
     }
 
     pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
-        let absolute_path = sdkman_dir.join(VAR_DIR).join(CANDIDATES_DIR);
-        let verified_path = check_exists(absolute_path);
+        let absolute_path = sdkman_dir.join(VAR_DIR).join(CANDIDATES_FILE);
+        let verified_path = check_file_exists(absolute_path);
         let panic = format!(
             "the candidates file is missing: {}",
             verified_path.to_str().unwrap()
@@ -61,7 +64,7 @@ pub mod helpers {
         fields
     }
 
-    pub fn validate_candidate(all_candidates: Vec<&str>, candidate: &str) {
+    pub fn validate_candidate(all_candidates: Vec<&str>, candidate: &str) -> String {
         if !all_candidates.contains(&candidate) {
             eprint!("{} is not a valid candidate.", candidate.bold());
             process::exit(1);
