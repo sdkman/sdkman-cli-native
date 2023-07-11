@@ -1,6 +1,6 @@
-use std::fs::remove_dir_all;
 use clap::Parser;
 use colored::Colorize;
+use std::fs::remove_dir_all;
 use symlink::{remove_symlink_dir, symlink_dir};
 
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
