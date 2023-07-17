@@ -1,5 +1,7 @@
 use clap::Parser;
 use colored::Colorize;
+use fs_extra::copy_items;
+use fs_extra::dir::CopyOptions;
 use std::fs::{copy, remove_dir_all};
 use symlink::{remove_symlink_dir, symlink_dir};
 
@@ -33,14 +35,14 @@ fn main() {
         .join(CURRENT_DIR);
 
     if current_link_path.exists() {
-        remove_symlink_dir(current_link_path.to_owned()).unwrap_or_else(|_| {
-            remove_dir_all(current_link_path.to_owned()).expect(&format!(
+        remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
+            remove_dir_all(&current_link_path).expect(&format!(
                 "cannot remove current directory for {}",
                 candidate
             ))
         })
     }
-    symlink_dir(version_path.to_owned(), current_link_path.to_owned())
+    symlink_dir(&version_path, &current_link_path)
         .map(|_| {
             println!(
                 "set {} {} as {} version",
@@ -50,6 +52,10 @@ fn main() {
             )
         })
         .unwrap_or_else(|_| {
-            copy(version_path, current_link_path).expect("cannot copy directory");
+            let options = CopyOptions::new();
+            let mut version_paths = Vec::new();
+            version_paths.push(&version_path);
+            copy_items(&version_paths, current_link_path, &options)
+                .expect("failed to copy directory");
         })
 }
