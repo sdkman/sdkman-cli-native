@@ -1,6 +1,6 @@
 use clap::Parser;
 use colored::Colorize;
-use std::fs::remove_dir_all;
+use std::fs::{copy, remove_dir_all};
 use symlink::{remove_symlink_dir, symlink_dir};
 
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
@@ -40,7 +40,7 @@ fn main() {
             ))
         })
     }
-    symlink_dir(version_path, current_link_path)
+    symlink_dir(version_path.to_owned(), current_link_path.to_owned())
         .map(|_| {
             println!(
                 "set {} {} as {} version",
@@ -49,5 +49,7 @@ fn main() {
                 "default".italic()
             )
         })
-        .expect("cannot create symlink");
+        .unwrap_or_else(|_| {
+            copy(version_path, current_link_path).expect("cannot copy directory");
+        })
 }
