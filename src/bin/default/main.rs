@@ -2,10 +2,11 @@ use clap::Parser;
 use colored::Colorize;
 use fs_extra::copy_items;
 use fs_extra::dir::CopyOptions;
-use std::fs::{copy, remove_dir_all};
+use std::fs;
+use std::fs::remove_dir_all;
 use symlink::{remove_symlink_dir, symlink_dir};
 
-use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
+use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR};
 use sdkman_cli_native::helpers::{
     infer_sdkman_dir, known_candidates, validate_candidate, validate_version_path,
 };
@@ -27,6 +28,7 @@ fn main() {
     let candidate = args.candidate;
     let version = args.version;
     let sdkman_dir = infer_sdkman_dir();
+    let tmp_dir = sdkman_dir.join(TMP_DIR);
     let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
     let version_path = validate_version_path(sdkman_dir.to_owned(), &candidate, &version);
     let current_link_path = sdkman_dir
@@ -42,20 +44,25 @@ fn main() {
             ))
         })
     }
-    symlink_dir(&version_path, &current_link_path)
-        .map(|_| {
-            println!(
-                "set {} {} as {} version",
-                &candidate.bold(),
-                &version.bold(),
-                "default".italic()
-            )
-        })
-        .unwrap_or_else(|_| {
-            let options = CopyOptions::new();
-            let mut version_paths = Vec::new();
-            version_paths.push(&version_path);
-            copy_items(&version_paths, current_link_path, &options)
-                .expect("failed to copy directory");
-        })
+    println!(
+        "setting {} {} as the {} version for all shells",
+        &candidate.bold(),
+        &version.bold(),
+        "default".italic()
+    );
+    symlink_dir(&version_path, &current_link_path).unwrap_or_else(|_| {
+        let options = CopyOptions::new();
+        let mut version_paths = Vec::new();
+        let version_path_string = version_path.into_os_string().into_string().unwrap();
+        version_paths.push(version_path_string);
+
+        copy_items(&version_paths, &tmp_dir, &options).expect("cannot copy to tmp folder");
+        let tmp_version_path = tmp_dir.join(&version);
+        fs::rename(tmp_version_path, current_link_path).expect("cannot rename copied folder");
+        let error_message = format!(
+            "cannot create {} symlink, fall back to copy!",
+            "current".italic()
+        );
+        println!("{}", error_message.bold())
+    })
 }

@@ -25,7 +25,7 @@ fn should_set_an_installed_version_as_default() -> Result<(), Box<dyn std::error
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "set scala 0.0.2 as default";
+    let expected_output = "setting scala 0.0.2 as the default version for all shells";
     Command::cargo_bin("default")?
         .arg("scala")
         .arg("0.0.2")
@@ -65,7 +65,7 @@ fn should_reset_the_current_default_version_as_default() -> Result<(), Box<dyn s
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "set scala 0.0.1 as default version";
+    let expected_output = "setting scala 0.0.1 as the default version for all shells";
     Command::cargo_bin("default")?
         .arg("scala")
         .arg("0.0.1")
@@ -90,30 +90,28 @@ fn should_reset_the_current_default_version_as_default() -> Result<(), Box<dyn s
 #[test]
 #[serial]
 fn should_not_set_an_uninstalled_version_as_default() -> Result<(), Box<dyn std::error::Error>> {
-    {
-        let candidate = TestCandidate {
-            name: "scala",
-            versions: vec!["0.0.1"],
-            current_version: "0.0.1",
-        };
-        let env = VirtualEnv {
-            cli_version: "0.0.1".to_string(),
-            native_version: "0.0.1".to_string(),
-            candidate: Some(candidate),
-        };
+    let candidate = TestCandidate {
+        name: "scala",
+        versions: vec!["0.0.1"],
+        current_version: "0.0.1",
+    };
+    let env = VirtualEnv {
+        cli_version: "0.0.1".to_string(),
+        native_version: "0.0.1".to_string(),
+        candidate: Some(candidate),
+    };
 
-        let sdkman_dir = support::virtual_env(env);
-        let dir_string = sdkman_dir.path().to_str().unwrap();
+    let sdkman_dir = support::virtual_env(env);
+    let dir_string = sdkman_dir.path().to_str().unwrap();
 
-        env::set_var("SDKMAN_DIR", dir_string);
-        let expected_output = "scala 0.0.2 is not installed on your system";
-        Command::cargo_bin("default")?
-            .arg("scala")
-            .arg("0.0.2")
-            .assert()
-            .failure()
-            .stderr(contains(expected_output))
-            .code(1);
-        Ok(())
-    }
+    env::set_var("SDKMAN_DIR", dir_string);
+    let expected_output = "scala 0.0.2 is not installed on your system";
+    Command::cargo_bin("default")?
+        .arg("scala")
+        .arg("0.0.2")
+        .assert()
+        .failure()
+        .stderr(contains(expected_output))
+        .code(1);
+    Ok(())
 }
