@@ -39,13 +39,13 @@ fn main() {
     if current_link_path.exists() {
         remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
             remove_dir_all(&current_link_path).expect(&format!(
-                "cannot remove current directory for {}",
+                "cannot remove current directory for {}.",
                 candidate
             ))
         })
     }
     println!(
-        "setting {} {} as the {} version for all shells",
+        "setting {} {} as the {} version for all shells.",
         &candidate.bold(),
         &version.bold(),
         "default".italic()
@@ -56,9 +56,9 @@ fn main() {
         let version_path_string = version_path.into_os_string().into_string().unwrap();
         version_paths.push(version_path_string);
 
-        copy_items(&version_paths, &tmp_dir, &options).expect("cannot copy to tmp folder");
+        copy_items(&version_paths, &tmp_dir, &options).expect("cannot copy to tmp folder.");
         let tmp_version_path = tmp_dir.join(&version);
-        fs::rename(tmp_version_path, current_link_path).expect("cannot rename copied folder");
+        fs::rename(tmp_version_path, current_link_path).expect("cannot rename copied folder.");
         let error_message = format!(
             "cannot create {} symlink, fall back to copy!",
             "current".italic()

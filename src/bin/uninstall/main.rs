@@ -46,7 +46,7 @@ fn main() {
                 if (version_path == resolved_link_path) && force {
                     remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
                         remove_dir_all(current_link_path.to_owned()).expect(&format!(
-                            "cannot remove current directory for {}",
+                            "cannot remove current directory for {}.",
                             candidate
                         ))
                     });
@@ -72,7 +72,7 @@ fn main() {
 
     remove_dir_all(version_path)
         .map(|_| {
-            println!("removed {} {}", candidate.bold(), version.bold());
+            println!("removed {} {}.", candidate.bold(), version.bold());
         })
-        .expect("panic! could not delete directory");
+        .expect("panic! could not delete directory.");
 }
