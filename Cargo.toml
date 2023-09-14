@@ -6,7 +6,7 @@ publish = false
 
 [dependencies]
 assert_cmd = "2.0.12"
-proc-macro2 = "1.0.66"
+proc-macro2 = "1.0.67"
 clap = { version = "4.4.0", features = ["derive"] }
 colored = "2.0.4"
 directories = "5.0.0"
