@@ -217,7 +217,6 @@ sdkman_curl_connect_timeout=7
 sdkman_curl_max_time=10
 sdkman_debug_mode=false
 sdkman_insecure_ssl=false
-sdkman_rosetta2_compatible=false
 sdkman_selfupdate_feature=true
 ---";
     Help {
@@ -588,7 +587,6 @@ CONFIGURATION
     sdkman_curl_max_time=10
     sdkman_debug_mode=false
     sdkman_insecure_ssl=false
-    sdkman_rosetta2_compatible=false
     sdkman_selfupdate_feature=true
     ---
 
