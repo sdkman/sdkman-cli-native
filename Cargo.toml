@@ -8,7 +8,7 @@ publish = false
 assert_cmd = "2.0.12"
 proc-macro2 = "1.0.73"
 clap = { version = "4.4.12", features = ["derive"] }
-colored = "2.0.4"
+colored = "2.1.0"
 directories = "5.0.0"
 dirs = "5.0.1"
 exitcode = "1.1.2"
