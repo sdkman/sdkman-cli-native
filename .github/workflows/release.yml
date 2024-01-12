@@ -37,7 +37,7 @@ jobs:
           profile: minimal
 
       - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@v2.7.0
         with:
           cache-targets: "false"
 
