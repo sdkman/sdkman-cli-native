@@ -12,7 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ self-hosted, windows-latest, macos-latest ]
+        os: [ ubuntu-20.04, windows-latest, macos-latest ]
 
     runs-on: ${{ matrix.os }}
 
