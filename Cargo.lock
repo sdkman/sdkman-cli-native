@@ -597,7 +597,7 @@ checksum = "b84345e4c9bd703274a082fb80caaa99b7612be48dfaa1dd9266577ec412309d"
 
 [[package]]
 name = "sdkman-cli-native"
-version = "0.5.6"
+version = "0.5.7"
 dependencies = [
  "assert_cmd",
  "clap",
