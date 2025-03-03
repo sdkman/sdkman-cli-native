@@ -55,15 +55,15 @@ distributions:
     executable:
       windowsExtension: exe
     artifacts:
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64-apple-darwin.zip'
+      - path: 'artifacts-aarch64-apple-darwin/{{distributionName}}-{{projectVersion}}-aarch64-apple-darwin.zip'
         platform: osx-aarch_64
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-x86_64-apple-darwin.zip'
+      - path: 'artifacts-x86_64-apple-darwin/{{distributionName}}-{{projectVersion}}-x86_64-apple-darwin.zip'
         platform: osx-x86_64
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-x86_64-pc-windows-msvc.zip'
+      - path: 'artifacts-x86_64-pc-windows-msvc/{{distributionName}}-{{projectVersion}}-x86_64-pc-windows-msvc.zip'
         platform: windows-x86_64
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-x86_64-unknown-linux-gnu.zip'
+      - path: 'artifacts-x86_64-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-x86_64-unknown-linux-gnu.zip'
         platform: linux-x86_64
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64-unknown-linux-gnu.zip'
+      - path: 'artifacts-aarch64-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-aarch64-unknown-linux-gnu.zip'
         platform: linux-aarch_64
 announce:
   twitter:

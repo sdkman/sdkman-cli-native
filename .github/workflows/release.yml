@@ -132,7 +132,7 @@ jobs:
         uses: jreleaser/release-action@v2
         with:
           version: latest
-          arguments: release -PartifactsDir=artifacts-* -PskipArchiveResolver
+          arguments: release -PskipArchiveResolver
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
