@@ -1,6 +1,3 @@
-environment:
-  properties:
-    artifactsDir: out/jreleaser/assemble/sdkman-cli-native/archive
 project:
   name: sdkman
   description: SDKMAN! native extensions
@@ -18,6 +15,7 @@ platform:
     osx-x86_64: x86_64-apple-darwin
     osx-aarch_64: aarch64-apple-darwin
     linux-x86_64: x86_64-unknown-linux-gnu
+    linux-x86_32: x86_32-unknown-linux-gnu
     linux-aarch_64: aarch64-unknown-linux-gnu
     windows-x86_64: x86_64-pc-windows-msvc
 release:
@@ -63,6 +61,8 @@ distributions:
         platform: windows-x86_64
       - path: 'artifacts-x86_64-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-x86_64-unknown-linux-gnu.zip'
         platform: linux-x86_64
+      - path: 'artifacts-x86_32-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-x86_32-unknown-linux-gnu.zip'
+        platform: linux-x86_32
       - path: 'artifacts-aarch64-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-aarch64-unknown-linux-gnu.zip'
         platform: linux-aarch_64
 announce:
