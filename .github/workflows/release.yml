@@ -104,7 +104,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: artifacts
+          name: artifacts-${{ matrix.job.target }}
           path: |
             out/jreleaser/assemble/sdkman-cli-native/archive/*.zip
       - name: JReleaser output
@@ -126,13 +126,13 @@ jobs:
           fetch-depth: 0
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Release
         uses: jreleaser/release-action@v2
         with:
           version: latest
-          arguments: release -PartifactsDir=artifacts -PskipArchiveResolver
+          arguments: release -PartifactsDir=artifacts-${{ matrix.job.target }} -PskipArchiveResolver
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -148,7 +148,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jreleaser-release
+          name: jreleaser-release-${{ matrix.job.target }}
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
