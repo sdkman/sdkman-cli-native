@@ -4,7 +4,7 @@ use colored::Colorize;
 
 use sdkman_cli_native::{
     constants::VAR_DIR,
-    helpers::{infer_sdkman_dir, read_file_content, check_file_exists},
+    helpers::{check_file_exists, infer_sdkman_dir, read_file_content},
 };
 const CLI_VERSION_FILE: &str = "version";
 const NATIVE_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -15,9 +15,11 @@ fn main() {
     let cli_version = read_file_content(check_file_exists(cli_version_file));
 
     println!(
-        "\n{}\nscript: {}\nnative: {}",
+        "\n{}\nscript: {}\nnative: {} ({} {})\n",
         "SDKMAN!".bold().yellow(),
         cli_version.expect("Failed to read CLI version file"),
-        NATIVE_VERSION
+        NATIVE_VERSION,
+        std::env::consts::OS,
+        std::env::consts::ARCH
     );
 }

@@ -71,3 +71,34 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
     Command::cargo_bin("version")?.assert().failure().code(101);
     Ok(())
 }
+
+#[test]
+#[serial]
+fn should_include_os_and_arch_info() -> Result<(), Box<dyn std::error::Error>> {
+    let cli_version = "5.0.0";
+    let native_version = env!("CARGO_PKG_VERSION");
+
+    let env = VirtualEnv {
+        cli_version: cli_version.to_string(),
+        native_version: native_version.to_string(),
+        ..Default::default()
+    };
+
+    let sdkman_dir = support::virtual_env(env);
+    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
+
+    // Get the expected OS and architecture strings
+    let os = std::env::consts::OS;
+    let arch = std::env::consts::ARCH;
+
+    let contains_os = predicate::str::contains(format!("{}", os));
+    let contains_arch = predicate::str::contains(format!("{}", arch));
+
+    Command::cargo_bin("version")?
+        .assert()
+        .success()
+        .stdout(contains_os.and(contains_arch))
+        .code(0);
+
+    Ok(())
+}
