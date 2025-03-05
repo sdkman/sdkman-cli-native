@@ -12,13 +12,13 @@ if [[ -z "$MONGO_URL" || -z "$MONGO_USERNAME" || -z "$MONGO_PASSWORD" || -z "$RE
 else
   echo "Releasing $RELEASE_CHANNEL: $RELEASE_VERSION"
   case "$RELEASE_CHANNEL" in
-    beta)   NATIVE_FIELD="betaNativeCliVersion" ;;
-    stable) NATIVE_FIELD="stableNativeCliVersion" ;;
+    beta)   UPDATE_OBJECT="{ \"betaNativeCliVersion\": \"$RELEASE_VERSION\"}" ;;
+    stable) UPDATE_OBJECT="{ \"betaNativeCliVersion\": \"$RELEASE_VERSION\", \"stableNativeCliVersion\": \"$RELEASE_VERSION\"}" ;;
   esac
-  echo "Updating field: $NATIVE_FIELD"
+  echo "db.application.updateOne, will set object: $UPDATE_OBJECT"
   docker run mongo:3.2 mongo "${MONGO_URL}" \
     --username="${MONGO_USERNAME}" \
     --password="${MONGO_PASSWORD}" \
     --quiet \
-    --eval "db.application.updateOne({}, {\$set: { \"$NATIVE_FIELD\": \"$RELEASE_VERSION\"}});"
+    --eval "db.application.updateOne({}, {\$set: $UPDATE_OBJECT});"
 fi
