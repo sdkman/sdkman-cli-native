@@ -21,15 +21,6 @@ platform:
 release:
   github:
     overwrite: true
-    tagName: '{{projectVersion}}'
-    releaseName: 'SDKMAN! Native Extensions {{projectVersion}}'
-    prerelease:
-      enabled: '{{#regexMatch projectVersion "^[0-9]+\\.[0-9]+\\.[1-9][0-9]*$"}}true{{/regexMatch}}' # If patch > 0, mark as prerelease
-    milestone:
-      name: '{{projectVersion}}'
-    labels:
-      - '{{#regexMatch projectVersion "^[0-9]+\\.[0-9]+\\.0$"}}stable{{/regexMatch}}'
-      - '{{#regexMatch projectVersion "^[0-9]+\\.[0-9]+\\.[1-9][0-9]*$"}}beta{{/regexMatch}}'
     changelog:
       formatted: ALWAYS
       preset: conventional-commits
