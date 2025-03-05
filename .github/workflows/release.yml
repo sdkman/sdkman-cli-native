@@ -12,6 +12,14 @@ on:
           - "minor"
           - "major"
         default: "patch"
+      channel:
+        type: choice
+        description: "Release channel"
+        required: true
+        options:
+          - "beta"
+          - "stable"
+        default: "beta"
 
 jobs:
   prerelease:
@@ -165,5 +173,6 @@ jobs:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          CARGO_RELEASE_TAG: ${{ needs.prerelease.outputs.VERSION }}
-        run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "$CARGO_RELEASE_TAG"
+          RELEASE_VERSION: ${{ needs.prerelease.outputs.VERSION }}
+          RELEASE_CHANNEL: ${{ github.event.inputs.channel }}
+        run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "$RELEASE_VERSION" "$RELEASE_CHANNEL"
