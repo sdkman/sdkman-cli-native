@@ -58,6 +58,7 @@ jobs:
         shell: bash
         run: |
           version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
+          echo "Setting VERSION to $version"
           echo ::set-output name=VERSION::$(echo "$version")
   build:
     needs: [ prerelease ]
@@ -85,7 +86,13 @@ jobs:
           override: true
           profile: minimal
 
-      - uses: actions-rs/cargo@v1
+      - name: Clean
+        uses: actions-rs/cargo@v1
+        with:
+          command: clean
+
+      - name: Build
+        uses: actions-rs/cargo@v1
         with:
           use-cross: ${{ matrix.job.use-cross }}
           command: build
