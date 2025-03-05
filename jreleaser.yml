@@ -7,7 +7,7 @@ project:
     - Oliver Weiler
   license: Apache-2.0
   links:
-    homepage: 'https://github.com/sdkman/sdkman-native-cli'
+    homepage: 'https://github.com/sdkman/sdkman-cli-native'
     license: 'https://spdx.org/licenses/Apache-2.0.html'
   inceptionYear: 2021
 platform:
