@@ -14,7 +14,7 @@ mod support;
 fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>> {
     let prefix = "SDKMAN!";
     let cli_version = "5.0.0";
-    let native_version = "0.1.0";
+    let native_version = env!("CARGO_PKG_VERSION");
 
     let header = format!("\n{}", prefix);
     let env = VirtualEnv {
@@ -43,33 +43,7 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
 #[test]
 #[serial]
 fn should_panic_if_version_file_not_present() -> Result<(), Box<dyn std::error::Error>> {
-    let native_version = "0.1.0".to_string();
-
     let sdkman_dir = support::prepare_sdkman_dir();
-    let var_path = Path::new("var");
-
-    support::write_file(
-        sdkman_dir.path(),
-        var_path,
-        "version_native",
-        native_version,
-    );
-
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
-
-    Command::cargo_bin("version")?.assert().failure().code(101);
-    Ok(())
-}
-
-#[test]
-#[serial]
-fn should_panic_if_native_version_file_not_present() -> Result<(), Box<dyn std::error::Error>> {
-    let version = "5.0.0".to_string();
-
-    let sdkman_dir = support::prepare_sdkman_dir();
-    let var_path = Path::new("var");
-
-    support::write_file(sdkman_dir.path(), var_path, "version", version);
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
@@ -94,27 +68,6 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    Command::cargo_bin("version")?.assert().failure().code(78);
-    Ok(())
-}
-
-#[test]
-#[serial]
-fn should_panic_if_native_version_file_empty() -> Result<(), Box<dyn std::error::Error>> {
-    let sdkman_dir = support::prepare_sdkman_dir();
-    let var_path = Path::new("var");
-
-    support::write_file(sdkman_dir.path(), var_path, "version", "5.0.0".to_string());
-
-    support::write_file(
-        sdkman_dir.path(),
-        var_path,
-        "version_native",
-        "".to_string(),
-    );
-
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
-
-    Command::cargo_bin("version")?.assert().failure().code(78);
+    Command::cargo_bin("version")?.assert().failure().code(101);
     Ok(())
 }
