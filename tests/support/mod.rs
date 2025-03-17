@@ -16,6 +16,7 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidate: Option<TestCandidate>,
+    pub candidates: Vec<TestCandidate>,
 }
 
 pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
@@ -38,20 +39,36 @@ pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
         virtual_env.native_version,
     );
 
-    // candidates file
+    // Build a list of all candidates to register
+    let mut all_candidates = Vec::new();
+
+    // Add the single candidate if provided (for backward compatibility)
+    if let Some(candidate) = &virtual_env.candidate {
+        all_candidates.push(candidate);
+    }
+
+    // Add all candidates from the vector
+    for candidate in &virtual_env.candidates {
+        all_candidates.push(candidate);
+    }
+
+    // Write candidates to the candidates file
+    let candidates_str = all_candidates
+        .iter()
+        .map(|c| c.name)
+        .collect::<Vec<&str>>()
+        .join(",");
+
     write_file(
         sdkman_dir.path(),
         Path::new("var"),
         "candidates",
-        virtual_env
-            .candidate
-            .as_ref()
-            .map_or_else(|| "", |c| c.name)
-            .to_string(),
+        candidates_str,
     );
 
-    if let Some(candidate) = virtual_env.candidate {
-        for version in candidate.versions {
+    // Process each candidate
+    for candidate in all_candidates {
+        for version in &candidate.versions {
             let location = format!("candidates/{}/{}/bin/", candidate.name, version);
             let content = format!(
                 "\
