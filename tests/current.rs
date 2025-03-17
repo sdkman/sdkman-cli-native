@@ -20,12 +20,14 @@ fn should_show_current_version_for_specific_candidate() -> Result<(), Box<dyn st
     let env = VirtualEnv {
         cli_version: "5.0.0".to_string(),
         native_version: "0.1.0".to_string(),
-        candidate: Some(TestCandidate {
-            name,
-            versions: versions.clone(),
-            current_version,
-        }),
-        candidates: vec![],
+        candidate: None,
+        candidates: vec![
+            TestCandidate {
+                name,
+                versions: versions.clone(),
+                current_version,
+            }
+        ],
     };
 
     let sdkman_dir = support::virtual_env(env);

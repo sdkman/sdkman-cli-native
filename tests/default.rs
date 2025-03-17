@@ -10,15 +10,17 @@ mod support;
 #[test]
 #[serial]
 fn should_set_an_installed_version_as_default() -> Result<(), Box<dyn std::error::Error>> {
-    let candidate = TestCandidate {
-        name: "scala",
-        versions: vec!["0.0.1", "0.0.2"],
-        current_version: "0.0.1",
-    };
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: Some(candidate),
+        candidate: None,
+        candidates: vec![
+            TestCandidate {
+                name: "scala",
+                versions: vec!["0.0.1", "0.0.2"],
+                current_version: "0.0.1",
+            }
+        ],
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -50,15 +52,17 @@ fn should_set_an_installed_version_as_default() -> Result<(), Box<dyn std::error
 #[test]
 #[serial]
 fn should_reset_the_current_default_version_as_default() -> Result<(), Box<dyn std::error::Error>> {
-    let candidate = TestCandidate {
-        name: "scala",
-        versions: vec!["0.0.1"],
-        current_version: "0.0.1",
-    };
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: Some(candidate),
+        candidate: None,
+        candidates: vec![
+            TestCandidate {
+                name: "scala",
+                versions: vec!["0.0.1"],
+                current_version: "0.0.1",
+            }
+        ],
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -90,15 +94,17 @@ fn should_reset_the_current_default_version_as_default() -> Result<(), Box<dyn s
 #[test]
 #[serial]
 fn should_not_set_an_uninstalled_version_as_default() -> Result<(), Box<dyn std::error::Error>> {
-    let candidate = TestCandidate {
-        name: "scala",
-        versions: vec!["0.0.1"],
-        current_version: "0.0.1",
-    };
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: Some(candidate),
+        candidate: None,
+        candidates: vec![
+            TestCandidate {
+                name: "scala",
+                versions: vec!["0.0.1"],
+                current_version: "0.0.1",
+            }
+        ],
     };
 
     let sdkman_dir = support::virtual_env(env);
