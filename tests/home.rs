@@ -13,14 +13,11 @@ fn should_successfully_display_current_candidate_home() -> Result<(), Box<dyn st
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: None,
-        candidates: vec![
-            TestCandidate {
-                name: "scala",
-                versions: vec!["0.0.1"],
-                current_version: "0.0.1",
-            }
-        ],
+        candidates: vec![TestCandidate {
+            name: "scala",
+            versions: vec!["0.0.1"],
+            current_version: "0.0.1",
+        }],
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -45,14 +42,11 @@ fn should_fail_if_candidate_home_is_not_found() -> Result<(), Box<dyn std::error
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: None,
-        candidates: vec![
-            TestCandidate {
-                name: "scala",
-                versions: vec!["0.0.1"],
-                current_version: "0.0.1",
-            }
-        ],
+        candidates: vec![TestCandidate {
+            name: "scala",
+            versions: vec!["0.0.1"],
+            current_version: "0.0.1",
+        }],
     };
 
     let sdkman_dir = support::virtual_env(env);
