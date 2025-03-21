@@ -40,6 +40,7 @@ assemble:
         - input: 'target/{{ osPlatformReplaced }}/release'
           output: libexec
           includes:
+            - 'current{.exe}'
             - 'default{.exe,}'
             - 'help{.exe,}'
             - 'home{.exe,}'

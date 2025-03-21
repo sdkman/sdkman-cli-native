@@ -9,15 +9,14 @@ mod support;
 #[test]
 #[serial]
 fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error>> {
-    let candidate = TestCandidate {
-        name: "scala",
-        versions: vec!["0.0.1"],
-        current_version: "0.0.1",
-    };
     let env = VirtualEnv {
         cli_version: "0.0.1".to_string(),
         native_version: "0.0.1".to_string(),
-        candidate: Some(candidate),
+        candidates: vec![TestCandidate {
+            name: "scala",
+            versions: vec!["0.0.1"],
+            current_version: "0.0.1",
+        }],
     };
 
     let sdkman_dir = support::virtual_env(env);
