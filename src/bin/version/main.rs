@@ -1,5 +1,3 @@
-extern crate core;
-
 use colored::Colorize;
 
 use sdkman_cli_native::{
