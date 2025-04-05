@@ -1,0 +1,38 @@
+---
+source: src/bin/help/main.rs
+expression: render(config_help())
+---
+[1mNAME[0m
+    [3msdk config[0m - sdk subcommand to edit the SDKMAN configuration file
+
+[1mSYNOPSIS[0m
+    [3msdk config[0m
+
+[1mDESCRIPTION[0m
+    This subcommand opens a text editor on the configuration file located at
+    [4m${SDKMAN_DIR}/etc/config[0m. The subcommand will infer the text editor from
+    the [3mEDITOR[0m environment variable. If the system does not set the [3mEDITOR[0m
+    environment variable, then vi is assumed as the default editor.
+
+[1mCONFIGURATION[0m
+    The [4m${SDKMAN_DIR}/etc/config[0m file contains the following default
+    configuration. A new shell should be opened for any configuration changes to
+    take effect.
+
+    [3m---
+    sdkman_auto_answer=false
+    sdkman_auto_complete=true
+    sdkman_auto_env=false
+    sdkman_auto_update=true
+    sdkman_beta_channel=false
+    sdkman_checksum_enable=true
+    sdkman_colour_enable=true
+    sdkman_curl_connect_timeout=7
+    sdkman_curl_max_time=10
+    sdkman_debug_mode=false
+    sdkman_insecure_ssl=false
+    sdkman_selfupdate_feature=true
+    ---[0m
+
+[1mEXAMPLES[0m
+    [3msdk config[0m

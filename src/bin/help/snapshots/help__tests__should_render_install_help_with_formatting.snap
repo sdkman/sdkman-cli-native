@@ -1,0 +1,31 @@
+---
+source: src/bin/help/main.rs
+expression: render(install_help())
+---
+[1mNAME[0m
+    [3msdk install[0m - sdk subcommand to install a candidate version
+
+[1mSYNOPSIS[0m
+    [3msdk install <candidate> [version] [path][0m
+
+[1mDESCRIPTION[0m
+    Invoking this subcommand with only the candidate as parameter will install
+    the currently known default version for that candidate. Provide a second
+    qualifier to install a specific non-default version. Provide a third
+    optional qualifier to add an already installed local version. This final
+    qualifier is the absolute local path to the base directory of the SDK to
+    be added. The local version will appear as an installed version of the
+    candidate. The version may not conflict with an existing version, installed
+    or not.
+
+[1mEXIT CODE[0m
+    The subcommand will return a non-zero exit code for versions not found or
+    for an invalid path.
+
+[1mMNEMONIC[0m
+    [1mi[0m - may be used in place of the [1minstall[0m subcommand.
+
+[1mEXAMPLES[0m
+    [3msdk install java
+    sdk install java 17.0.0-tem
+    sdk install java 11-local /usr/lib/jvm/java-11-openjdk[0m

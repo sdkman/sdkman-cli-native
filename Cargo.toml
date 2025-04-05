@@ -18,3 +18,6 @@ serial_test = "3.2.0"
 symlink = "0.1.0"
 tempfile = "3.19.1"
 textwrap = "0.16.2"
+
+[dev-dependencies]
+insta = "1.34.0"

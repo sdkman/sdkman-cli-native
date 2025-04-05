@@ -1,0 +1,37 @@
+---
+source: src/bin/help/main.rs
+expression: render(main_help())
+---
+[1mNAME[0m
+    [3msdk[0m - The command line interface (CLI) for SDKMAN!
+
+[1mSYNOPSIS[0m
+    [3msdk <subcommand> [candidate] [version][0m
+
+[1mDESCRIPTION[0m
+    SDKMAN! is a tool for managing parallel versions of multiple JVM related
+    Software Development Kits on most Unix based systems. It provides a
+    convenient Command Line Interface (CLI) and API for installing, switching,
+    removing and listing Candidates.
+
+[1mSUBCOMMANDS & QUALIFIERS[0m
+    help         [3m[subcommand][0m
+    install      [3m<candidate> [version] [path][0m
+    uninstall    [3m<candidate> <version>[0m
+    list         [3m[candidate][0m
+    use          [3m<candidate> <version>[0m
+    config       no qualifier
+    default      [3m<candidate> [version][0m
+    home         [3m<candidate> <version>[0m
+    env          [3m[init|install|clear][0m
+    current      [3m[candidate][0m
+    upgrade      [3m[candidate][0m
+    version      no qualifier
+    offline      [3m[enable|disable][0m
+    selfupdate   [3m[force][0m
+    update       no qualifier
+    flush        [3m[tmp|metadata|version][0m
+
+[1mEXAMPLES[0m
+    [3msdk install java 17.0.0-tem
+    sdk help install[0m

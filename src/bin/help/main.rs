@@ -507,510 +507,94 @@ fn version_help() -> Help {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        config_help, current_help, default_help, env_help, flush_help, home_help, install_help,
-        list_help, main_help, render, selfupdate_help, uninstall_help, update_help, upgrade_help,
-        use_help, version_help,
-    };
+    use super::*;
 
-    #[test]
-    fn render_main_help() {
-        let help_text = "
-NAME
-    sdk - The command line interface (CLI) for SDKMAN!
-
-SYNOPSIS
-    sdk <subcommand> [candidate] [version]
-
-DESCRIPTION
-    SDKMAN! is a tool for managing parallel versions of multiple JVM related
-    Software Development Kits on most Unix based systems. It provides a
-    convenient Command Line Interface (CLI) and API for installing, switching,
-    removing and listing Candidates.
-
-SUBCOMMANDS & QUALIFIERS
-    help         [subcommand]
-    install      <candidate> [version] [path]
-    uninstall    <candidate> <version>
-    list         [candidate]
-    use          <candidate> <version>
-    config       no qualifier
-    default      <candidate> [version]
-    home         <candidate> <version>
-    env          [init|install|clear]
-    current      [candidate]
-    upgrade      [candidate]
-    version      no qualifier
-    offline      [enable|disable]
-    selfupdate   [force]
-    update       no qualifier
-    flush        [tmp|metadata|version]
-
-EXAMPLES
-    sdk install java 17.0.0-tem
-    sdk help install
-
-";
-        colored::control::set_override(false);
-        assert_eq!(help_text, render(main_help()));
+    fn setup() {
+        colored::control::set_override(true);
+        colored::control::SHOULD_COLORIZE.set_override(true);
     }
 
     #[test]
-    fn render_config_help() {
-        let config_text = "
-NAME
-    sdk config - sdk subcommand to edit the SDKMAN configuration file
-
-SYNOPSIS
-    sdk config
-
-DESCRIPTION
-    This subcommand opens a text editor on the configuration file located at
-    ${SDKMAN_DIR}/etc/config. The subcommand will infer the text editor from
-    the EDITOR environment variable. If the system does not set the EDITOR
-    environment variable, then vi is assumed as the default editor.
-
-CONFIGURATION
-    The ${SDKMAN_DIR}/etc/config file contains the following default
-    configuration. A new shell should be opened for any configuration changes to
-    take effect.
-
-    ---
-    sdkman_auto_answer=false
-    sdkman_auto_complete=true
-    sdkman_auto_env=false
-    sdkman_auto_update=true
-    sdkman_beta_channel=false
-    sdkman_checksum_enable=true
-    sdkman_colour_enable=true
-    sdkman_curl_connect_timeout=7
-    sdkman_curl_max_time=10
-    sdkman_debug_mode=false
-    sdkman_insecure_ssl=false
-    sdkman_selfupdate_feature=true
-    ---
-
-EXAMPLES
-    sdk config
-
-";
-        colored::control::set_override(false);
-        assert_eq!(config_text, render(config_help()));
+    fn should_render_main_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(main_help()));
     }
 
     #[test]
-    fn render_current_help() {
-        let current_text = "
-NAME
-    sdk current - sdk subcommand to display the current default installed
-    versions
-
-SYNOPSIS
-    sdk current [candidate]
-
-DESCRIPTION
-    This subcommand will display a list of candidates with their default version
-    installed on the system. It is also possible to qualify the candidate when
-    running the subcommand to display only that candidate's default version.
-
-MNEMONIC
-    c - may be used in place of the current subcommand.
-
-EXAMPLES
-    sdk current
-    sdk current java
-
-";
-        colored::control::set_override(false);
-        assert_eq!(current_text, render(current_help()));
+    fn should_render_config_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(config_help()));
     }
 
     #[test]
-    fn render_default_help() {
-        let default_text = "
-NAME
-    sdk default - sdk subcommand to set the local default version of the
-    candidate
-
-SYNOPSIS
-    sdk default <candidate> [version]
-
-DESCRIPTION
-    The mandatory candidate qualifier of the subcommand specifies the candidate
-    to default for all future shells.
-
-    The optional version qualifier sets that specific version as default for all
-    subsequent shells on the local environment. Omitting the version will set
-    the global SDKMAN tracked version as the default version for that candidate.
-
-EXIT CODE
-    The subcommand will return a non-zero return code if the candidate or
-    version does not exist.
-
-MNEMONIC
-    d - may be used in place of the default subcommand.
-
-EXAMPLES
-    sdk default java 17.0.0-tem
-    sdk default java
-
-";
-        colored::control::set_override(false);
-        assert_eq!(default_text, render(default_help()));
+    fn should_render_current_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(current_help()));
     }
 
     #[test]
-    fn render_env_help() {
-        let env_text = "
-NAME
-    sdk env - sdk subcommand to control SDKs on a project level, setting up
-    specific versions for a directory
-
-SYNOPSIS
-    sdk env [init|install|clear]
-
-DESCRIPTION
-    Allows the developer to manage the SDK versions used in a project directory.
-    The subcommand uses an .sdkmanrc file to install or switch specific SDK
-    versions in a project directory.
-
-    When issuing the subcommand without a qualifier, it will switch to the
-    versions specified in .sdkmanrc and emit warnings for versions not present
-    on the system. In addition, the subcommand has three optional qualifiers.
-
-SUBCOMMANDS & QUALIFIERS
-    install      install and switch to the SDK versions specified
-                 in .sdkmanrc
-    init         allows for the creation of a default .sdkmanrc file with
-                 a single entry for the java candidate, set to the current
-                 default value)
-    clear        reset all SDK versions to their system defaults
-
-CONFIGURATION
-    The .sdkmanrc file contains key-value pairs for each configurable SDK for
-    that project environment. You may enable a configuration option for auto-
-    env behaviour by setting sdkman_auto_env=true in the $SDKMAN_DIR/etc/config
-    file. This setting will automatically switch versions when stepping into a
-    directory on the presence of a .sdkmanrc descriptor. When enabled, you no
-    longer need to issue the install qualifier explicitly. This behaviour is
-    disabled by default. An initial file will have content such as this:
-
-    ---
-    # Enable auto-env through the sdkman_auto_env config
-    # Add key=value pairs of SDKs to use below
-    java=11.0.13-tem
-    ---
-
-EXAMPLES
-    sdk env
-    sdk env install
-    sdk env init
-    sdk env clear
-
-";
-        colored::control::set_override(false);
-        assert_eq!(env_text, render(env_help()));
+    fn should_render_default_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(default_help()));
     }
 
     #[test]
-    fn render_flush_help() {
-        let flush_text = "
-NAME
-    sdk flush - sdk subcommand used for flushing local temporal state of SDKMAN
-
-SYNOPSIS
-    sdk flush [tmp|metadata|version]
-
-DESCRIPTION
-    This command cleans temporary storage under $SDKMAN_DIR in the var and
-    tmp directories, removing metadata and version caches. It also removes any
-    residual download artifacts. It is possible to flush specific targets by
-    providing a qualifier. Omission of the qualifier results in a full flush of
-    all targets.
-
-SUBCOMMANDS & QUALIFIERS
-    tmp          cleans out pre/post hooks and residual archives from
-                 $SDKMAN_DIR/tmp
-    metadata     removes any header metadata
-    version      flushes the version and version_native files under
-                 $SDKMAN_DIR/var
-
-EXAMPLES
-    sdk flush
-    sdk flush tmp
-    sdk flush metadata
-    sdk flush version
-
-";
-        colored::control::set_override(false);
-        assert_eq!(flush_text, render(flush_help()));
+    fn should_render_env_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(env_help()));
     }
 
     #[test]
-    fn render_home_help() {
-        let home_text = "
-NAME
-    sdk home - sdk subcommand to output the path of a specific candidate version
-
-SYNOPSIS
-    sdk home <candidate> <version>
-
-DESCRIPTION
-    Print the absolute home path of any candidate version installed by SDKMAN.
-    The candidate and version parameters are mandatory. This subcommand is
-    usually used for scripting, so does not append a newline character.
-
-EXIT CODE
-    The subcommand will emit a non-zero exit code if a valid candidate version
-    is not locally installed.
-
-EXAMPLES
-    sdk home java 17.0.0-tem
-
-";
-        colored::control::set_override(false);
-        assert_eq!(home_text, render(home_help()));
+    fn should_render_flush_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(flush_help()));
     }
 
     #[test]
-    fn render_install_help() {
-        let install_text = "
-NAME
-    sdk install - sdk subcommand to install a candidate version
-
-SYNOPSIS
-    sdk install <candidate> [version] [path]
-
-DESCRIPTION
-    Invoking this subcommand with only the candidate as parameter will install
-    the currently known default version for that candidate. Provide a second
-    qualifier to install a specific non-default version. Provide a third
-    optional qualifier to add an already installed local version. This final
-    qualifier is the absolute local path to the base directory of the SDK to
-    be added. The local version will appear as an installed version of the
-    candidate. The version may not conflict with an existing version, installed
-    or not.
-
-EXIT CODE
-    The subcommand will return a non-zero exit code for versions not found or
-    for an invalid path.
-
-MNEMONIC
-    i - may be used in place of the install subcommand.
-
-EXAMPLES
-    sdk install java
-    sdk install java 17.0.0-tem
-    sdk install java 11-local /usr/lib/jvm/java-11-openjdk
-
-";
-        colored::control::set_override(false);
-        assert_eq!(install_text, render(install_help()));
+    fn should_render_home_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(home_help()));
     }
 
     #[test]
-    fn render_list_help() {
-        let list_text = "
-NAME
-    sdk list - sdk subcommand to list all candidates or candidate versions
-
-SYNOPSIS
-    sdk list [candidate]
-
-DESCRIPTION
-    Invoke the subcommand without a candidate to see a comprehensive list of all
-    candidates with name, URL, detailed description and an installation command.
-    If the candidate qualifier is specified, the subcommand will display a list
-    of all available and local versions for that candidate. In addition, the
-    version list view marks all versions that are local, installed or currently
-    in use. They appear as follows:
-
-    + - local version
-    * - installed
-    > - currently in use
-
-    Java has a custom list view with vendor-specific details.
-
-MNEMONIC
-    ls - may be used in place of the list subcommand.
-
-EXAMPLES
-    sdk list
-    sdk list java
-    sdk list groovy
-
-";
-        colored::control::set_override(false);
-        assert_eq!(list_text, render(list_help()));
+    fn should_render_install_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(install_help()));
     }
 
     #[test]
-    fn render_selfupdate_help() {
-        let selfupdate_text = "
-NAME
-    sdk selfupdate - sdk subcommand to upgrade the SDKMAN core
-
-SYNOPSIS
-    sdk selfupdate [force]
-
-DESCRIPTION
-    Invoke this command to upgrade the core script and native components of
-    the SDKMAN command-line interface. The command will only upgrade the native
-    components if the detected platform is supported. The command will refuse to
-    upgrade the core if no new version is available. A qualifier may be added to
-    the selfupdate command to force an upgrade.
-
-EXAMPLES
-    sdk selfupdate
-    sdk selfupdate force
-
-";
-        colored::control::set_override(false);
-        assert_eq!(selfupdate_text, render(selfupdate_help()));
+    fn should_render_list_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(list_help()));
     }
 
     #[test]
-    fn render_uninstall_help() {
-        let uninstall_text = "
-NAME
-    sdk uninstall - sdk subcommand to uninstall a candidate version
-
-SYNOPSIS
-    sdk uninstall <candidate> <version>
-
-DESCRIPTION
-    Always follow the subcommand with two qualifiers, the candidate and version
-    to be uninstalled.
-
-    The specified version will be removed from the corresponding candidate
-    directory under $SDKMAN_DIR/candidates and will no longer be available for
-    use on the system.
-
-EXIT CODE
-    An invalid candidate or version supplied to the subcommand will result in a
-    non-zero return code.
-
-MNEMONIC
-    rm - may be used in place of the uninstall subcommand.
-
-EXAMPLES
-    sdk uninstall java 17.0.0-tem
-
-";
-        colored::control::set_override(false);
-        assert_eq!(uninstall_text, render(uninstall_help()));
+    fn should_render_selfupdate_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(selfupdate_help()));
     }
 
     #[test]
-    fn render_update_help() {
-        let update_text = "
-NAME
-    sdk update - sdk subcommand to update the local state of SDKMAN
-
-SYNOPSIS
-    sdk update
-
-DESCRIPTION
-    This command is used to download information about all candidates
-    and versions. Other commands operate on this data to perform version
-    installations and upgrades or search and display details about all packages
-    available for installation. Run this command often to ensure that all
-    candidates are up to date and that the latest versions will be visible and
-    installed.
-
-EXAMPLES
-    sdk update
-
-";
-        colored::control::set_override(false);
-        assert_eq!(update_text, render(update_help()));
+    fn should_render_uninstall_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(uninstall_help()));
     }
 
     #[test]
-    fn render_upgrade_help() {
-        let upgrade_text = "
-NAME
-    sdk upgrade - sdk subcommand to upgrade installed candidate versions
-
-SYNOPSIS
-    sdk upgrade [candidate]
-
-DESCRIPTION
-    The optional candidate qualifier can be applied to specify the candidate you
-    want to upgrade. If the candidate qualifier is omitted from the command, it
-    will attempt an upgrade of all outdated candidates.
-    Candidates that do not require an upgrade will be omitted, and a
-    notification will be displayed that these candidates are up to date.
-
-EXIT CODE
-    The subcommand will return a non-zero return code if the candidate does
-    not exist.
-
-MNEMONIC
-    ug - may be used in place of the upgrade subcommand.
-
-EXAMPLES
-    sdk upgrade
-    sdk upgrade java
-
-";
-        colored::control::set_override(false);
-        assert_eq!(upgrade_text, render(upgrade_help()));
+    fn should_render_update_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(update_help()));
     }
 
     #[test]
-    fn render_use_help() {
-        let use_text = "
-NAME
-    sdk use - sdk subcommand to use a specific version only in the current shell
-
-SYNOPSIS
-    sdk use <candidate> <version>
-
-DESCRIPTION
-    The mandatory candidate and version follow the subcommand to specify
-    what to use in the shell. This subcommand only operates on the current
-    shell. It does not affect other shells running different versions of the
-    same candidate. It also does not change the default version set for all
-    subsequent shells.
-
-EXIT CODE
-    The subcommand will return a non-zero return code if the candidate or
-    version does not exist.
-
-MNEMONIC
-    u - may be used in place of the use subcommand.
-
-EXAMPLES
-    sdk use java 17.0.0-tem
-
-";
-        colored::control::set_override(false);
-        assert_eq!(use_text, render(use_help()));
+    fn should_render_upgrade_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(upgrade_help()));
     }
 
     #[test]
-    fn render_version_help() {
-        let version_text = "
-NAME
-    sdk version - sdk subcommand to display the installed SDKMAN version
-
-SYNOPSIS
-    sdk version
-
-DESCRIPTION
-    This subcommand displays the version of the bash and native components of
-    SDKMAN on this system. The versions of the bash and native libraries evolve
-    independently from each other and so will not be in sync.
-
-MNEMONIC
-    v - may be used in place of the version subcommand.
-
-EXAMPLES
-    sdk version
-
-";
-        colored::control::set_override(false);
-        assert_eq!(version_text, render(version_help()));
+    fn should_render_use_help_with_formatting() {
+        setup();
+        insta::assert_snapshot!(render(use_help()));
     }
 }

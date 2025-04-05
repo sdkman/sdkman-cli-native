@@ -1,0 +1,31 @@
+---
+source: src/bin/help/main.rs
+expression: render(list_help())
+---
+[1mNAME[0m
+    [3msdk list[0m - sdk subcommand to list all candidates or candidate versions
+
+[1mSYNOPSIS[0m
+    [3msdk list [candidate][0m
+
+[1mDESCRIPTION[0m
+    Invoke the subcommand without a candidate to see a comprehensive list of all
+    candidates with name, URL, detailed description and an installation command.
+    If the candidate qualifier is specified, the subcommand will display a list
+    of all available and local versions for that candidate. In addition, the
+    version list view marks all versions that are local, installed or currently
+    in use. They appear as follows:
+
+    [3m+ - local version
+    * - installed
+    > - currently in use[0m
+
+    Java has a custom list view with vendor-specific details.
+
+[1mMNEMONIC[0m
+    [1mls[0m - may be used in place of the [1mlist[0m subcommand.
+
+[1mEXAMPLES[0m
+    [3msdk list
+    sdk list java
+    sdk list groovy[0m

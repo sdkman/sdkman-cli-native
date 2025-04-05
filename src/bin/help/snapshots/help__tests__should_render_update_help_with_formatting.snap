@@ -1,0 +1,20 @@
+---
+source: src/bin/help/main.rs
+expression: render(update_help())
+---
+[1mNAME[0m
+    [3msdk update[0m - sdk subcommand to update the local state of SDKMAN
+
+[1mSYNOPSIS[0m
+    [3msdk update[0m
+
+[1mDESCRIPTION[0m
+    This command is used to download information about all candidates
+    and versions. Other commands operate on this data to perform version
+    installations and upgrades or search and display details about all packages
+    available for installation. Run this command often to ensure that all
+    candidates are up to date and that the latest versions will be visible and
+    installed.
+
+[1mEXAMPLES[0m
+    [3msdk update[0m
