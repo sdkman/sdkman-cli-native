@@ -17,7 +17,8 @@ jobs:
         id: get_version
         run: |
           latest_tag=$(git describe --tags --abbrev=0)
-          echo "VERSION=${latest_tag}" >> $GITHUB_ENV
+          version=${latest_tag#v}
+          echo "VERSION=${version}" >> $GITHUB_ENV
           echo "Latest tag version: ${latest_tag}"
 
       - name: Promote to Stable
