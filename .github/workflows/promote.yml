@@ -1,0 +1,29 @@
+name: Promote to Stable
+
+on:
+  workflow_dispatch:
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Get Latest Beta Version
+        id: get_version
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0)
+          echo "VERSION=${latest_tag}" >> $GITHUB_ENV
+          echo "Latest tag version: ${latest_tag}"
+
+      - name: Promote to Stable
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          RELEASE_VERSION: ${{ env.VERSION }}
+        run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "$RELEASE_VERSION" "stable"

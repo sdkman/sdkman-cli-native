@@ -13,7 +13,7 @@ else
   echo "Releasing $RELEASE_CHANNEL: $RELEASE_VERSION"
   case "$RELEASE_CHANNEL" in
     beta)   UPDATE_OBJECT="{ \"betaNativeCliVersion\": \"$RELEASE_VERSION\"}" ;;
-    stable) UPDATE_OBJECT="{ \"betaNativeCliVersion\": \"$RELEASE_VERSION\", \"stableNativeCliVersion\": \"$RELEASE_VERSION\"}" ;;
+    stable) UPDATE_OBJECT="{ \"stableNativeCliVersion\": \"$RELEASE_VERSION\"}" ;;
   esac
   echo "db.application.updateOne, will set object: $UPDATE_OBJECT"
   docker run mongo:3.2 mongo "${MONGO_URL}" \

@@ -1,4 +1,4 @@
-name: Release
+name: Release Beta
 
 on:
   workflow_dispatch:
@@ -12,14 +12,6 @@ on:
           - "minor"
           - "major"
         default: "patch"
-      channel:
-        type: choice
-        description: "Release channel"
-        required: true
-        options:
-          - "beta"
-          - "stable"
-        default: "beta"
 
 jobs:
   prerelease:
@@ -168,11 +160,10 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
-      - name: Update MongoDB
+      - name: Update MongoDB (Beta)
         env:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
           RELEASE_VERSION: ${{ needs.prerelease.outputs.VERSION }}
-          RELEASE_CHANNEL: ${{ github.event.inputs.channel }}
-        run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "$RELEASE_VERSION" "$RELEASE_CHANNEL"
+        run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "$RELEASE_VERSION" "beta"
