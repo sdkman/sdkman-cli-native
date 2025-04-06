@@ -510,17 +510,17 @@ mod tests {
     use super::*;
 
     /// # Working with Snapshots
-    /// 
+    ///
     /// Snapshots are stored in src/bin/help/snapshots/ and preserve ANSI formatting.
-    /// 
+    ///
     /// ```bash
     /// # Review changes
     /// cargo insta review
-    /// 
+    ///
     /// # View formatted snapshots
     /// bat src/bin/help/snapshots/
     /// ```
-    /// 
+    ///
     /// See https://insta.rs/ for more details.
 
     fn setup() {
