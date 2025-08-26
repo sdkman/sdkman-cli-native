@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
-cargo build
+project_root="$(dirname -- "$0")"
+sdkman_dir="${SDKMAN_DIR:-$HOME/.sdkman}"
 
-if [[ ! -d "$SDKMAN_DIR" ]]; then
-  export SDKMAN_DIR="$HOME/.sdkman"
-  echo "SDKMAN_DIR environment variable not defined, set to $SDKMAN_DIR"
-fi
-
-find target/debug -maxdepth 1 -executable -type f -exec cp -v {} "$SDKMAN_DIR/libexec" \;
+# TODO: use --artifact-dir when it stable
+# https://github.com/rust-lang/cargo/issues/6790
+cargo build --manifest-path "$project_root/Cargo.toml"
+for file in target/debug/*; do
+    if [ -f "$file" ] && [ -x "$file" ]; then
+        cp "$file" "$sdkman_dir/libexec/"
+    fi
+done
