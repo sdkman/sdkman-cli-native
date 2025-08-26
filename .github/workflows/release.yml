@@ -82,6 +82,13 @@ jobs:
         with:
           fetch-depth: 0
           ref: master
+
+      - name: Install dependencies (Linux containers)
+        if: matrix.job.container
+        run: |
+          apt-get update
+          apt-get install -y curl build-essential
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
