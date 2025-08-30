@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 16
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up Rust toolchain
