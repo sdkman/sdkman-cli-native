@@ -30,13 +30,13 @@ fn main() {
             let current_version = get_current_version(sdkman_dir.to_owned(), &candidate);
             match current_version {
                 Some(version) => println!("Using {} version {}", candidate.bold(), version.bold()),
-                None => {
+                _ => {
                     eprintln!("No current version of {} configured.", candidate.bold());
                     process::exit(1);
                 }
             }
         }
-        None => {
+        _ => {
             // Show current version for all candidates
             let mut found_any = false;
             let mut candidates_with_versions = Vec::new();
