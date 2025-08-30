@@ -107,6 +107,7 @@ jobs:
 
       - name: Install SDKMAN and JReleaser (Linux containers)
         if: matrix.job.container
+        shell: bash
         run: |
           curl -s "https://get.sdkman.io" | bash
           source ~/.sdkman/bin/sdkman-init.sh
@@ -121,6 +122,7 @@ jobs:
 
       - name: Assemble (Linux containers)
         if: matrix.job.container
+        shell: bash
         run: |
           source ~/.sdkman/bin/sdkman-init.sh
           jreleaser assemble
