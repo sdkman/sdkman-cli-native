@@ -20,4 +20,4 @@ tempfile = "3.21.0"
 textwrap = "0.16.2"
 
 [dev-dependencies]
-insta = "1.42.2"
+insta = "1.43.2"
