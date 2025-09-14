@@ -1,13 +1,13 @@
 [package]
 name = "sdkman-cli-native"
-version = "0.7.4"
+version = "0.7.13"
 edition = "2021"
 publish = false
 
 [dependencies]
 assert_cmd = "2.0.17"
-proc-macro2 = "1.0.94"
-clap = { version = "4.5.36", features = ["derive"] }
+proc-macro2 = "1.0.101"
+clap = { version = "4.5.47", features = ["derive"] }
 colored = "3.0.0"
 directories = "5.0.0"
 dirs = "5.0.1"
@@ -16,8 +16,8 @@ fs_extra = "1.3.0"
 predicates = "3.1.3"
 serial_test = "3.2.0"
 symlink = "0.1.0"
-tempfile = "3.19.1"
+tempfile = "3.21.0"
 textwrap = "0.16.2"
 
 [dev-dependencies]
-insta = "1.42.2"
+insta = "1.43.2"

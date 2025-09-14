@@ -68,19 +68,28 @@ jobs:
       fail-fast: true
       matrix:
         job:
-          - { target: aarch64-apple-darwin     , os: macos-latest  ,                  jreleaser_platform: osx-aarch_64   }
-          - { target: x86_64-apple-darwin      , os: macos-latest  ,                  jreleaser_platform: osx-x86_64     }
-          - { target: x86_64-pc-windows-msvc   , os: windows-latest,                  jreleaser_platform: windows-x86_64 }
-          - { target: x86_64-unknown-linux-gnu , os: ubuntu-20.04  ,                  jreleaser_platform: linux-x86_64   }
-          - { target: i686-unknown-linux-gnu   , os: ubuntu-20.04  , use-cross: true, jreleaser_platform: linux-x86_32   }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-20.04  , use-cross: true, jreleaser_platform: linux-aarch_64 }
+          - {target: aarch64-apple-darwin, os: macos-latest, jreleaser_platform: osx-aarch_64}
+          - {target: x86_64-apple-darwin, os: macos-latest, jreleaser_platform: osx-x86_64}
+          - {target: x86_64-pc-windows-msvc, os: windows-latest, jreleaser_platform: windows-x86_64}
+          - {target: x86_64-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-x86_64}
+          - {target: i686-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-x86_32}
+          - {target: aarch64-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-aarch_64}
     runs-on: ${{ matrix.job.os }}
+    container:
+      image: ${{ matrix.job.container }}
+      options: --privileged
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: master
+
+      - name: Install dependencies (Linux containers)
+        if: matrix.job.container
+        run: |
+          apt-get update
+          apt-get install -y curl build-essential zip unzip
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -90,14 +99,40 @@ jobs:
           override: true
           profile: minimal
 
+      - name: Setup cross-compilation toolchain
+        if: matrix.job.container
+        uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: ${{ matrix.job.target }}
+
+      - name: Install SDKMAN and JReleaser (Linux containers)
+        if: matrix.job.container
+        shell: bash
+        run: |
+          curl -s "https://get.sdkman.io" | bash
+          source ~/.sdkman/bin/sdkman-init.sh
+          sdk install java 17.0.2-tem
+          sdk install jreleaser
+
       - name: Build
         uses: actions-rs/cargo@v1
         with:
-          use-cross: ${{ matrix.job.use-cross }}
           command: build
           args: --locked --release --target=${{ matrix.job.target }}
 
-      - name: Assemble
+      - name: Assemble (Linux containers)
+        if: matrix.job.container
+        shell: bash
+        run: |
+          source ~/.sdkman/bin/sdkman-init.sh
+          jreleaser assemble
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_PLATFORM_OVERRIDE: ${{ matrix.job.jreleaser_platform }}
+
+      - name: Assemble (Non-Linux)
+        if: '!matrix.job.container'
         uses: jreleaser/release-action@v2
         with:
           version: latest
