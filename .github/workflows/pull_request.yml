@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Setup node 16 for self hosted 
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 16
       - name: Check out repository
