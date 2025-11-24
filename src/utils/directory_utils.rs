@@ -1,6 +1,6 @@
-//! sdkran — small, opinionated utilities for working with SDKMAN-style directories.
+//! sdkman — small, opinionated utilities for working with SDKMAN-style directories.
 //!
-//! The crate provides helpers to:
+//! The file provides helpers to:
 //! - infer the SDKMAN home directory (via `SDKMAN_DIR` or a home-based fallback)
 //! - work with well-known SDKMAN layout constants
 //!
@@ -8,8 +8,8 @@
 //! ```rust
 //! use std::io;
 //! use tempfile::TempDir;
-//! use sdkran::utils::constants::SDKMAN_DIR_ENV_VAR;
-//! use sdkran::utils::directory_utils::infer_sdkman_dir;
+//! use sdkman::utils::constants::SDKMAN_DIR_ENV_VAR;
+//! use sdkman::utils::directory_utils::infer_sdkman_dir;
 //!
 //! # fn main() -> io::Result<()> {
 //! // Prefer `SDKMAN_DIR` when present.
@@ -39,8 +39,8 @@ use std::{env, path::PathBuf};
 /// Set the environment variable and retrieve it:
 /// ```
 /// use std::{env, path::PathBuf};
-/// use sdkran::utils::directory_utils::infer_sdkman_dir;
-/// use sdkran::utils::constants::SDKMAN_DIR_ENV_VAR;
+/// use sdkman::utils::directory_utils::infer_sdkman_dir;
+/// use sdkman::utils::constants::SDKMAN_DIR_ENV_VAR;
 ///
 /// let temp_dir = tempfile::TempDir::new().unwrap();
 /// unsafe {
@@ -54,8 +54,8 @@ use std::{env, path::PathBuf};
 /// Unset the variable to fall back:
 /// ```
 /// use std::env;
-/// use sdkran::utils::directory_utils::{infer_sdkman_dir, fallback_sdkman_dir};
-/// use sdkran::utils::constants::SDKMAN_DIR_ENV_VAR;
+/// use sdkman::utils::directory_utils::{infer_sdkman_dir, fallback_sdkman_dir};
+/// use sdkman::utils::constants::SDKMAN_DIR_ENV_VAR;
 ///
 /// unsafe {
 ///     env::remove_var(SDKMAN_DIR_ENV_VAR);
@@ -74,8 +74,8 @@ pub fn infer_sdkman_dir() -> Result<PathBuf, std::env::VarError> {
 /// # Examples
 ///
 /// ```
-/// use sdkran::utils::directory_utils::fallback_sdkman_dir;
-/// use sdkran::utils::constants::DEFAULT_SDKMAN_HOME;
+/// use sdkman::utils::directory_utils::fallback_sdkman_dir;
+/// use sdkman::utils::constants::DEFAULT_SDKMAN_HOME;
 /// use directories::UserDirs;
 ///
 /// let expected = UserDirs::new()

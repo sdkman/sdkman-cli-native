@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 use sdkman::{
-    constants::VAR_DIR,
+    utils::constants::VAR_DIR,
     helpers::{check_file_exists, infer_sdkman_dir, read_file_content},
 };
 const CLI_VERSION_FILE: &str = "version";

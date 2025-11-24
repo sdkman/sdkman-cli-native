@@ -1,13 +1,3 @@
-pub mod constants {
-    pub const CANDIDATES_DIR: &str = "candidates";
-    pub const CANDIDATES_FILE: &str = "candidates";
-    pub const CURRENT_DIR: &str = "current";
-    pub const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
-    pub const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
-    pub const TMP_DIR: &str = "tmp";
-    pub const VAR_DIR: &str = "var";
-}
-
 pub mod utils;
 
 pub mod helpers {
@@ -16,7 +6,7 @@ pub mod helpers {
     use std::path::PathBuf;
     use std::{env, fs, process};
 
-    use crate::constants::{
+    use crate::utils::constants::{
         CANDIDATES_DIR, CANDIDATES_FILE, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR,
     };
 
@@ -100,9 +90,9 @@ mod tests {
     use serial_test::serial;
     use tempfile::NamedTempFile;
 
-    use crate::constants::SDKMAN_DIR_ENV_VAR;
     use crate::helpers::infer_sdkman_dir;
     use crate::helpers::read_file_content;
+    use crate::utils::constants::SDKMAN_DIR_ENV_VAR;
 
     #[test]
     #[serial]

@@ -1,6 +1,6 @@
 //! File utilities for common path validation and file content helpers.
 //!
-//! This crate provides small, opinionated helpers around common filesystem tasks.
+//! This file provides small, opinionated helpers around common filesystem tasks.
 //!
 //! # Examples
 //! ```rust
