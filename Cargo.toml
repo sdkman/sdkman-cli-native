@@ -1,5 +1,5 @@
 [package]
-name = "sdkman-cli-native"
+name = "sdkman"
 version = "0.7.14"
 edition = "2021"
 publish = false
@@ -21,3 +21,5 @@ textwrap = "0.16.2"
 
 [dev-dependencies]
 insta = "1.44.3"
+rstest = "0.26.1"
+tempfile = "3.23.0"

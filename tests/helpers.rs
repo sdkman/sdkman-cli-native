@@ -1,6 +1,6 @@
 #[cfg(test)]
 use crate::support::TestCandidate;
-use sdkman_cli_native::helpers::known_candidates;
+use sdkman::helpers::known_candidates;
 use serial_test::serial;
 use support::{prepare_sdkman_dir, VirtualEnv};
 

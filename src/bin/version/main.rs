@@ -1,6 +1,6 @@
 use colored::Colorize;
 
-use sdkman_cli_native::{
+use sdkman::{
     constants::VAR_DIR,
     helpers::{check_file_exists, infer_sdkman_dir, read_file_content},
 };

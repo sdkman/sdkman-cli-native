@@ -6,8 +6,8 @@ use std::fs;
 use std::fs::remove_dir_all;
 use symlink::{remove_symlink_dir, symlink_dir};
 
-use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR};
-use sdkman_cli_native::helpers::{
+use sdkman::constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR};
+use sdkman::helpers::{
     infer_sdkman_dir, known_candidates, validate_candidate, validate_version_path,
 };
 

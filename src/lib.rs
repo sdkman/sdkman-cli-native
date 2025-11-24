@@ -8,6 +8,7 @@ pub mod constants {
     pub const VAR_DIR: &str = "var";
 }
 
+pub mod utils;
 pub mod helpers {
     use colored::Colorize;
     use directories::UserDirs;

@@ -3,8 +3,8 @@ use std::process;
 use clap::Parser;
 use colored::Colorize;
 
-use sdkman_cli_native::constants::CANDIDATES_DIR;
-use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
+use sdkman::constants::CANDIDATES_DIR;
+use sdkman::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
 
 #[derive(Parser, Debug)]
 #[command(
