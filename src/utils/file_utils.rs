@@ -18,10 +18,11 @@
 //! # Ok(())
 //! # }
 //! ```
+use super::PathBuf;
 use std::{
     fs,
     io::{Error, ErrorKind},
-    path::{Path, PathBuf},
+    path::Path,
 };
 
 /// Checks whether the given path exists and is a regular file.

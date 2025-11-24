@@ -25,9 +25,12 @@
 //! # }
 //! ```
 
-use super::constants::{DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR};
+use super::{
+    constants::{DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR},
+    PathBuf,
+};
 use directories::UserDirs;
-use std::{env, path::PathBuf};
+use std::env;
 
 /// Attempts to determine the SDKMAN directory.
 ///

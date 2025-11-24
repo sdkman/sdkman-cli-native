@@ -5,8 +5,8 @@ use std::process;
 use clap::Parser;
 use colored::Colorize;
 
-use sdkman::utils::constants::{CANDIDATES_DIR, CURRENT_DIR};
-use sdkman::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
+use sdkman::utils::helpers::{infer_sdkman_dir, known_candidates, validate_cand
+use sdkman::utils::constants::{CANDIDATES_DIR, CURRENT_DIR};idate};
 
 #[derive(Parser, Debug)]
 #[command(

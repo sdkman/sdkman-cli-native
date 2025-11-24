@@ -6,9 +6,10 @@ use clap::Parser;
 use colored::Colorize;
 use symlink::remove_symlink_dir;
 
-use sdkman::utils::constants::{CANDIDATES_DIR, CURRENT_DIR};
-use sdkman::helpers::{
-    infer_sdkman_dir, known_candidates, validate_candidate, validate_version_path,
+use sdkman::utils::{
+    constants::{CANDIDATES_DIR, CURRENT_DIR},
+    directory_utils::infer_sdkman_dir,
+    helpers::{known_candidates, validate_candidate, validate_version_path},
 };
 
 #[derive(Parser, Debug)]
