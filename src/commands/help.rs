@@ -628,3 +628,108 @@ fn version_help() -> Help {
         ..Default::default()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn setup() {
+        colored::control::set_override(true);
+        colored::control::SHOULD_COLORIZE.set_override(true);
+    }
+
+    fn snapshot_dir() -> std::path::PathBuf {
+        // Point this at where your existing snapshots already live.
+        // (Matches what you described: src/bin/help/snapshots/)
+        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("src")
+            .join("bin")
+            .join("help")
+            .join("snapshots")
+    }
+
+    fn assert_help_snapshot(name: &str, rendered: String) {
+        setup();
+        insta::with_settings!({
+            snapshot_path => snapshot_dir(),
+            prepend_module_to_snapshot => false, // keep names stable across module moves
+        }, {
+            insta::assert_snapshot!(name, rendered);
+        });
+    }
+
+    #[test]
+    fn renders_main_help() {
+        assert_help_snapshot("main_help", render(main_help()));
+    }
+
+    #[test]
+    fn renders_config_help() {
+        assert_help_snapshot("config_help", render(config_help()));
+    }
+
+    #[test]
+    fn renders_current_help() {
+        assert_help_snapshot("current_help", render(current_help()));
+    }
+
+    #[test]
+    fn renders_default_help() {
+        assert_help_snapshot("default_help", render(default_help()));
+    }
+
+    #[test]
+    fn renders_env_help() {
+        assert_help_snapshot("env_help", render(env_help()));
+    }
+
+    #[test]
+    fn renders_flush_help() {
+        assert_help_snapshot("flush_help", render(flush_help()));
+    }
+
+    #[test]
+    fn renders_home_help() {
+        assert_help_snapshot("home_help", render(home_help()));
+    }
+
+    #[test]
+    fn renders_install_help() {
+        assert_help_snapshot("install_help", render(install_help()));
+    }
+
+    #[test]
+    fn renders_list_help() {
+        assert_help_snapshot("list_help", render(list_help()));
+    }
+
+    #[test]
+    fn renders_selfupdate_help() {
+        assert_help_snapshot("selfupdate_help", render(selfupdate_help()));
+    }
+
+    #[test]
+    fn renders_uninstall_help() {
+        assert_help_snapshot("uninstall_help", render(uninstall_help()));
+    }
+
+    #[test]
+    fn renders_update_help() {
+        assert_help_snapshot("update_help", render(update_help()));
+    }
+
+    #[test]
+    fn renders_upgrade_help() {
+        assert_help_snapshot("upgrade_help", render(upgrade_help()));
+    }
+
+    #[test]
+    fn renders_use_help() {
+        assert_help_snapshot("use_help", render(use_help()));
+    }
+
+    #[test]
+    fn renders_version_help() {
+        assert_help_snapshot("version_help", render(version_help()));
+    }
+}

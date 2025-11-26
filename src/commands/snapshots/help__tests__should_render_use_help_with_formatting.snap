@@ -1,0 +1,26 @@
+---
+source: src/bin/help/main.rs
+expression: render(use_help())
+---
+[1mNAME[0m
+    [3msdk use[0m - sdk subcommand to use a specific version only in the current shell
+
+[1mSYNOPSIS[0m
+    [3msdk use <candidate> <version>[0m
+
+[1mDESCRIPTION[0m
+    The mandatory candidate and version follow the subcommand to specify
+    what to use in the shell. This subcommand only operates on the current
+    shell. It does not affect other shells running different versions of the
+    same candidate. It also does not change the default version set for all
+    subsequent shells.
+
+[1mEXIT CODE[0m
+    The subcommand will return a non-zero return code if the candidate or
+    version does not exist.
+
+[1mMNEMONIC[0m
+    [1mu[0m - may be used in place of the [1muse[0m subcommand.
+
+[1mEXAMPLES[0m
+    [3msdk use java 17.0.0-tem[0m

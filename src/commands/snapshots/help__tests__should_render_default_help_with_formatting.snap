@@ -1,0 +1,29 @@
+---
+source: src/bin/help/main.rs
+expression: render(default_help())
+---
+[1mNAME[0m
+    [3msdk default[0m - sdk subcommand to set the local default version of the
+    candidate
+
+[1mSYNOPSIS[0m
+    [3msdk default <candidate> [version][0m
+
+[1mDESCRIPTION[0m
+    The mandatory candidate qualifier of the subcommand specifies the candidate
+    to default for all future shells.
+
+    The optional version qualifier sets that specific version as default for all
+    subsequent shells on the local environment. Omitting the version will set
+    the global SDKMAN tracked version as the default version for that candidate.
+
+[1mEXIT CODE[0m
+    The subcommand will return a non-zero return code if the candidate or
+    version does not exist.
+
+[1mMNEMONIC[0m
+    [1md[0m - may be used in place of the [1mdefault[0m subcommand.
+
+[1mEXAMPLES[0m
+    [3msdk default java 17.0.0-tem
+    sdk default java[0m
