@@ -21,6 +21,7 @@ enum Commands {
     Help(commands::help::Args),
     Version(commands::version::Args),
     Default(commands::default::Args),
+    Current(commands::current::Args),
 }
 
 fn main() {
@@ -30,6 +31,7 @@ fn main() {
         Commands::Version(args) => commands::version::run(args),
         Commands::Help(args) => commands::help::run(args),
         Commands::Default(args) => commands::default::run(args),
+        Commands::Current(args) => commands::current::run(args),
     };
 
     if let Err(code) = result {

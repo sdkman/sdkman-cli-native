@@ -4,7 +4,7 @@ use textwrap::{fill, indent};
 #[derive(clap::Args, Debug)]
 #[command(about = "Show detailed help for a subcommand")]
 pub struct Args {
-    /// Optional subcommand name (e.g. `install`). Aliases like `i`, `ls`, etc. also work.
+    /// optional subcommand name (e.g. `install`), Aliases like `i`, `ls`, etc. also work
     pub subcommand: Option<String>,
 }
 
@@ -639,8 +639,8 @@ mod tests {
     }
 
     fn snapshot_dir() -> std::path::PathBuf {
-        // Point this at where your existing snapshots already live.
-        // (Matches what you described: src/bin/help/snapshots/)
+        // point this at where your existing snapshots already live
+        // (matches what you described: src/bin/help/snapshots/)
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("src")
             .join("bin")

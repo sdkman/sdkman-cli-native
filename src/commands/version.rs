@@ -12,7 +12,7 @@ const NATIVE_VERSION: &str = env!("CARGO_PKG_VERSION");
 #[derive(clap::Args, Debug)]
 #[command(about = "Display the installed SDKMAN! version (script + native)")]
 pub struct Args {
-    /// Print only the native binary version
+    /// print only the native binary version
     #[arg(long)]
     pub native_only: bool,
 }

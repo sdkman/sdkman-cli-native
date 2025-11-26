@@ -36,7 +36,7 @@ pub fn run(args: Args) -> Result<(), i32> {
         .join(&candidate)
         .join(CURRENT_DIR);
 
-    // Remove existing "current" (symlink or dir).
+    // remove existing "current" (symlink or dir)
     if current_link_path.exists() {
         remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
             remove_dir_all(&current_link_path).unwrap_or_else(|e| {
@@ -57,7 +57,7 @@ pub fn run(args: Args) -> Result<(), i32> {
         "default".italic()
     );
 
-    // Prefer symlink; fall back to copying into place if symlinks fail.
+    // prefer symlink; fallback to copying into place if symlinks fail
     symlink_dir(&version_path, &current_link_path).unwrap_or_else(|_| {
         let options = CopyOptions::new();
 
