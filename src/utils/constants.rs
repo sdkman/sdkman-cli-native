@@ -10,7 +10,7 @@ pub const CURRENT_DIR: &str = "current";
 pub const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
 
 /// Environment variable that overrides SDKMAN home.
-pub const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
+pub const SDKMAN_DIR: &str = "SDKMAN_DIR";
 
 /// Temporary directory name.
 pub const TMP_DIR: &str = "tmp";

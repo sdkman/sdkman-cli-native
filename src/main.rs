@@ -20,6 +20,7 @@ struct Cli {
 enum Commands {
     Help(commands::help::Args),
     Version(commands::version::Args),
+    Default(commands::default::Args),
 }
 
 fn main() {
@@ -28,6 +29,7 @@ fn main() {
     let result = match cli.command {
         Commands::Version(args) => commands::version::run(args),
         Commands::Help(args) => commands::help::run(args),
+        Commands::Default(args) => commands::default::run(args),
     };
 
     if let Err(code) = result {

@@ -1,11 +1,10 @@
-use colored::Colorize;
-use std::env::consts::{ARCH, OS};
-
 use crate::utils::{
     constants::VAR_DIR,
     directory_utils::infer_sdkman_dir,
     file_utils::{check_file_exists, read_file_content},
 };
+use colored::Colorize;
+use std::env::consts::{ARCH, OS};
 
 const CLI_VERSION_FILE: &str = "version";
 const NATIVE_VERSION: &str = env!("CARGO_PKG_VERSION");
