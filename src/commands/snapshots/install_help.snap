@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(install_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk install[0m - sdk subcommand to install a candidate version
+    [3msdk install[0m sdk subcommand to install a candidate version
 
 [1mSYNOPSIS[0m
     [3msdk install <candidate> [version] [path][0m

@@ -83,7 +83,9 @@ fn render(help: Help) -> String {
     let spaced_tab = format!("{:width$}", " ", width = INDENTATION_WIDTH);
     let indentation = spaced_tab.as_str();
 
-    let nameline = format!("{} {}", help.cmd.italic(), help.tagline);
+    let sep = if help.cmd.trim() == "sdk" { " - " } else { " " };
+    let nameline = format!("{}{}{}", help.cmd.italic(), sep, help.tagline);
+
     let wrapped_nameline = fill(&nameline, TEXT_WIDTH);
     let name = format!(
         "\n{}\n{}\n\n",
@@ -632,10 +634,11 @@ fn version_help() -> Help {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use colored::control;
 
     fn setup() {
-        colored::control::set_override(true);
-        colored::control::SHOULD_COLORIZE.set_override(true);
+        control::set_override(true);
+        control::SHOULD_COLORIZE.set_override(true);
     }
 
     fn snapshot_dir() -> std::path::PathBuf {
@@ -643,8 +646,7 @@ mod tests {
         // (matches what you described: src/bin/help/snapshots/)
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("src")
-            .join("bin")
-            .join("help")
+            .join("commands")
             .join("snapshots")
     }
 

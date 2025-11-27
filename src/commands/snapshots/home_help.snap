@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(home_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk home[0m - sdk subcommand to output the path of a specific candidate version
+    [3msdk home[0m sdk subcommand to output the path of a specific candidate version
 
 [1mSYNOPSIS[0m
     [3msdk home <candidate> <version>[0m

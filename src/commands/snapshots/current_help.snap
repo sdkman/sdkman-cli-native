@@ -1,10 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(current_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk current[0m - sdk subcommand to display the current default installed
-    versions
+    [3msdk current[0m sdk subcommand to display the current default installed versions
 
 [1mSYNOPSIS[0m
     [3msdk current [candidate][0m

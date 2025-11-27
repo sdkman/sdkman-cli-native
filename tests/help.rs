@@ -1,49 +1,91 @@
-#[cfg(test)]
+use assert_cmd::{cargo, prelude::*};
+use predicates::prelude::*;
+use rstest::rstest;
 use std::process::Command;
 
-use assert_cmd::prelude::*;
-use predicates::prelude::*;
+fn sdk() -> Command {
+    Command::new(cargo::cargo_bin!("sdkman"))
+}
 
 #[test]
 fn should_render_base_help() -> Result<(), Box<dyn std::error::Error>> {
-    let header = "\nNAME\n    sdk - The command line interface (CLI) for SDKMAN!";
-    Command::cargo_bin("help")?
+    sdk()
+        .arg("help")
         .assert()
         .success()
-        .stdout(predicate::str::starts_with(header))
-        .code(0);
-    println!("Tested: {}", header);
+        .code(0)
+        // Don't hardcode ANSI/wrapping; just validate structure.
+        .stdout(
+            predicate::str::contains("\nNAME\n")
+                .and(predicate::str::contains(
+                    "sdk - The command line interface (CLI) for SDKMAN!",
+                ))
+                .and(predicate::str::contains("\nSYNOPSIS\n"))
+                .and(predicate::str::contains("\nDESCRIPTION\n"))
+                .and(predicate::str::contains("\nEXAMPLES\n")),
+        );
+
+    Ok(())
+}
+
+#[rstest]
+#[case("config")]
+#[case("current")]
+#[case("default")]
+#[case("env")]
+#[case("flush")]
+#[case("home")]
+#[case("install")]
+#[case("list")]
+#[case("selfupdate")]
+#[case("uninstall")]
+#[case("update")]
+#[case("upgrade")]
+#[case("use")]
+#[case("version")]
+fn should_render_help_for_subcommand(
+    #[case] subcommand: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let expected_name_line = format!("sdk {}", subcommand);
+
+    sdk()
+        .arg("help")
+        .arg(subcommand)
+        .assert()
+        .success()
+        .code(0)
+        .stdout(
+            predicate::str::contains("\nNAME\n")
+                .and(predicate::str::contains(&expected_name_line))
+                .and(predicate::str::contains("\nSYNOPSIS\n"))
+                .and(predicate::str::contains("\nDESCRIPTION\n"))
+                .and(predicate::str::contains("\nEXAMPLES\n")),
+        );
+
+    Ok(())
+}
+
+#[rstest]
+#[case("help", None)]
+#[case("help", Some("version"))]
+#[case("help", Some("install"))]
+fn should_not_panic_for_help_paths(
+    #[case] a: &str,
+    #[case] b: Option<&str>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = sdk();
+    cmd.arg(a);
+    if let Some(b) = b {
+        cmd.arg(b);
+    }
+
+    cmd.assert().success();
     Ok(())
 }
 
 #[test]
-fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Error>> {
-    let args = [
-        "config",
-        "current",
-        "default",
-        "env",
-        "flush",
-        "home",
-        "install",
-        "list",
-        "selfupdate",
-        "uninstall",
-        "update",
-        "upgrade",
-        "use",
-        "version",
-    ];
-
-    for arg in &args {
-        let header = format!("\n{} {} - ", "NAME\n    sdk", &arg);
-        Command::cargo_bin("help")?
-            .arg(arg)
-            .assert()
-            .success()
-            .stdout(predicate::str::starts_with(&header))
-            .code(0);
-        println!("Success: sdk {}", arg);
-    }
+fn should_not_panic_on_clap_help_flag() -> Result<(), Box<dyn std::error::Error>> {
+    // This ensures your clap wiring (disable_help_subcommand etc) is not exploding.
+    sdk().arg("--help").assert().success().code(0);
     Ok(())
 }

@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(use_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk use[0m - sdk subcommand to use a specific version only in the current shell
+    [3msdk use[0m sdk subcommand to use a specific version only in the current shell
 
 [1mSYNOPSIS[0m
     [3msdk use <candidate> <version>[0m

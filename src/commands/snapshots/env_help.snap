@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(env_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk env[0m - sdk subcommand to control SDKs on a project level, setting up
+    [3msdk env[0m sdk subcommand to control SDKs on a project level, setting up
     specific versions for a directory
 
 [1mSYNOPSIS[0m

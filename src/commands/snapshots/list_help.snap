@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(list_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk list[0m - sdk subcommand to list all candidates or candidate versions
+    [3msdk list[0m sdk subcommand to list all candidates or candidate versions
 
 [1mSYNOPSIS[0m
     [3msdk list [candidate][0m

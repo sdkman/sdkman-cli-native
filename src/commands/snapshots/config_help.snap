@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(config_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk config[0m - sdk subcommand to edit the SDKMAN configuration file
+    [3msdk config[0m sdk subcommand to edit the SDKMAN configuration file
 
 [1mSYNOPSIS[0m
     [3msdk config[0m

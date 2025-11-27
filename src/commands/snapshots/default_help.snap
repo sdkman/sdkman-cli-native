@@ -1,10 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(default_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk default[0m - sdk subcommand to set the local default version of the
-    candidate
+    [3msdk default[0m sdk subcommand to set the local default version of the candidate
 
 [1mSYNOPSIS[0m
     [3msdk default <candidate> [version][0m

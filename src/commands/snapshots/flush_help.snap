@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(flush_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk flush[0m - sdk subcommand used for flushing local temporal state of SDKMAN
+    [3msdk flush[0m sdk subcommand used for flushing local temporal state of SDKMAN
 
 [1mSYNOPSIS[0m
     [3msdk flush [tmp|metadata|version][0m

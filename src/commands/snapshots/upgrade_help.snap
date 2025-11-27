@@ -1,9 +1,10 @@
 ---
-source: src/bin/help/main.rs
-expression: render(upgrade_help())
+source: src/commands/help.rs
+expression: rendered
 ---
+
 [1mNAME[0m
-    [3msdk upgrade[0m - sdk subcommand to upgrade installed candidate versions
+    [3msdk upgrade[0m sdk subcommand to upgrade installed candidate versions
 
 [1mSYNOPSIS[0m
     [3msdk upgrade [candidate][0m

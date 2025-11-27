@@ -9,7 +9,9 @@ use std::process::exit;
     name = "sdk",
     about = "The command line interface (CLI) for SDKMAN!",
     version,
-    propagate_version = true
+    propagate_version = true,
+    disable_version_flag = true,
+    disable_help_subcommand = true
 )]
 struct Cli {
     #[command(subcommand)]
