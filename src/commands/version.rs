@@ -1,3 +1,25 @@
+//! `sdk version`.
+//!
+//! Shows the installed SDKMAN! script version (from `$SDKMAN_DIR/var/version`) and the
+//! native CLI version (from `CARGO_PKG_VERSION`), plus the current platform.
+//!
+//! ## Flags
+//! - `--native-only`: print only the native binary version.
+//!
+//! ## Examples
+//! ```no_run
+//! # use std::process::Command;
+//! Command::new("sdk").arg("version").status().unwrap();
+//! ```
+//!
+//! ```no_run
+//! # use std::process::Command;
+//! Command::new("sdk")
+//!     .args(["version", "--native-only"])
+//!     .status()
+//!     .unwrap();
+//! ```
+
 use crate::utils::{
     constants::VAR_DIR,
     directory_utils::infer_sdkman_dir,
@@ -9,14 +31,18 @@ use std::env::consts::{ARCH, OS};
 const CLI_VERSION_FILE: &str = "version";
 const NATIVE_VERSION: &str = env!("CARGO_PKG_VERSION");
 
+/// Arguments for `sdk version`.
 #[derive(clap::Args, Debug)]
 #[command(about = "Display the installed SDKMAN! version (script + native)")]
 pub struct Args {
-    /// print only the native binary version
+    /// Print only the native binary version.
     #[arg(long)]
     pub native_only: bool,
 }
 
+/// Run `sdk version`.
+///
+/// Returns `Ok(())` on success, or an exit code (`Err(code)`) on failure.
 pub fn run(args: Args) -> Result<(), i32> {
     if args.native_only {
         println!("{NATIVE_VERSION}");

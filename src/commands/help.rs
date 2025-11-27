@@ -1,13 +1,36 @@
+//! `sdk help` command.
+//!
+//! Renders human-friendly help text for `sdk` and its subcommands, matching the
+//! look/feel of SDKMAN!'s bash help (headings, indentation, wrapping, and ANSI
+//! styling).
+//!
+//! Notes:
+//! - `sdk` (main help) renders the NAME line as `sdk - …`
+//! - Subcommand help renders as `sdk <subcommand> …`
+//! - Aliases are supported (e.g. `sdk help ls`, `sdk help rm`, `sdk help v`)
+//! - Snapshot tests live in `src/commands/snapshots/` and preserve ANSI output.
+//!
+//! # Examples
+//! ```no_run
+//! # use std::process::Command;
+//! Command::new("sdk").args(["help"]).status().unwrap();
+//! Command::new("sdk").args(["help", "install"]).status().unwrap();
+//! Command::new("sdk").args(["help", "ls"]).status().unwrap();
+//! ```
 use colored::Colorize;
 use textwrap::{fill, indent};
 
+/// CLI arguments for `sdk help`.
 #[derive(clap::Args, Debug)]
 #[command(about = "Show detailed help for a subcommand")]
 pub struct Args {
-    /// optional subcommand name (e.g. `install`), Aliases like `i`, `ls`, etc. also work
+    /// Optional subcommand name (e.g. `install`). Aliases like `i`, `ls`, etc. also work.
     pub subcommand: Option<String>,
 }
 
+/// Entry point for `sdk help`.
+///
+/// Resolves an optional help topic (including aliases) and prints the rendered help text.
 pub fn run(args: Args) -> Result<(), i32> {
     let help = match args
         .subcommand
@@ -47,38 +70,65 @@ pub fn run(args: Args) -> Result<(), i32> {
     Ok(())
 }
 
+/// A single row in the "SUBCOMMANDS & QUALIFIERS" section.
 struct Subcommand {
+    /// Subcommand name.
     command: String,
+    /// Subcommand qualifier summary (rendered in italic).
     description: String,
 }
 
+/// Optional "CONFIGURATION" section content.
 struct Configuration {
+    /// Explanatory text.
     content: String,
+    /// Example snippet (typically multi-line).
     snippet: String,
 }
 
+/// Optional mnemonic shorthand for a subcommand (e.g. `v` for `version`).
 struct Mnemonic {
+    /// Shorthand alias.
     shorthand: String,
+    /// Canonical subcommand name.
     command: String,
 }
 
+/// In-memory representation of a help page.
 #[derive(Default)]
 struct Help {
+    /// Command label used in the NAME line (e.g. `sdk`, `sdk install`).
     cmd: String,
+    /// Short tagline shown in NAME.
     tagline: String,
+    /// One-line usage form.
     synopsis: String,
+    /// Paragraph describing the command.
     description: String,
+    /// Optional list of subcommands or qualifiers.
     subcommands: Option<Vec<Subcommand>>,
+    /// Optional configuration details and example snippet.
     configuration: Option<Configuration>,
+    /// Optional mnemonic shorthand.
     mnemonic: Option<Mnemonic>,
+    /// Optional exit code note.
     exit_code: Option<String>,
+    /// Example invocations.
     examples: String,
 }
 
+/// Visual indentation used for help body blocks.
 const INDENTATION_WIDTH: usize = 4;
+
+/// Target terminal width for wrapping.
 const TERMINAL_WIDTH: usize = 80;
+
+/// Effective text width after indentation.
 const TEXT_WIDTH: usize = TERMINAL_WIDTH - INDENTATION_WIDTH;
 
+/// Render a [`Help`] page into a styled string.
+///
+/// Output includes section headings and wraps text to [`TERMINAL_WIDTH`].
 fn render(help: Help) -> String {
     let spaced_tab = format!("{:width$}", " ", width = INDENTATION_WIDTH);
     let indentation = spaced_tab.as_str();
@@ -176,6 +226,7 @@ fn render(help: Help) -> String {
     )
 }
 
+/// Help text for `sdk` (top-level).
 fn main_help() -> Help {
     Help {
         cmd: "sdk".to_string(),
@@ -252,6 +303,7 @@ fn main_help() -> Help {
     }
 }
 
+/// Help text for `sdk config`.
 fn config_help() -> Help {
     let config_file = "${SDKMAN_DIR}/etc/config";
     let default_config = "\
@@ -295,6 +347,7 @@ sdkman_selfupdate_feature=true
     }
 }
 
+/// Help text for `sdk current` (and alias `c`).
 fn current_help() -> Help {
     Help {
         cmd: "sdk current".to_string(),
@@ -313,6 +366,7 @@ fn current_help() -> Help {
     }
 }
 
+/// Help text for `sdk default` (and alias `d`).
 fn default_help() -> Help {
     Help {
         cmd: "sdk default".to_string(),
@@ -336,6 +390,7 @@ fn default_help() -> Help {
     }
 }
 
+/// Help text for `sdk env` (and alias `e`).
 fn env_help() -> Help {
     let config_file_content = "\
 ---
@@ -401,6 +456,7 @@ java=11.0.13-tem
     }
 }
 
+/// Help text for `sdk flush`.
 fn flush_help() -> Help {
     Help {
         cmd: "sdk flush".to_string(),
@@ -442,6 +498,7 @@ fn flush_help() -> Help {
     }
 }
 
+/// Help text for `sdk home` (and alias `h`).
 fn home_help() -> Help {
     Help {
         cmd: "sdk home".to_string(),
@@ -460,6 +517,7 @@ fn home_help() -> Help {
     }
 }
 
+/// Help text for `sdk install` (and alias `i`).
 fn install_help() -> Help {
     Help {
         cmd: "sdk install".to_string(),
@@ -485,6 +543,7 @@ fn install_help() -> Help {
     }
 }
 
+/// Help text for `sdk list` (and alias `ls`).
 fn list_help() -> Help {
     let legend = "\
 + - local version
@@ -514,6 +573,7 @@ Java has a custom list view with vendor-specific details.",
     }
 }
 
+/// Help text for `sdk selfupdate`.
 fn selfupdate_help() -> Help {
     Help {
         cmd: "sdk selfupdate".to_string(),
@@ -529,6 +589,7 @@ fn selfupdate_help() -> Help {
     }
 }
 
+/// Help text for `sdk uninstall` (and alias `rm`).
 fn uninstall_help() -> Help {
     Help {
         cmd: "sdk uninstall".to_string(),
@@ -553,6 +614,7 @@ fn uninstall_help() -> Help {
     }
 }
 
+/// Help text for `sdk update`.
 fn update_help() -> Help {
     Help {
         cmd: "sdk update".to_string(),
@@ -568,6 +630,7 @@ fn update_help() -> Help {
     }
 }
 
+/// Help text for `sdk upgrade` (and alias `ug`).
 fn upgrade_help() -> Help {
     Help {
         cmd: "sdk upgrade".to_string(),
@@ -590,6 +653,7 @@ fn upgrade_help() -> Help {
     }
 }
 
+/// Help text for `sdk use` (and alias `u`).
 fn use_help() -> Help {
     Help {
         cmd: "sdk use".to_string(),
@@ -613,6 +677,7 @@ fn use_help() -> Help {
     }
 }
 
+/// Help text for `sdk version` (and alias `v`).
 fn version_help() -> Help {
     Help {
         cmd: "sdk version".to_string(),
@@ -642,19 +707,19 @@ mod tests {
     }
 
     fn snapshot_dir() -> std::path::PathBuf {
-        // point this at where your existing snapshots already live
-        // (matches what you described: src/bin/help/snapshots/)
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("src")
             .join("commands")
             .join("snapshots")
     }
 
-    fn assert_help_snapshot(name: &str, rendered: String) {
+    fn assert_help_snapshot(name: &str, render_fn: impl FnOnce() -> String) {
         setup();
+        let rendered = render_fn();
+
         insta::with_settings!({
             snapshot_path => snapshot_dir(),
-            prepend_module_to_snapshot => false, // keep names stable across module moves
+            prepend_module_to_snapshot => false,
         }, {
             insta::assert_snapshot!(name, rendered);
         });
@@ -662,76 +727,76 @@ mod tests {
 
     #[test]
     fn renders_main_help() {
-        assert_help_snapshot("main_help", render(main_help()));
+        assert_help_snapshot("main_help", || render(main_help()));
     }
 
     #[test]
     fn renders_config_help() {
-        assert_help_snapshot("config_help", render(config_help()));
+        assert_help_snapshot("config_help", || render(config_help()));
     }
 
     #[test]
     fn renders_current_help() {
-        assert_help_snapshot("current_help", render(current_help()));
+        assert_help_snapshot("current_help", || render(current_help()));
     }
 
     #[test]
     fn renders_default_help() {
-        assert_help_snapshot("default_help", render(default_help()));
+        assert_help_snapshot("default_help", || render(default_help()));
     }
 
     #[test]
     fn renders_env_help() {
-        assert_help_snapshot("env_help", render(env_help()));
+        assert_help_snapshot("env_help", || render(env_help()));
     }
 
     #[test]
     fn renders_flush_help() {
-        assert_help_snapshot("flush_help", render(flush_help()));
+        assert_help_snapshot("flush_help", || render(flush_help()));
     }
 
     #[test]
     fn renders_home_help() {
-        assert_help_snapshot("home_help", render(home_help()));
+        assert_help_snapshot("home_help", || render(home_help()));
     }
 
     #[test]
     fn renders_install_help() {
-        assert_help_snapshot("install_help", render(install_help()));
+        assert_help_snapshot("install_help", || render(install_help()));
     }
 
     #[test]
     fn renders_list_help() {
-        assert_help_snapshot("list_help", render(list_help()));
+        assert_help_snapshot("list_help", || render(list_help()));
     }
 
     #[test]
     fn renders_selfupdate_help() {
-        assert_help_snapshot("selfupdate_help", render(selfupdate_help()));
+        assert_help_snapshot("selfupdate_help", || render(selfupdate_help()));
     }
 
     #[test]
     fn renders_uninstall_help() {
-        assert_help_snapshot("uninstall_help", render(uninstall_help()));
+        assert_help_snapshot("uninstall_help", || render(uninstall_help()));
     }
 
     #[test]
     fn renders_update_help() {
-        assert_help_snapshot("update_help", render(update_help()));
+        assert_help_snapshot("update_help", || render(update_help()));
     }
 
     #[test]
     fn renders_upgrade_help() {
-        assert_help_snapshot("upgrade_help", render(upgrade_help()));
+        assert_help_snapshot("upgrade_help", || render(upgrade_help()));
     }
 
     #[test]
     fn renders_use_help() {
-        assert_help_snapshot("use_help", render(use_help()));
+        assert_help_snapshot("use_help", || render(use_help()));
     }
 
     #[test]
     fn renders_version_help() {
-        assert_help_snapshot("version_help", render(version_help()));
+        assert_help_snapshot("version_help", || render(version_help()));
     }
 }

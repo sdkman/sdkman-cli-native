@@ -4,17 +4,27 @@ on:
   push:
     branches: ["main", "master"]
   pull_request:
+    branches: ["main", "master"]
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  rust:
-    runs-on: ubuntu-latest
+  test:
+    name: test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,33 +33,50 @@ jobs:
           components: rustfmt, clippy
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          cache-targets: "false"
 
       - name: fmt
+        if: matrix.os == 'ubuntu-latest'
         run: cargo fmt --all -- --check
 
       - name: check
+        if: matrix.os == 'ubuntu-latest'
         run: cargo check --all-targets --all-features
 
       - name: clippy
+        if: matrix.os == 'ubuntu-latest'
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: test
+        run: cargo test
+
+      - name: test (all features)
+        if: matrix.os == 'ubuntu-latest'
         run: cargo test --all-features
 
       - name: doc
+        if: matrix.os == 'ubuntu-latest'
         env:
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --no-deps --all-features
 
   audit:
+    name: audit
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
+
       - uses: dtolnay/rust-toolchain@stable
-      - name: install cargo-audit
-        uses: taiki-e/install-action@v2
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-targets: "false"
+
+      - uses: taiki-e/install-action@v2
         with:
           tool: cargo-audit
+
       - name: audit
         run: cargo audit

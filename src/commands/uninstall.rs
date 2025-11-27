@@ -1,3 +1,29 @@
+//! `sdk uninstall` command.
+//!
+//! Removes an installed candidate version from `$SDKMAN_DIR/candidates/<candidate>/<version>`.
+//! If the target version is currently selected via the `current` link, removal is blocked unless
+//! `--force` is provided.
+//!
+//! ## Flags
+//! - `-f, --force`: remove even if the target is the current version (may leave the candidate unusable).
+//!
+//! ## Examples
+//! ```no_run
+//! # use std::process::Command;
+//! Command::new("sdk")
+//!     .args(["uninstall", "java", "17.0.0-tem"])
+//!     .status()
+//!     .unwrap();
+//! ```
+//!
+//! ```no_run
+//! # use std::process::Command;
+//! Command::new("sdk")
+//!     .args(["uninstall", "java", "17.0.0-tem", "--force"])
+//!     .status()
+//!     .unwrap();
+//! ```
+
 use crate::utils::{
     constants::{CANDIDATES_DIR, CURRENT_DIR},
     directory_utils::infer_sdkman_dir,
@@ -7,20 +33,32 @@ use colored::Colorize;
 use std::{fs, fs::remove_dir_all};
 use symlink::remove_symlink_dir;
 
+/// Arguments for `sdk uninstall`.
 #[derive(clap::Args, Debug)]
-#[command(about = "Remove a specific a candidate version")]
+#[command(about = "Remove a specific candidate version")]
 pub struct Args {
-    /// remove even if this version is current selected (leaves candiate unusable)
+    /// Remove even if this version is currently selected (may leave the candidate unusable).
     #[arg(short = 'f', long = "force")]
     pub force: bool,
 
+    /// Candidate name (e.g. `java`).
     #[arg(required = true)]
     pub candidate: String,
 
+    /// Candidate version to remove (e.g. `17.0.0-tem`).
     #[arg(required = true)]
     pub version: String,
 }
 
+/// Run `sdk uninstall`.
+///
+/// Returns `Ok(())` on success, or an exit code (`Err(code)`) on failure.
+///
+/// Behavior notes:
+/// - Validates the candidate against the local candidates list.
+/// - Refuses to remove the target if it is the `current` version unless `--force` is set.
+/// - Attempts to remove the `current` symlink first (when forced), falling back to removing a
+///   real directory if `current` is not a symlink.
 pub fn run(args: Args) -> Result<(), i32> {
     let sdkman_dir = infer_sdkman_dir().map_err(|e| {
         eprintln!("failed to infer SDKMAN_DIR: {e}");

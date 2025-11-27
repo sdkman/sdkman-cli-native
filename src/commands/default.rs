@@ -1,3 +1,26 @@
+//! `sdk default` command.
+//!
+//! Sets the “current” version for a candidate by updating
+//! `${SDKMAN_DIR}/candidates/<candidate>/current`.
+//!
+//! The preferred implementation is a directory symlink to the requested version.
+//! On platforms or filesystems where symlinks are unavailable, this falls back to
+//! copying the version directory into place (via `${SDKMAN_DIR}/tmp`).
+//!
+//! ## Exit codes
+//! - `0` on success
+//! - `1` on invalid candidate/version, missing files, or filesystem errors
+//!
+//! ## Examples
+//! ```no_run
+//! # use std::process::Command;
+//! // Set scala 3.3.1 as the default for all new shells
+//! Command::new("sdk")
+//!     .args(["default", "scala", "3.3.1"])
+//!     .status()
+//!     .unwrap();
+//! ```
+
 use crate::utils::{
     constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR},
     directory_utils::infer_sdkman_dir,
@@ -12,16 +35,27 @@ use std::{
 };
 use symlink::{remove_symlink_dir, symlink_dir};
 
+/// Arguments for `sdk default`.
 #[derive(clap::Args, Debug)]
 #[command(about = "Set the local default version of a candidate")]
 pub struct Args {
+    /// Candidate name (e.g. `java`, `scala`).
     #[arg(required = true)]
     pub candidate: String,
 
+    /// Candidate version to set as `current`.
     #[arg(required = true)]
     pub version: String,
 }
 
+/// Run `sdk default`.
+///
+/// Returns `Ok(())` on success, or an exit code (`Err(code)`) on failure.
+///
+/// Implementation notes:
+/// - Removes any existing `current` path (symlink or directory).
+/// - Attempts to create a symlink `current -> <version>`.
+/// - If symlinking fails, copies `<version>` into `${SDKMAN_DIR}/tmp` then renames into place.
 pub fn run(args: Args) -> Result<(), i32> {
     let sdkman_dir = infer_sdkman_dir().map_err(|e| {
         eprintln!("failed to infer SDKMAN_DIR: {e}");
@@ -37,7 +71,7 @@ pub fn run(args: Args) -> Result<(), i32> {
         .join(&candidate)
         .join(CURRENT_DIR);
 
-    // remove existing "current" (symlink or dir)
+    // Remove existing "current" (symlink or dir).
     if current_link_path.exists() {
         remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
             remove_dir_all(&current_link_path).unwrap_or_else(|e| {
@@ -58,7 +92,7 @@ pub fn run(args: Args) -> Result<(), i32> {
         "default".italic()
     );
 
-    // prefer symlink; fallback to copying into place if symlinks fail
+    // Prefer symlink; fallback to copying into place if symlinks fail.
     symlink_dir(&version_path, &current_link_path).unwrap_or_else(|_| {
         let options = CopyOptions::new();
 
