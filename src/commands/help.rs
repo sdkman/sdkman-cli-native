@@ -121,7 +121,7 @@ fn render(help: Help) -> String {
                         &desc_indent,
                     )[command.len()..];
 
-                    format!("{}{}\n", command.to_string(), description)
+                    format!("{}{}\n", command, description)
                 })
                 .collect();
 
@@ -139,7 +139,7 @@ fn render(help: Help) -> String {
                 indent(&config.snippet, indentation)
             )
         })
-        .unwrap_or_else(String::new);
+        .unwrap_or_default();
 
     let mnemonic = help
         .mnemonic
@@ -151,7 +151,7 @@ fn render(help: Help) -> String {
             );
             format!("{}\n{}\n\n", "MNEMONIC".bold(), indent(&text, indentation))
         })
-        .unwrap_or_else(String::new);
+        .unwrap_or_default();
 
     let exit_code = help
         .exit_code
@@ -162,7 +162,7 @@ fn render(help: Help) -> String {
                 indent(&fill(&m, TEXT_WIDTH), indentation)
             )
         })
-        .unwrap_or_else(String::new);
+        .unwrap_or_default();
 
     let examples = format!(
         "{}\n{}\n\n",

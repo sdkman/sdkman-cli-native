@@ -20,7 +20,7 @@ pub fn run(args: Args) -> Result<(), i32> {
         1
     })?;
 
-    let all_candidates = known_candidates(sdkman_dir.to_owned());
+    let all_candidates = known_candidates(&sdkman_dir);
 
     match args.candidate {
         Some(candidate) => {

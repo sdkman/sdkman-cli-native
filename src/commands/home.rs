@@ -21,7 +21,7 @@ pub fn run(args: Args) -> Result<(), i32> {
         1
     })?;
 
-    let candidate = validate_candidate(&known_candidates(sdkman_dir.to_owned()), &args.candidate);
+    let candidate = validate_candidate(&known_candidates(&sdkman_dir), &args.candidate);
 
     let candidate_path = sdkman_dir
         .join(CANDIDATES_DIR)

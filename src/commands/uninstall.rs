@@ -27,10 +27,10 @@ pub fn run(args: Args) -> Result<(), i32> {
         1
     })?;
 
-    let candidate = validate_candidate(&known_candidates(sdkman_dir.to_owned()), &args.candidate);
+    let candidate = validate_candidate(&known_candidates(&sdkman_dir), &args.candidate);
 
     let candidate_path = sdkman_dir.join(CANDIDATES_DIR).join(&candidate);
-    let version_path = validate_version_path(sdkman_dir.to_owned(), &candidate, &args.version);
+    let version_path = validate_version_path(&sdkman_dir, &candidate, &args.version);
     let current_link_path = candidate_path.join(CURRENT_DIR);
 
     // if "current" points at the version we’re removing, enforce --force

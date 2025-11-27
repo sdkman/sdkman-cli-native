@@ -8,6 +8,7 @@ use fs_extra::{copy_items, dir::CopyOptions};
 use std::{
     fs::{self, remove_dir_all},
     process::exit,
+    slice,
 };
 use symlink::{remove_symlink_dir, symlink_dir};
 
@@ -28,8 +29,8 @@ pub fn run(args: Args) -> Result<(), i32> {
     })?;
 
     let tmp_dir = sdkman_dir.join(TMP_DIR);
-    let candidate = validate_candidate(&known_candidates(sdkman_dir.to_owned()), &args.candidate);
-    let version_path = validate_version_path(sdkman_dir.to_owned(), &candidate, &args.version);
+    let candidate = validate_candidate(&known_candidates(&sdkman_dir), &args.candidate);
+    let version_path = validate_version_path(&sdkman_dir, &candidate, &args.version);
 
     let current_link_path = sdkman_dir
         .join(CANDIDATES_DIR)
@@ -61,7 +62,7 @@ pub fn run(args: Args) -> Result<(), i32> {
     symlink_dir(&version_path, &current_link_path).unwrap_or_else(|_| {
         let options = CopyOptions::new();
 
-        copy_items(&[version_path.clone()], &tmp_dir, &options).unwrap_or_else(|e| {
+        copy_items(slice::from_ref(&version_path), &tmp_dir, &options).unwrap_or_else(|e| {
             eprintln!("cannot copy to tmp folder: {e}");
             exit(1);
         });
