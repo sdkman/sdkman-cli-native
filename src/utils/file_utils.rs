@@ -100,14 +100,19 @@ pub fn read_file_content<P: AsRef<Path>>(path: P) -> Result<String, Error> {
 
 #[cfg(test)]
 mod tests {
-    use super::{check_file_exists, read_file_content, Error, ErrorKind, Path, PathBuf};
+    use super::{check_file_exists, read_file_content};
     use rstest::rstest;
     use std::{
-        io::{Result, Write},
-        os::unix::fs as unix_fs,
-        write,
+        io::{Error, ErrorKind, Result, Write},
+        path::{Path, PathBuf},
     };
     use tempfile::{tempdir, NamedTempFile};
+
+    #[cfg(unix)]
+    use std::os::unix::fs as unix_fs;
+
+    #[cfg(windows)]
+    use std::os::windows::fs as windows_fs;
 
     fn assert_kind_is_one_of(err: &Error, kinds: &[ErrorKind]) {
         let got = err.kind();
@@ -208,6 +213,42 @@ mod tests {
         Ok(())
     }
 
+    // On Windows, creating symlinks can require admin privileges or Developer Mode.
+    // So: attempt to create the symlink, and if it fails, skip the test.
+    #[cfg(windows)]
+    #[test]
+    fn check_file_exists_ok_with_symlink_to_file() -> Result<()> {
+        let file = NamedTempFile::new()?;
+        let dir = tempdir()?;
+        let link_path = dir.path().join("link_to_file");
+
+        if windows_fs::symlink_file(file.path(), &link_path).is_err() {
+            eprintln!("skipping symlink test (no permission / developer mode not enabled)");
+            return Ok(());
+        }
+
+        let validated = check_file_exists(&link_path)?;
+        assert_eq!(validated, link_path);
+        Ok(())
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn check_file_exists_err_with_broken_symlink() -> Result<()> {
+        let dir = tempdir()?;
+        let target = dir.path().join("target_that_does_not_exist");
+        let link = dir.path().join("broken_link");
+
+        if windows_fs::symlink_file(&target, &link).is_err() {
+            eprintln!("skipping symlink test (no permission / developer mode not enabled)");
+            return Ok(());
+        }
+
+        let err = check_file_exists(&link).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::NotFound);
+        Ok(())
+    }
+
     // read_file_content tests
     #[rstest]
     #[case::trims_newline("5.9.0\n", "5.9.0")]
@@ -253,7 +294,8 @@ mod tests {
         let dir = tempdir()?;
         let err = read_file_content(dir.path()).unwrap_err();
 
-        // OS/filesystem dependent
+        // OS/filesystem dependent.
+        // Windows can report PermissionDenied/Other for "is a directory" attempts.
         assert_kind_is_one_of(
             &err,
             &[

@@ -12,14 +12,12 @@
 //! use sdkman::utils::directory_utils::infer_sdkman_dir;
 //!
 //! # fn main() -> io::Result<()> {
-//! // Prefer `SDKMAN_DIR` when present.
 //! let tmp = TempDir::new()?;
 //! unsafe { std::env::set_var(SDKMAN_DIR, tmp.path()); }
 //!
 //! let dir = infer_sdkman_dir().unwrap();
 //! assert_eq!(dir, tmp.path().to_path_buf());
 //!
-//! // Cleanup to avoid leaking state across doctests.
 //! unsafe { std::env::remove_var(SDKMAN_DIR); }
 //! # Ok(())
 //! # }
@@ -34,24 +32,24 @@ use std::env;
 
 /// Attempts to determine the SDKMAN directory.
 ///
-/// If the environment variable [`SDKMAN_DIR`] is set, its value is used.
+/// If the environment variable [`SDKMAN_DIR`] is set and valid unicode, its value is used.
 /// Otherwise, falls back to [`fallback_sdkman_dir`].
 ///
 /// # Examples
 ///
-/// Set the environment variable and retrieve it:
+/// Prefer `SDKMAN_DIR` when present:
 /// ```
-/// use std::{env, path::PathBuf};
+/// use std::env;
 /// use sdkman::utils::directory_utils::infer_sdkman_dir;
 /// use sdkman::utils::constants::SDKMAN_DIR;
 ///
 /// let temp_dir = tempfile::TempDir::new().unwrap();
-/// unsafe {
-///     env::set_var(SDKMAN_DIR, temp_dir.path());
-/// }
+/// unsafe { env::set_var(SDKMAN_DIR, temp_dir.path()); }
 ///
 /// let dir = infer_sdkman_dir().unwrap();
 /// assert_eq!(dir, temp_dir.path().to_path_buf());
+///
+/// unsafe { env::remove_var(SDKMAN_DIR); }
 /// ```
 ///
 /// Unset the variable to fall back:
@@ -60,9 +58,7 @@ use std::env;
 /// use sdkman::utils::directory_utils::{infer_sdkman_dir, fallback_sdkman_dir};
 /// use sdkman::utils::constants::SDKMAN_DIR;
 ///
-/// unsafe {
-///     env::remove_var(SDKMAN_DIR);
-/// }
+/// unsafe { env::remove_var(SDKMAN_DIR); }
 /// let dir = infer_sdkman_dir().unwrap();
 /// assert_eq!(dir, fallback_sdkman_dir());
 /// ```
@@ -75,7 +71,6 @@ pub fn infer_sdkman_dir() -> Result<PathBuf, std::env::VarError> {
 /// Returns the default SDKMAN directory, based on the user's home directory.
 ///
 /// # Examples
-///
 /// ```
 /// use sdkman::utils::directory_utils::fallback_sdkman_dir;
 /// use sdkman::utils::constants::DEFAULT_SDKMAN_HOME;
@@ -101,19 +96,21 @@ mod tests {
     use std::{
         env::{remove_var, set_var, var_os},
         ffi::{OsStr, OsString},
-        os::unix::ffi::OsStringExt,
         sync::{Mutex, MutexGuard, OnceLock},
     };
     use tempfile::TempDir;
 
-    // --- global env lock ---
+    #[cfg(unix)]
+    use std::os::unix::ffi::OsStringExt;
+    #[cfg(windows)]
+    use std::os::windows::ffi::OsStringExt;
+
     static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
 
     fn lock_env() -> MutexGuard<'static, ()> {
         ENV_LOCK.get_or_init(|| Mutex::new(())).lock().unwrap()
     }
 
-    // --- RAII guard to set/remove env vars ---
     struct ScopedEnvVar {
         key: &'static str,
         old: Option<OsString>,
@@ -121,7 +118,7 @@ mod tests {
 
     impl ScopedEnvVar {
         fn set(key: &'static str, value: impl AsRef<OsStr>) -> Self {
-            let old = std::env::var_os(key);
+            let old = var_os(key);
             unsafe { set_var(key, value) };
             Self { key, old }
         }
@@ -147,10 +144,12 @@ mod tests {
     #[test]
     fn fallback_is_home_join_default() {
         let _guard = lock_env();
+
         let expected = UserDirs::new()
             .unwrap()
             .home_dir()
             .join(DEFAULT_SDKMAN_HOME);
+
         assert_eq!(fallback_sdkman_dir(), expected);
     }
 
@@ -191,13 +190,23 @@ mod tests {
         }
     }
 
-    // non-unicode is considered as fallback rn
-    #[cfg(unix)]
     #[test]
     fn infer_falls_back_when_env_is_not_unicode() {
         let _guard = lock_env();
 
-        let invalid = OsString::from_vec(vec![0xFF, 0xFE, 0xFD]);
+        let invalid: OsString = {
+            #[cfg(unix)]
+            {
+                // bytes that are not valid UTF-8
+                OsString::from_vec(vec![0xFF, 0xFE, 0xFD])
+            }
+            #[cfg(windows)]
+            {
+                // unpaired surrogate => not valid Unicode scalar sequence
+                OsString::from_wide(&[0xD800])
+            }
+        };
+
         let _sdkman = ScopedEnvVar::set(SDKMAN_DIR, invalid);
 
         let got = infer_sdkman_dir().unwrap();
