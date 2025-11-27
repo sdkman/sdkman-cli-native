@@ -23,6 +23,7 @@ enum Commands {
     Default(commands::default::Args),
     Current(commands::current::Args),
     Uninstall(commands::uninstall::Args),
+    Home(commands::home::Args),
 }
 
 fn main() {
@@ -34,6 +35,7 @@ fn main() {
         Commands::Default(args) => commands::default::run(args),
         Commands::Current(args) => commands::current::run(args),
         Commands::Uninstall(args) => commands::uninstall::run(args),
+        Commands::Home(args) => commands::home::run(args),
     };
 
     if let Err(code) = result {
