@@ -77,7 +77,8 @@ fn should_fail_if_version_file_missing_or_empty(
         .code(1)
         .stderr(
             predicate::str::contains("failed to read SDKMAN! script version")
-                .and(predicate::str::contains("/var/version"))
+                // match "/var/version" on unix OR "\var\version" on windows
+                .and(predicate::str::is_match(r"[/\\]var[/\\]version").unwrap())
                 .and(predicate::str::contains(expected_reason)),
         );
 
