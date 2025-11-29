@@ -9,8 +9,8 @@ assert_cmd = "2.1.1"
 proc-macro2 = "1.0.103"
 clap = { version = "4.5.53", features = ["derive"] }
 colored = "3.0.0"
-directories = "5.0.0"
-dirs = "5.0.1"
+directories = "6.0.0"
+dirs = "6.0.0"
 exitcode = "1.1.2"
 fs_extra = "1.3.0"
 predicates = "3.1.3"
@@ -20,6 +20,6 @@ tempfile = "3.23.0"
 textwrap = "0.16.2"
 
 [dev-dependencies]
-insta = "1.44.3"
+insta = "1.45.0"
 rstest = "0.26.1"
 tempfile = "3.23.0"
