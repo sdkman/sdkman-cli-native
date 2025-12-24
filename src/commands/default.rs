@@ -1,0 +1,121 @@
+//! `sdk default` command.
+//!
+//! Sets the “current” version for a candidate by updating
+//! `${SDKMAN_DIR}/candidates/<candidate>/current`.
+//!
+//! The preferred implementation is a directory symlink to the requested version.
+//! On platforms or filesystems where symlinks are unavailable, this falls back to
+//! copying the version directory into place (via `${SDKMAN_DIR}/tmp`).
+//!
+//! ## Exit codes
+//! - `0` on success
+//! - `1` on invalid candidate/version, missing files, or filesystem errors
+//!
+//! ## Examples
+//! ```no_run
+//! # use std::process::Command;
+//! // Set scala 3.3.1 as the default for all new shells
+//! Command::new("sdk")
+//!     .args(["default", "scala", "3.3.1"])
+//!     .status()
+//!     .unwrap();
+//! ```
+
+use crate::utils::{
+    constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR},
+    directory_utils::infer_sdkman_dir,
+    helpers::{known_candidates, validate_candidate, validate_version_path},
+};
+use colored::Colorize;
+use fs_extra::{copy_items, dir::CopyOptions};
+use std::{
+    fs::{self, remove_dir_all},
+    process::exit,
+    slice,
+};
+use symlink::{remove_symlink_dir, symlink_dir};
+
+/// Arguments for `sdk default`.
+#[derive(clap::Args, Debug)]
+#[command(about = "Set the local default version of a candidate")]
+pub struct Args {
+    /// Candidate name (e.g. `java`, `scala`).
+    #[arg(required = true)]
+    pub candidate: String,
+
+    /// Candidate version to set as `current`.
+    #[arg(required = true)]
+    pub version: String,
+}
+
+/// Run `sdk default`.
+///
+/// Returns `Ok(())` on success, or an exit code (`Err(code)`) on failure.
+///
+/// Implementation notes:
+/// - Removes any existing `current` path (symlink or directory).
+/// - Attempts to create a symlink `current -> <version>`.
+/// - If symlinking fails, copies `<version>` into `${SDKMAN_DIR}/tmp` then renames into place.
+pub fn run(args: Args) -> Result<(), i32> {
+    let sdkman_dir = infer_sdkman_dir().map_err(|e| {
+        eprintln!("failed to infer SDKMAN_DIR: {e}");
+        1
+    })?;
+
+    let tmp_dir = sdkman_dir.join(TMP_DIR);
+    let candidate = validate_candidate(&known_candidates(&sdkman_dir), &args.candidate);
+    let version_path = validate_version_path(&sdkman_dir, &candidate, &args.version);
+
+    let current_link_path = sdkman_dir
+        .join(CANDIDATES_DIR)
+        .join(&candidate)
+        .join(CURRENT_DIR);
+
+    // Remove existing "current" (symlink or dir).
+    if current_link_path.exists() {
+        remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
+            remove_dir_all(&current_link_path).unwrap_or_else(|e| {
+                eprintln!(
+                    "cannot remove current directory for {}: {}",
+                    candidate.bold(),
+                    e
+                );
+                exit(1);
+            })
+        });
+    }
+
+    println!(
+        "setting {} {} as the {} version for all shells.",
+        candidate.bold(),
+        args.version.bold(),
+        "default".italic()
+    );
+
+    // Prefer symlink; fallback to copying into place if symlinks fail.
+    symlink_dir(&version_path, &current_link_path).unwrap_or_else(|_| {
+        let options = CopyOptions::new();
+
+        copy_items(slice::from_ref(&version_path), &tmp_dir, &options).unwrap_or_else(|e| {
+            eprintln!("cannot copy to tmp folder: {e}");
+            exit(1);
+        });
+
+        let tmp_version_path = tmp_dir.join(&args.version);
+        fs::rename(&tmp_version_path, &current_link_path).unwrap_or_else(|e| {
+            eprintln!("cannot rename copied folder into place: {e}");
+            exit(1);
+        });
+
+        println!(
+            "{}",
+            format!(
+                "cannot create {} symlink, falling back to copy!",
+                "current".italic()
+            )
+            .bold()
+        );
+    });
+
+    Ok(())
+}

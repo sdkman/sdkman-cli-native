@@ -1,0 +1,21 @@
+---
+source: src/commands/help.rs
+expression: rendered
+---
+
+[1mNAME[0m
+    [3msdk version[0m sdk subcommand to display the installed SDKMAN version
+
+[1mSYNOPSIS[0m
+    [3msdk version[0m
+
+[1mDESCRIPTION[0m
+    This subcommand displays the version of the bash and native components of
+    SDKMAN on this system. The versions of the bash and native libraries evolve
+    independently from each other and so will not be in sync.
+
+[1mMNEMONIC[0m
+    [1mv[0m - may be used in place of the [1mversion[0m subcommand.
+
+[1mEXAMPLES[0m
+    [3msdk version[0m

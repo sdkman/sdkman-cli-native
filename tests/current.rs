@@ -1,103 +1,92 @@
-#[cfg(test)]
-use std::env;
+use assert_cmd::{assert::OutputAssertExt, cargo};
+use predicates::prelude::PredicateBooleanExt;
+use rstest::rstest;
 use std::path::Path;
 use std::process::Command;
 
-use assert_cmd::prelude::*;
-use predicates::prelude::*;
-use serial_test::serial;
 use support::{TestCandidate, VirtualEnv};
 
 mod support;
 
-#[test]
-#[serial]
-fn should_show_current_version_for_specific_candidate() -> Result<(), Box<dyn std::error::Error>> {
-    let name = "java";
-    let current_version = "11.0.15-tem";
-    let versions = vec!["11.0.15-tem", "17.0.3-tem"];
+fn sdk_cmd(sdkman_dir: &Path) -> Result<Command, Box<dyn std::error::Error>> {
+    let mut cmd = Command::new(cargo::cargo_bin!("sdkman"));
+    cmd.env("SDKMAN_DIR", sdkman_dir);
+    cmd.env("NO_COLOR", "1");
+    cmd.env("CLICOLOR", "0");
+    Ok(cmd)
+}
 
+#[rstest]
+#[case("java", "11.0.15-tem", vec!["11.0.15-tem", "17.0.3-tem"])]
+#[case("kotlin", "1.7.22", vec!["1.6.21", "1.7.22"])]
+fn should_show_current_version_for_specific_candidate(
+    #[case] name: &'static str,
+    #[case] current_version: &'static str,
+    #[case] versions: Vec<&'static str>,
+) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let env = VirtualEnv {
         cli_version: "5.0.0".to_string(),
         native_version: "0.1.0".to_string(),
         candidates: vec![TestCandidate {
             name,
-            versions: versions.clone(),
+            versions,
             current_version,
         }],
     };
 
     let sdkman_dir = support::virtual_env(env);
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
+    let expected = format!("Using {} version {}", name, current_version);
 
-    let expected_output = format!("Using {} version {}", name, current_version);
-    let contains_expected = predicate::str::contains(expected_output);
-
-    Command::cargo_bin("current")?
+    sdk_cmd(sdkman_dir.path())?
+        .arg("current")
         .arg(name)
         .assert()
         .success()
-        .stdout(contains_expected)
-        .code(0);
+        .stdout(predicates::str::contains(expected));
 
     Ok(())
 }
 
 #[test]
-#[serial]
 fn should_show_current_versions_for_all_candidates() -> Result<(), Box<dyn std::error::Error>> {
-    // Define multiple candidates with their versions
-    let java_name = "java";
-    let java_current_version = "11.0.15-tem";
-    let java_versions = vec!["11.0.15-tem", "17.0.3-tem"];
-
-    let kotlin_name = "kotlin";
-    let kotlin_current_version = "1.7.22";
-    let kotlin_versions = vec!["1.6.21", "1.7.22"];
-
     let env = VirtualEnv {
         cli_version: "5.0.0".to_string(),
         native_version: "0.1.0".to_string(),
         candidates: vec![
             TestCandidate {
-                name: java_name,
-                versions: java_versions.clone(),
-                current_version: java_current_version,
+                name: "java",
+                versions: vec!["11.0.15-tem", "17.0.3-tem"],
+                current_version: "11.0.15-tem",
             },
             TestCandidate {
-                name: kotlin_name,
-                versions: kotlin_versions.clone(),
-                current_version: kotlin_current_version,
+                name: "kotlin",
+                versions: vec!["1.6.21", "1.7.22"],
+                current_version: "1.7.22",
             },
         ],
     };
 
     let sdkman_dir = support::virtual_env(env);
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    // Expected output patterns for the simple format (candidate version)
-    let expected_java_output = format!("{} {}", java_name, java_current_version);
-    let expected_kotlin_output = format!("{} {}", kotlin_name, kotlin_current_version);
-
-    // Check for both expected outputs
-    let contains_java_output = predicate::str::contains(expected_java_output);
-    let contains_kotlin_output = predicate::str::contains(expected_kotlin_output);
-
-    Command::cargo_bin("current")?
+    sdk_cmd(sdkman_dir.path())?
+        .arg("current")
         .assert()
         .success()
-        .stdout(contains_java_output.and(contains_kotlin_output))
-        .code(0);
+        .stdout(
+            predicates::str::contains("Current versions in use:")
+                .and(predicates::str::contains("java 11.0.15-tem"))
+                .and(predicates::str::contains("kotlin 1.7.22")),
+        );
 
     Ok(())
 }
 
-#[test]
-#[serial]
-fn should_show_error_for_non_existent_candidate() -> Result<(), Box<dyn std::error::Error>> {
-    let invalid_name = "invalid";
-
-    // Create a simple environment with an empty candidates file
+#[rstest]
+#[case("invalid")]
+#[case("not-a-candidate")]
+fn should_error_for_non_existent_candidate(
+    #[case] invalid_name: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let env = VirtualEnv {
         cli_version: "5.0.0".to_string(),
         native_version: "0.1.0".to_string(),
@@ -106,7 +95,7 @@ fn should_show_error_for_non_existent_candidate() -> Result<(), Box<dyn std::err
 
     let sdkman_dir = support::virtual_env(env);
 
-    // Write at least one valid candidate to avoid empty candidates list error
+    // Ensure candidates file is non-empty and valid.
     support::write_file(
         sdkman_dir.path(),
         Path::new("var"),
@@ -114,28 +103,21 @@ fn should_show_error_for_non_existent_candidate() -> Result<(), Box<dyn std::err
         "java".to_string(),
     );
 
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
-
-    let contains_error = predicate::str::contains(invalid_name);
-
-    Command::cargo_bin("current")?
+    sdk_cmd(sdkman_dir.path())?
+        .arg("current")
         .arg(invalid_name)
         .assert()
         .failure()
-        .stderr(contains_error)
-        .code(1);
+        .code(1)
+        .stderr(predicates::str::contains(invalid_name));
 
     Ok(())
 }
 
 #[test]
-#[serial]
-fn should_show_error_for_candidate_with_no_current_version(
-) -> Result<(), Box<dyn std::error::Error>> {
-    // Create a candidate entry in candidates file, but no directory structure
+fn should_error_for_candidate_with_no_current_version() -> Result<(), Box<dyn std::error::Error>> {
     let sdkman_dir = support::prepare_sdkman_dir();
 
-    // Write candidates file with a candidate
     let candidate_name = "kotlin";
     support::write_file(
         sdkman_dir.path(),
@@ -144,31 +126,25 @@ fn should_show_error_for_candidate_with_no_current_version(
         candidate_name.to_string(),
     );
 
-    // Create candidate directory but no current symlink
-    let candidate_dir = Path::new("candidates").join(candidate_name);
-    std::fs::create_dir_all(sdkman_dir.path().join(&candidate_dir))
-        .expect("Failed to create candidate directory");
+    // Candidate dir exists, but no `current` link/dir
+    std::fs::create_dir_all(sdkman_dir.path().join("candidates").join(candidate_name))?;
 
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
-
-    let contains_error = predicate::str::contains("No current version of");
-
-    Command::cargo_bin("current")?
+    sdk_cmd(sdkman_dir.path())?
+        .arg("current")
         .arg(candidate_name)
         .assert()
         .failure()
-        .stderr(contains_error)
-        .code(1);
+        .code(1)
+        .stderr(predicates::str::contains("No current version of"));
 
     Ok(())
 }
 
 #[test]
-#[serial]
 fn should_show_message_when_no_candidates_in_use() -> Result<(), Box<dyn std::error::Error>> {
-    // Create empty candidates file, but ensure it has at least one character (e.g., "kotlin")
-    // to avoid causing a panic in the known_candidates function
     let sdkman_dir = support::prepare_sdkman_dir();
+
+    // known_candidates() needs at least one candidate entry
     support::write_file(
         sdkman_dir.path(),
         Path::new("var"),
@@ -176,18 +152,35 @@ fn should_show_message_when_no_candidates_in_use() -> Result<(), Box<dyn std::er
         "kotlin".to_string(),
     );
 
-    // Create candidates dir structure but without current symlinks
-    std::fs::create_dir_all(sdkman_dir.path().join("candidates/kotlin"))
-        .expect("Failed to create candidate directory");
+    // Candidate exists but no current link set
+    std::fs::create_dir_all(sdkman_dir.path().join("candidates/kotlin"))?;
 
-    env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
-
-    let contains_message = predicate::str::contains("No candidates are in use");
-
-    Command::cargo_bin("current")?
+    sdk_cmd(sdkman_dir.path())?
+        .arg("current")
         .assert()
-        .stderr(contains_message)
-        .code(0);
+        .success()
+        .code(0)
+        .stderr(predicates::str::contains("No candidates are in use."));
+
+    Ok(())
+}
+
+#[test]
+fn should_fail_when_candidates_file_missing() -> Result<(), Box<dyn std::error::Error>> {
+    let sdkman_dir = support::prepare_sdkman_dir();
+
+    // Ensure var exists but candidates file is missing
+    let var_dir = sdkman_dir.path().join("var");
+    std::fs::create_dir_all(&var_dir)?;
+    let candidates_path = var_dir.join("candidates");
+    let _ = std::fs::remove_file(candidates_path);
+
+    sdk_cmd(sdkman_dir.path())?
+        .arg("current")
+        .assert()
+        .failure()
+        .code(1)
+        .stderr(predicates::str::contains("candidates"));
 
     Ok(())
 }
