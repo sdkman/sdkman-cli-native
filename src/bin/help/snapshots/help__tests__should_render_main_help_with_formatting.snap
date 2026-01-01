@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(main_help())
 ---
+
 [1mNAME[0m
     [3msdk[0m - The command line interface (CLI) for SDKMAN!
 

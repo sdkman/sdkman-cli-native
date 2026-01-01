@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(uninstall_help())
 ---
+
 [1mNAME[0m
     [3msdk uninstall[0m - sdk subcommand to uninstall a candidate version
 

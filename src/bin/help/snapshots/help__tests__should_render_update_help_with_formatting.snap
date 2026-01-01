@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(update_help())
 ---
+
 [1mNAME[0m
     [3msdk update[0m - sdk subcommand to update the local state of SDKMAN
 

@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(list_help())
 ---
+
 [1mNAME[0m
     [3msdk list[0m - sdk subcommand to list all candidates or candidate versions
 

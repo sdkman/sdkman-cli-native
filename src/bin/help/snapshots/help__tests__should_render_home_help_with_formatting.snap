@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(home_help())
 ---
+
 [1mNAME[0m
     [3msdk home[0m - sdk subcommand to output the path of a specific candidate version
 

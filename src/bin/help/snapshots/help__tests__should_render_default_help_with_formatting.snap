@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(default_help())
 ---
+
 [1mNAME[0m
     [3msdk default[0m - sdk subcommand to set the local default version of the
     candidate

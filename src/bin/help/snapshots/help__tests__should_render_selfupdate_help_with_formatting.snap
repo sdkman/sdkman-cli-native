@@ -2,6 +2,7 @@
 source: src/bin/help/main.rs
 expression: render(selfupdate_help())
 ---
+
 [1mNAME[0m
     [3msdk selfupdate[0m - sdk subcommand to upgrade the SDKMAN core
 
