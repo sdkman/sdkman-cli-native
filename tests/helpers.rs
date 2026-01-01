@@ -20,7 +20,7 @@ fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error
     };
 
     let sdkman_dir = support::virtual_env(env);
-    let candidates = known_candidates(sdkman_dir.into_path());
+    let candidates = known_candidates(sdkman_dir.keep());
     let expected_candidate = vec!["scala"];
 
     assert_eq!(candidates, expected_candidate);
@@ -33,5 +33,5 @@ fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error
 #[should_panic]
 fn should_fail_if_candidate_file_is_missing() {
     let sdkman_dir = prepare_sdkman_dir();
-    known_candidates(sdkman_dir.into_path());
+    known_candidates(sdkman_dir.keep());
 }

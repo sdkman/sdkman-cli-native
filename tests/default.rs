@@ -25,7 +25,7 @@ fn should_set_an_installed_version_as_default() -> Result<(), Box<dyn std::error
 
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = "setting scala 0.0.2 as the default version for all shells";
-    Command::cargo_bin("default")?
+    Command::new(assert_cmd::cargo::cargo_bin!("default"))
         .arg("scala")
         .arg("0.0.2")
         .assert()
@@ -64,7 +64,7 @@ fn should_reset_the_current_default_version_as_default() -> Result<(), Box<dyn s
 
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = "setting scala 0.0.1 as the default version for all shells";
-    Command::cargo_bin("default")?
+    Command::new(assert_cmd::cargo::cargo_bin!("default"))
         .arg("scala")
         .arg("0.0.1")
         .assert()
@@ -103,7 +103,7 @@ fn should_not_set_an_uninstalled_version_as_default() -> Result<(), Box<dyn std:
 
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = "scala 0.0.2 is not installed on your system";
-    Command::cargo_bin("default")?
+    Command::new(assert_cmd::cargo::cargo_bin!("default"))
         .arg("scala")
         .arg("0.0.2")
         .assert()

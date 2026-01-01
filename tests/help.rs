@@ -7,7 +7,7 @@ use predicates::prelude::*;
 #[test]
 fn should_render_base_help() -> Result<(), Box<dyn std::error::Error>> {
     let header = "\nNAME\n    sdk - The command line interface (CLI) for SDKMAN!";
-    Command::cargo_bin("help")?
+    Command::new(assert_cmd::cargo::cargo_bin!("help"))
         .assert()
         .success()
         .stdout(predicate::str::starts_with(header))
@@ -37,7 +37,7 @@ fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Er
 
     for arg in &args {
         let header = format!("\n{} {} - ", "NAME\n    sdk", &arg);
-        Command::cargo_bin("help")?
+        Command::new(assert_cmd::cargo::cargo_bin!("help"))
             .arg(arg)
             .assert()
             .success()

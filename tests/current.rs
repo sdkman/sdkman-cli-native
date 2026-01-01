@@ -33,7 +33,7 @@ fn should_show_current_version_for_specific_candidate() -> Result<(), Box<dyn st
     let expected_output = format!("Current default {} version {}", name, current_version);
     let contains_expected = predicate::str::contains(expected_output);
 
-    Command::cargo_bin("current")?
+    Command::new(assert_cmd::cargo::cargo_bin!("current"))
         .arg(name)
         .assert()
         .success()
@@ -83,7 +83,7 @@ fn should_show_current_versions_for_all_candidates() -> Result<(), Box<dyn std::
     let contains_java_output = predicate::str::contains(expected_java_output);
     let contains_kotlin_output = predicate::str::contains(expected_kotlin_output);
 
-    Command::cargo_bin("current")?
+    Command::new(assert_cmd::cargo::cargo_bin!("current"))
         .assert()
         .success()
         .stdout(contains_java_output.and(contains_kotlin_output))
@@ -118,7 +118,7 @@ fn should_show_error_for_non_existent_candidate() -> Result<(), Box<dyn std::err
 
     let contains_error = predicate::str::contains(invalid_name);
 
-    Command::cargo_bin("current")?
+    Command::new(assert_cmd::cargo::cargo_bin!("current"))
         .arg(invalid_name)
         .assert()
         .failure()
@@ -153,7 +153,7 @@ fn should_show_error_for_candidate_with_no_current_version(
 
     let contains_error = predicate::str::contains("No current version of");
 
-    Command::cargo_bin("current")?
+    Command::new(assert_cmd::cargo::cargo_bin!("current"))
         .arg(candidate_name)
         .assert()
         .failure()
@@ -184,7 +184,7 @@ fn should_show_message_when_no_candidates_in_use() -> Result<(), Box<dyn std::er
 
     let contains_message = predicate::str::contains("No candidates are in use");
 
-    Command::cargo_bin("current")?
+    Command::new(assert_cmd::cargo::cargo_bin!("current"))
         .assert()
         .stderr(contains_message)
         .code(0);

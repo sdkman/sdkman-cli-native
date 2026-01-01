@@ -25,7 +25,7 @@ fn should_successfully_display_current_candidate_home() -> Result<(), Box<dyn st
 
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = format!("{}/candidates/scala/0.0.1", dir_string);
-    Command::cargo_bin("home")?
+    Command::new(assert_cmd::cargo::cargo_bin!("home"))
         .arg("scala")
         .arg("0.0.1")
         .assert()
@@ -54,7 +54,7 @@ fn should_fail_if_candidate_home_is_not_found() -> Result<(), Box<dyn std::error
 
     env::set_var("SDKMAN_DIR", dir_string);
     let expected_output = format!("{} {} is not installed on your system", "scala", "0.0.2");
-    Command::cargo_bin("home")?
+    Command::new(assert_cmd::cargo::cargo_bin!("home"))
         .arg("scala")
         .arg("0.0.2")
         .assert()

@@ -31,7 +31,7 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
     let contains_version = predicate::str::contains(format!("script: {}", cli_version));
     let contains_native_version = predicate::str::contains(format!("native: {}", native_version));
 
-    Command::cargo_bin("version")?
+    Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
         .success()
         .stdout(contains_header.and(contains_version.and(contains_native_version)))
@@ -47,7 +47,7 @@ fn should_panic_if_version_file_not_present() -> Result<(), Box<dyn std::error::
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    Command::cargo_bin("version")?.assert().failure().code(101);
+    Command::new(assert_cmd::cargo::cargo_bin!("version")).assert().failure().code(101);
     Ok(())
 }
 
@@ -68,7 +68,7 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    Command::cargo_bin("version")?.assert().failure().code(101);
+    Command::new(assert_cmd::cargo::cargo_bin!("version")).assert().failure().code(101);
     Ok(())
 }
 
@@ -94,7 +94,7 @@ fn should_include_os_and_arch_info() -> Result<(), Box<dyn std::error::Error>> {
     let contains_os = predicate::str::contains(format!("{}", os));
     let contains_arch = predicate::str::contains(format!("{}", arch));
 
-    Command::cargo_bin("version")?
+    Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
         .success()
         .stdout(contains_os.and(contains_arch))
