@@ -30,7 +30,7 @@ fn should_show_current_version_for_specific_candidate() -> Result<(), Box<dyn st
     let sdkman_dir = support::virtual_env(env);
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    let expected_output = format!("Using {} version {}", name, current_version);
+    let expected_output = format!("Current default {} version {}", name, current_version);
     let contains_expected = predicate::str::contains(expected_output);
 
     Command::cargo_bin("current")?

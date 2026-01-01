@@ -29,7 +29,11 @@ fn main() {
             let candidate = validate_candidate(all_candidates, &candidate);
             let current_version = get_current_version(sdkman_dir.to_owned(), &candidate);
             match current_version {
-                Some(version) => println!("Using {} version {}", candidate.bold(), version.bold()),
+                Some(version) => println!(
+                    "Current default {} version {}",
+                    candidate.bold(),
+                    version.bold()
+                ),
                 _ => {
                     eprintln!("No current version of {} configured.", candidate.bold());
                     process::exit(1);
@@ -52,7 +56,7 @@ fn main() {
 
             if found_any {
                 // Print header
-                println!("{}", "Current versions in use:".bold());
+                println!("{}", "Current default versions:".bold());
 
                 // Print all candidate versions
                 for (candidate, version) in candidates_with_versions {
