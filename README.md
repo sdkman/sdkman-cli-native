@@ -29,4 +29,4 @@ The default installer will automatically detect your architecture and install th
 $ sdk help
 $ sdk help [subcommand]
 ```
-
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=d99e5747251d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
