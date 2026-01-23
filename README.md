@@ -2,6 +2,14 @@
 
 [![release](https://github.com/sdkman/sdkman-cli-native/actions/workflows/release.yml/badge.svg)](https://github.com/sdkman/sdkman-cli-native/actions/workflows/release.yml)
 
+# SDKMAN! CLI Native
+
+# SDKMAN! CLI Native
+
+> [!NOTE]
+> The components in this project are already included in the [standard SDKMAN! installation](https://sdkman.io/install) and do not need to be installed manually.
+> The instructions below are intended only for those who wish to contribute to or perform local development on these components.
+
 Native CLI subcommand components for SDKMAN! written in [Rust](https://www.rust-lang.org/). Use the binaries generated
 by this project in the `sdk` wrapper shell function from the [sdkman-cli](https://github.com/sdkman/sdkman-cli) project.
 
