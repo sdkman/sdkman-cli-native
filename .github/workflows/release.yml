@@ -39,16 +39,10 @@ jobs:
           cache-targets: "false"
 
       - name: Cargo install cargo-release
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cargo-release
+        run: cargo install cargo-release
 
       - name: Perform Cargo release
-        uses: actions-rs/cargo@v1
-        with:
-          command: release
-          args: ${{ github.event.inputs.level }} --execute --no-confirm
+        run: cargo release ${{ github.event.inputs.level }} --execute --no-confirm
 
       - name: Version
         id: vars
@@ -108,10 +102,7 @@ jobs:
           sdk install jreleaser
 
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --locked --release --target=${{ matrix.job.target }}
+        run: cargo build --locked --release --target=${{ matrix.job.target }}
 
       - name: Assemble (Linux containers)
         if: matrix.job.container
