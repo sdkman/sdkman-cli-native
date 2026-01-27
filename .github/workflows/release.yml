@@ -60,7 +60,7 @@ jobs:
         run: |
           version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)
           echo "Setting VERSION to $version"
-          echo ::set-output name=VERSION::$(echo "$version")
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
   build:
     needs: [ prerelease ]
     name: 'Build ${{ matrix.job.target }}'
