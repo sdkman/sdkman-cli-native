@@ -31,11 +31,7 @@ jobs:
           git config user.email github-actions@github.com
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          profile: minimal
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2.7.0
@@ -92,12 +88,9 @@ jobs:
           apt-get install -y curl build-essential zip unzip
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: ${{ matrix.job.target }}
-          override: true
-          profile: minimal
+          targets: ${{ matrix.job.target }}
 
       - name: Setup cross-compilation toolchain
         if: matrix.job.container

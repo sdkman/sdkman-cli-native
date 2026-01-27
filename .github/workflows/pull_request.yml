@@ -22,12 +22,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           components: rustfmt
-          override: true
-          profile: minimal
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2.7.0
         with:
