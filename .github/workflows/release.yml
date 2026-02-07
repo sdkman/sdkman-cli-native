@@ -93,14 +93,17 @@ jobs:
         with:
           target: ${{ matrix.job.target }}
 
-      - name: Install SDKMAN and JReleaser (Linux containers)
+      - name: Install SDKMAN, Java, and JReleaser (Linux containers)
         if: matrix.job.container
         shell: bash
         run: |
           curl -s "https://get.sdkman.io" | bash
           source ~/.sdkman/bin/sdkman-init.sh
           sdk install java 17.0.2-tem
-          sdk install jreleaser
+          # Use JReleaser early-access for linux-riscv_64 platform support
+          curl -sL https://github.com/jreleaser/jreleaser/releases/download/early-access/jreleaser-early-access.zip -o /tmp/jreleaser.zip
+          unzip -q /tmp/jreleaser.zip -d /opt
+          ln -s /opt/jreleaser-*/bin/jreleaser /usr/local/bin/jreleaser
 
       - name: Build
         run: cargo build --locked --release --target=${{ matrix.job.target }}
@@ -120,7 +123,7 @@ jobs:
         if: '!matrix.job.container'
         uses: jreleaser/release-action@v2
         with:
-          version: latest
+          version: early-access
           arguments: assemble
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
@@ -159,7 +162,7 @@ jobs:
       - name: Release
         uses: jreleaser/release-action@v2
         with:
-          version: latest
+          version: early-access
           arguments: release -PskipArchiveResolver
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
