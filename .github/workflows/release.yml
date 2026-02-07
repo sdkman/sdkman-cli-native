@@ -106,7 +106,7 @@ jobs:
         run: cargo build --locked --release --target=${{ matrix.job.target }}
 
       - name: Assemble (Linux containers)
-        if: matrix.job.container
+        if: matrix.job.container && matrix.job.target != 'riscv64gc-unknown-linux-gnu'
         shell: bash
         run: |
           source ~/.sdkman/bin/sdkman-init.sh
@@ -115,6 +115,20 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_PLATFORM_OVERRIDE: ${{ matrix.job.jreleaser_platform }}
+
+      - name: Assemble (RISC-V workaround)
+        if: matrix.job.target == 'riscv64gc-unknown-linux-gnu'
+        shell: bash
+        run: |
+          VERSION="${JRELEASER_PROJECT_VERSION}"
+          TARGET="riscv64gc-unknown-linux-gnu"
+          ARCHIVE_NAME="sdkman-cli-native-${VERSION}-${TARGET}"
+          mkdir -p "${ARCHIVE_NAME}/libexec"
+          cp target/${TARGET}/release/{current,default,help,home,uninstall,version} "${ARCHIVE_NAME}/libexec/"
+          mkdir -p out/jreleaser/assemble/sdkman-cli-native/archive
+          zip -r "out/jreleaser/assemble/sdkman-cli-native/archive/${ARCHIVE_NAME}.zip" "${ARCHIVE_NAME}"
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
 
       - name: Assemble (Non-Linux)
         if: '!matrix.job.container'
