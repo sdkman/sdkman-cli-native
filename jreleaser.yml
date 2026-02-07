@@ -17,6 +17,7 @@ platform:
     linux-x86_64: x86_64-unknown-linux-gnu
     linux-x86_32: i686-unknown-linux-gnu
     linux-aarch_64: aarch64-unknown-linux-gnu
+    linux-riscv_64: riscv64gc-unknown-linux-gnu
     windows-x86_64: x86_64-pc-windows-msvc
 release:
   github:
@@ -66,6 +67,8 @@ distributions:
         platform: linux-x86_32
       - path: 'artifacts-aarch64-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-aarch64-unknown-linux-gnu.zip'
         platform: linux-aarch_64
+      - path: 'artifacts-riscv64gc-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-riscv64gc-unknown-linux-gnu.zip'
+        platform: linux-riscv_64
 announce:
   twitter:
     active: ALWAYS

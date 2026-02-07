@@ -64,6 +64,7 @@ jobs:
           - {target: x86_64-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-x86_64}
           - {target: i686-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-x86_32}
           - {target: aarch64-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-aarch_64}
+          - {target: riscv64gc-unknown-linux-gnu, os: ubuntu-latest, container: 'ubuntu:20.04', jreleaser_platform: linux-riscv_64}
     runs-on: ${{ matrix.job.os }}
     container:
       image: ${{ matrix.job.container }}
