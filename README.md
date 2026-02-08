@@ -20,7 +20,6 @@ Nothing needs to be done if you are using one of the following supported archite
 * aarch64-unknown-linux-gnu
 * x86_64-unknown-linux-gnu
 * i686-unknown-linux-gnu
-* riscv64gc-unknown-linux-gnu
 * aarch64-apple-darwin
 * x86_64-apple-darwin
 * x86_64-pc-windows-msvc
