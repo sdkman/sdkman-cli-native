@@ -1,0 +1,30 @@
+name: Notify Chloé (Issue Triage)
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to OpenClaw
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          MSG="New issue in ${REPO} — #${ISSUE_NUMBER}: ${ISSUE_TITLE}"
+          MSG+=$'\nAuthor: '"${ISSUE_USER}"
+          MSG+=$'\nURL: '"${ISSUE_URL}"
+          MSG+=$'\n\n'"${ISSUE_BODY}"
+          PAYLOAD=$(jq -n --arg msg "$MSG" --arg name "GitHub Issues" \
+            '{message: $msg, name: $name, deliver: true, channel: "discord", to: "user:918237603617206303"}')
+          curl -sf -X POST \
+            -H "Authorization: Bearer ${{ secrets.OPENCLAW_HOOK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            ${{ secrets.OPENCLAW_HOOK_URL }}
