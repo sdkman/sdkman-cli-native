@@ -116,6 +116,10 @@ To migrate a Bash command to a native binary:
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md). We are committed to providing a welcoming and inclusive environment for all contributors.
 
+## Developer Certificate of Origin
+
+By contributing to this project, you agree to the terms of the [Developer Certificate of Origin](dco.txt). This certifies that you have the right to submit your contribution under the project's open source license.
+
 ## License
 
 By contributing, you agree that your contributions will be licensed under the same license as the project.
