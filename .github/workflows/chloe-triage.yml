@@ -13,7 +13,6 @@ jobs:
     steps:
       - name: Send to OpenClaw
         env:
-          HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
           EVENT_NAME: ${{ github.event_name }}
           REPO: ${{ github.repository }}
           SENDER: ${{ github.event.sender.login }}
@@ -23,8 +22,9 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           COMMENT_BODY: ${{ github.event.comment.body }}
           COMMENT_URL: ${{ github.event.comment.html_url }}
+          HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
+          HOOK_TOKEN: ${{ secrets.OPENCLAW_HOOK_TOKEN }}
         run: |
-          WAKE_URL="${HOOK_URL/hooks\/agent/hooks\/wake}"
           if [ "$EVENT_NAME" = "issues" ]; then
             TEXT="New issue in ${REPO} — #${ISSUE_NUMBER}: ${ISSUE_TITLE}"
             TEXT+=$'\nAuthor: '"${SENDER}"
@@ -36,9 +36,10 @@ jobs:
             TEXT+=$'\nURL: '"${COMMENT_URL}"
             TEXT+=$'\n\n'"${COMMENT_BODY}"
           fi
-          PAYLOAD=$(jq -n --arg text "$TEXT" '{"text": $text, "mode": "now"}')
+          PAYLOAD=$(jq -n --arg text "$TEXT" '{text: $text, mode: "now"}')
+          WAKE_URL="${HOOK_URL%/agent}/wake"
           curl -sf -X POST \
-            -H "Authorization: Bearer ${{ secrets.OPENCLAW_HOOK_TOKEN }}" \
+            -H "Authorization: Bearer ${HOOK_TOKEN}" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD" \
             "$WAKE_URL"
