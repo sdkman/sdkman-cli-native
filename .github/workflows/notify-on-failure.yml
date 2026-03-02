@@ -1,0 +1,29 @@
+name: Notify on Failure
+
+on:
+  workflow_run:
+    workflows: ["*"]
+    branches: [master, main]
+    types: [completed]
+
+jobs:
+  notify:
+    name: "Notify Chloé"
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+    steps:
+      - name: Notify Chloé
+        env:
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          MSG="❌ ${WORKFLOW} failed: ${REPO}"
+          MSG+=$'\nRun: '"${RUN_URL}"
+          PAYLOAD=$(jq -n --arg msg "$MSG" --arg name "GitHub CI" \
+            '{message: $msg, name: $name, deliver: true, channel: "discord", to: "1474759623209783327"}')
+          curl -sf -X POST \
+            -H "Authorization: Bearer ${{ secrets.OPENCLAW_HOOK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            "${{ secrets.OPENCLAW_HOOK_URL }}"
