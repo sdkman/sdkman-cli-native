@@ -14,17 +14,18 @@ jobs:
     steps:
       - name: Notify Chloé
         env:
-          HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
           REPO: ${{ github.repository }}
           WORKFLOW: ${{ github.event.workflow_run.name }}
           RUN_URL: ${{ github.event.workflow_run.html_url }}
+          HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
+          HOOK_TOKEN: ${{ secrets.OPENCLAW_HOOK_TOKEN }}
         run: |
-          WAKE_URL="${HOOK_URL/hooks\/agent/hooks\/wake}"
           TEXT="❌ ${WORKFLOW} failed: ${REPO}"
           TEXT+=$'\nRun: '"${RUN_URL}"
-          PAYLOAD=$(jq -n --arg text "$TEXT" '{"text": $text, "mode": "now"}')
+          PAYLOAD=$(jq -n --arg text "$TEXT" '{text: $text, mode: "now"}')
+          WAKE_URL="${HOOK_URL%/agent}/wake"
           curl -sf -X POST \
-            -H "Authorization: Bearer ${{ secrets.OPENCLAW_HOOK_TOKEN }}" \
+            -H "Authorization: Bearer ${HOOK_TOKEN}" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD" \
             "$WAKE_URL"
