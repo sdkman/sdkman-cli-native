@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SDKMAN! usage documentation
+    url: https://sdkman.io/usage
+    about: Find documentation about the available commands here.
+  - name: SDKMAN! Discord server
+    url: https://discord.gg/y9mVJYVyu4
+    about: Please ask and answer questions about the usage of SDKMAN! here.
+  - name: SDKMAN! on Stack Overflow
+    url: https://stackoverflow.com/questions/tagged/sdkman
+    about: You might find help to common issues here.
