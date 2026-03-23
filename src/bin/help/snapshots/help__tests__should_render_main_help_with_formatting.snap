@@ -28,7 +28,6 @@ expression: render(main_help())
     current      [3m[candidate][0m
     upgrade      [3m[candidate][0m
     version      no qualifier
-    offline      [3m[enable|disable][0m
     selfupdate   [3m[force][0m
     update       no qualifier
     flush        [3m[tmp|metadata|version][0m

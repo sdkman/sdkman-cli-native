@@ -31,6 +31,7 @@ expression: render(config_help())
     sdkman_curl_connect_timeout=7
     sdkman_curl_max_time=10
     sdkman_debug_mode=false
+    sdkman_healthcheck_enable=true
     sdkman_insecure_ssl=false
     sdkman_selfupdate_feature=true
     ---[0m

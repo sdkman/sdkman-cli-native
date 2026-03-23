@@ -192,7 +192,6 @@ fn main_help() -> Help {
             Subcommand { command: "current".to_string(), description: "[candidate]".italic().to_string() },
             Subcommand { command: "upgrade".to_string(), description: "[candidate]".italic().to_string() },
             Subcommand { command: "version".to_string(), description: "no qualifier".to_string() },
-            Subcommand { command: "offline".to_string(), description: "[enable|disable]".italic().to_string() },
             Subcommand { command: "selfupdate".to_string(), description: "[force]".italic().to_string() },
             Subcommand { command: "update".to_string(), description: "no qualifier".to_string() },
             Subcommand { command: "flush".to_string(), description: "[tmp|metadata|version]".italic().to_string() },
@@ -216,6 +215,7 @@ sdkman_colour_enable=true
 sdkman_curl_connect_timeout=7
 sdkman_curl_max_time=10
 sdkman_debug_mode=false
+sdkman_healthcheck_enable=true
 sdkman_insecure_ssl=false
 sdkman_selfupdate_feature=true
 ---";
