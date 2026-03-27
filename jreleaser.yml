@@ -71,3 +71,7 @@ announce:
     active: ALWAYS
     host: https://fosstodon.org
     status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
+  bluesky:
+    active: ALWAYS
+    host: https://bsky.social
+    status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
