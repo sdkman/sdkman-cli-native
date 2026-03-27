@@ -67,9 +67,6 @@ distributions:
       - path: 'artifacts-aarch64-unknown-linux-gnu/{{distributionName}}-{{projectVersion}}-aarch64-unknown-linux-gnu.zip'
         platform: linux-aarch_64
 announce:
-  twitter:
-    active: ALWAYS
-    status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
   mastodon:
     active: ALWAYS
     host: https://fosstodon.org
