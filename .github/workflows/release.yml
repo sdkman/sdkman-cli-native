@@ -164,9 +164,6 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ needs.prerelease.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_SKIP_TAG: true
-          JRELEASER_MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN}}
-          JRELEASER_BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
-          JRELEASER_BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
 
       - name: JReleaser output
         if: always()

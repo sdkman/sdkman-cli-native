@@ -29,3 +29,25 @@ jobs:
           RELEASE_VERSION: ${{ env.VERSION }}
         run: bin/release-binary.sh "$MONGO_URL" "$MONGO_USERNAME" "$MONGO_PASSWORD" "$RELEASE_VERSION" "stable"
 
+      - name: Announce Release
+        uses: jreleaser/release-action@v2
+        with:
+          version: latest
+          arguments: announce
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ env.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          JRELEASER_BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          JRELEASER_BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: jreleaser-announce
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
