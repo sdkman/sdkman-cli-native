@@ -70,4 +70,8 @@ announce:
   mastodon:
     active: ALWAYS
     host: https://fosstodon.org
-    status: 'Released native extensions version {{tagName}} of SDKMAN! {{releaseNotesUrl}}'
+    status: '🚀 SDKMAN! native extensions {{tagName}} released! Full changelog: {{releaseNotesUrl}}'
+  bluesky:
+    active: ALWAYS
+    host: https://bsky.social
+    status: '🚀 SDKMAN! native extensions {{tagName}} released! Full changelog: {{releaseNotesUrl}}'
