@@ -68,10 +68,10 @@ distributions:
         platform: linux-aarch_64
 announce:
   mastodon:
-    active: ALWAYS
+    active: RELEASE
     host: https://fosstodon.org
     status: '🚀 SDKMAN! native extensions {{tagName}} released! Full changelog: {{releaseNotesUrl}}'
   bluesky:
-    active: ALWAYS
+    active: RELEASE
     host: https://bsky.social
     status: '🚀 SDKMAN! native extensions {{tagName}} released! Full changelog: {{releaseNotesUrl}}'
