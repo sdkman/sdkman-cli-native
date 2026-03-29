@@ -70,11 +70,8 @@ announce:
   mastodon:
     active: RELEASE
     host: https://fosstodon.org
-    accessToken: __USE_ENVIRONMENT_VARIABLE__
     status: '🚀 SDKMAN! native extensions {{tagName}} released! Full changelog: {{releaseNotesUrl}}'
   bluesky:
     active: RELEASE
     host: https://bsky.social
-    handle: __USE_ENVIRONMENT_VARIABLE__
-    password: __USE_ENVIRONMENT_VARIABLE__
     status: '🚀 SDKMAN! native extensions {{tagName}} released! Full changelog: {{releaseNotesUrl}}'
