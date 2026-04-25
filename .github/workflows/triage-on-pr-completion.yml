@@ -1,0 +1,43 @@
+name: Triage on Fork PR Completion
+
+# Only triggers on fork PRs (external contributors)
+# Runs in base repo context with full secret access
+on:
+  workflow_run:
+    workflows: ["Pull Requests"]
+    types: [completed]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.head_repository.fork == true
+    steps:
+      - name: Send fork PR triage notification
+        env:
+          HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
+          HOOK_TOKEN: ${{ secrets.OPENCLAW_HOOK_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Fetch PR details from completed workflow
+          PR_DATA=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }} \
+            --jq '.pull_requests[0] | {number, title, html_url, user: .head.user.login}')
+          
+          PR_NUMBER=$(echo "$PR_DATA" | jq -r '.number // empty')
+          [ -z "$PR_NUMBER" ] && exit 0
+          
+          PR_TITLE=$(echo "$PR_DATA" | jq -r '.title')
+          PR_URL=$(echo "$PR_DATA" | jq -r '.html_url')
+          PR_AUTHOR=$(echo "$PR_DATA" | jq -r '.user')
+          
+          MSG="PR #${PR_NUMBER}: ${PR_TITLE}"$'\n'"Author: ${PR_AUTHOR}"$'\n'"URL: ${PR_URL}"
+          
+          PAYLOAD=$(jq -n \
+            --arg message "$MSG" \
+            --arg name "GitHub Triage" \
+            '{message: $message, name: $name, deliver: true, channel: "discord", to: "1474759623209783327"}')
+          
+          curl -sf -X POST \
+            -H "Authorization: Bearer ${HOOK_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            "$HOOK_URL"
