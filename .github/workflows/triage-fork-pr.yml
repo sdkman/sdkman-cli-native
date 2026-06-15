@@ -1,10 +1,8 @@
-name: Triage on Fork PR Completion
-
+name: "Triage: Fork PR"
 on:
   workflow_run:
     workflows: ["Pull Requests"]
     types: [completed]
-
 jobs:
   triage:
     uses: sdkman/.github/.github/workflows/reusable-triage-fork-pr.yml@main
