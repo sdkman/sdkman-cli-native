@@ -4,8 +4,6 @@
 
 # SDKMAN! CLI Native
 
-# SDKMAN! CLI Native
-
 > [!NOTE]
 > The components in this project are already included in the [standard SDKMAN! installation](https://sdkman.io/install) and do not need to be installed manually.
 > The instructions below are intended only for those who wish to contribute to or perform local development on these components.
