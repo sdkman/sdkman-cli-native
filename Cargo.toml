@@ -1,6 +1,6 @@
 [package]
 name = "sdkman-cli-native"
-version = "0.7.34"
+version = "0.7.35"
 edition = "2021"
 publish = false
 
