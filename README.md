@@ -1,8 +1,6 @@
-# SDKMAN! Native CLI components
+# SDKMAN! CLI Native
 
 [![release](https://github.com/sdkman/sdkman-cli-native/actions/workflows/release.yml/badge.svg)](https://github.com/sdkman/sdkman-cli-native/actions/workflows/release.yml)
-
-# SDKMAN! CLI Native
 
 > [!NOTE]
 > The components in this project are already included in the [standard SDKMAN! installation](https://sdkman.io/install) and do not need to be installed manually.
