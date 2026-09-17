@@ -25,6 +25,10 @@ jobs:
     defaults:
       run:
         shell: bash
+    outputs:
+      linux: ${{ steps.summary.outputs.ubuntu-latest }}
+      macos: ${{ steps.summary.outputs.macos-latest }}
+      windows: ${{ steps.summary.outputs.windows-latest }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -51,18 +55,11 @@ jobs:
         id: testing
         continue-on-error: true
         run: cargo test --locked --all-features
-      - name: Write summary
+      - name: Collect results
+        id: summary
         if: always()
         run: |
-          {
-            echo '### Checks (${{ matrix.os }})'
-            echo
-            echo '| Check | Result |'
-            echo '| --- | --- |'
-            echo '| Formatting | ${{ steps.formatting.outcome }} |'
-            echo '| Linting | ${{ steps.linting.outcome }} |'
-            echo '| Testing | ${{ steps.testing.outcome }} |'
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo '${{ matrix.os }}=| ${{ runner.os }} | ${{ steps.testing.outcome == 'success' && '✅' || '❌' }} | ${{ matrix.os != 'ubuntu-latest' && '➖' || (steps.formatting.outcome == 'success' && '✅' || '❌') }} | ${{ steps.linting.outcome == 'success' && '✅' || '❌' }} |' >> "$GITHUB_OUTPUT"
       - name: Fail unsuccessful checks
         if: >-
           always() &&
@@ -70,3 +67,26 @@ jobs:
            steps.linting.outcome != 'success' ||
            steps.testing.outcome != 'success')
         run: exit 1
+
+  summary:
+    name: Checks summary
+    needs: checks
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Write summary
+        env:
+          LINUX: ${{ needs.checks.outputs.linux || '| Linux | ❌ | ❌ | ❌ |' }}
+          MACOS: ${{ needs.checks.outputs.macos || '| macOS | ❌ | ➖ | ❌ |' }}
+          WINDOWS: ${{ needs.checks.outputs.windows || '| Windows | ❌ | ➖ | ❌ |' }}
+        run: |
+          {
+            echo '### Checks'
+            echo
+            echo '| OS | Test | Format | Lint |'
+            echo '| --- | :---: | :---: | :---: |'
+            printf '%s\n' "$LINUX" "$MACOS" "$WINDOWS"
+            echo
+            echo '✅ Passed · ❌ Failed or did not complete · ➖ Not run on this OS'
+          } >> "$GITHUB_STEP_SUMMARY"
