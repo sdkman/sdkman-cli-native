@@ -38,16 +38,14 @@ fn main() {
 
     if current_link_path.exists() {
         remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
-            remove_dir_all(&current_link_path).expect(&format!(
-                "cannot remove current directory for {}.",
-                candidate
-            ))
+            remove_dir_all(&current_link_path)
+                .unwrap_or_else(|_| panic!("cannot remove current directory for {}.", candidate))
         })
     }
     println!(
         "setting {} {} as the {} version for all shells.",
-        &candidate.bold(),
-        &version.bold(),
+        candidate.bold(),
+        version.bold(),
         "default".italic()
     );
     symlink_dir(&version_path, &current_link_path).unwrap_or_else(|_| {

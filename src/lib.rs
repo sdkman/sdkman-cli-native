@@ -40,15 +40,13 @@ pub mod helpers {
     }
 
     pub fn read_file_content(path: PathBuf) -> Option<String> {
-        match fs::read_to_string(path) {
-            Ok(s) => Some(s),
-            Err(_) => None,
-        }
-        .filter(|s| !s.trim().is_empty())
-        .map(|s| s.trim().to_string())
+        fs::read_to_string(path)
+            .ok()
+            .filter(|s| !s.trim().is_empty())
+            .map(|s| s.trim().to_string())
     }
 
-    pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
+    pub fn known_candidates(sdkman_dir: PathBuf) -> Vec<&'static str> {
         let absolute_path = sdkman_dir.join(VAR_DIR).join(CANDIDATES_FILE);
         let verified_path = check_file_exists(absolute_path);
         let panic = format!(

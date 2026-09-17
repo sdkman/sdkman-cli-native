@@ -45,7 +45,7 @@ fn main() {
         _ => main_help(),
     };
 
-    println!("{}", &render(help));
+    println!("{}", render(help));
 }
 
 struct Subcommand {
@@ -117,10 +117,10 @@ fn render(help: Help) -> String {
                         &fill(&sub.description, TEXT_WIDTH - desc_depth),
                         &desc_indent,
                     )[command.len()..];
-                    format!("{}{}\n", command.to_string(), description)
+                    format!("{}{}\n", command, description)
                 })
                 .collect();
-            return format!("{}\n{}\n", "SUBCOMMANDS & QUALIFIERS".bold(), lines);
+            format!("{}\n{}\n", "SUBCOMMANDS & QUALIFIERS".bold(), lines)
         })
         .collect();
 
@@ -134,19 +134,19 @@ fn render(help: Help) -> String {
                 indent(&config.snippet, indentation)
             )
         })
-        .unwrap_or_else(|| String::new());
+        .unwrap_or_default();
 
     let mnemonic = help
         .mnemonic
         .map(|mnemonic| {
             let text = format!(
                 "{} - may be used in place of the {} subcommand.",
-                &mnemonic.shorthand.bold(),
-                &mnemonic.command.bold()
+                mnemonic.shorthand.bold(),
+                mnemonic.command.bold()
             );
             format!("{}\n{}\n\n", "MNEMONIC".bold(), indent(&text, indentation))
         })
-        .unwrap_or_else(|| String::new());
+        .unwrap_or_default();
 
     let exit_code = help
         .exit_code
@@ -157,7 +157,7 @@ fn render(help: Help) -> String {
                 indent(&fill(&m, TEXT_WIDTH), indentation)
             )
         })
-        .unwrap_or_else(|| String::new());
+        .unwrap_or_default();
 
     let examples = format!(
         "{}\n{}\n\n",
@@ -343,7 +343,7 @@ fn flush_help() -> Help {
             },
             Subcommand {
                 command: "metadata".to_string(),
-                description: format!("removes any header metadata"),
+                description: "removes any header metadata".to_string(),
             },
             Subcommand {
                 command: "version".to_string(),
