@@ -36,7 +36,7 @@ fn should_render_help_for_all_subcommands() -> Result<(), Box<dyn std::error::Er
     ];
 
     for arg in &args {
-        let header = format!("\n{} {} - ", "NAME\n    sdk", &arg);
+        let header = format!("\n{} {} - ", "NAME\n    sdk", arg);
         Command::new(assert_cmd::cargo::cargo_bin!("help"))
             .arg(arg)
             .assert()

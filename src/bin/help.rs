@@ -522,7 +522,6 @@ mod tests {
     /// ```
     ///
     /// See https://insta.rs/ for more details.
-
     fn setup() {
         colored::control::set_override(true);
         colored::control::SHOULD_COLORIZE.set_override(true);

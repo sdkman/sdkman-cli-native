@@ -104,7 +104,7 @@ mod tests {
     #[serial]
     fn should_infer_sdkman_dir_from_env_var() {
         let sdkman_dir = PathBuf::from("/home/someone/.sdkman");
-        env::set_var(SDKMAN_DIR_ENV_VAR, sdkman_dir.to_owned());
+        env::set_var(SDKMAN_DIR_ENV_VAR, &sdkman_dir);
         assert_eq!(sdkman_dir, infer_sdkman_dir());
     }
 
@@ -121,7 +121,7 @@ mod tests {
     fn should_read_content_from_file() {
         let expected_version = "5.0.0";
         let mut file = NamedTempFile::new().unwrap();
-        file.write(expected_version.as_bytes()).unwrap();
+        file.write_all(expected_version.as_bytes()).unwrap();
         let path = file.path().to_path_buf();
         let maybe_version = read_file_content(path);
         assert_eq!(maybe_version, Some(expected_version.to_string()));
