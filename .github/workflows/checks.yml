@@ -1,0 +1,72 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Checks (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+      - name: Check formatting
+        if: matrix.os == 'ubuntu-latest'
+        id: formatting
+        continue-on-error: true
+        run: cargo fmt --all -- --check
+      - name: Lint
+        id: linting
+        continue-on-error: true
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - name: Test
+        id: testing
+        continue-on-error: true
+        run: cargo test --locked --all-features
+      - name: Write summary
+        if: always()
+        run: |
+          {
+            echo '### Checks (${{ matrix.os }})'
+            echo
+            echo '| Check | Result |'
+            echo '| --- | --- |'
+            echo '| Formatting | ${{ steps.formatting.outcome }} |'
+            echo '| Linting | ${{ steps.linting.outcome }} |'
+            echo '| Testing | ${{ steps.testing.outcome }} |'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Fail unsuccessful checks
+        if: >-
+          always() &&
+          ((matrix.os == 'ubuntu-latest' && steps.formatting.outcome != 'success') ||
+           steps.linting.outcome != 'success' ||
+           steps.testing.outcome != 'success')
+        run: exit 1
