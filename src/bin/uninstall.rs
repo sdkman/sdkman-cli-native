@@ -40,15 +40,14 @@ fn main() {
     let version_path = validate_version_path(sdkman_dir, &candidate, &version);
     let current_link_path = candidate_path.join(CURRENT_DIR);
     if current_link_path.is_dir() {
-        match fs::read_link(current_link_path.to_owned()) {
+        match fs::read_link(&current_link_path) {
             Ok(relative_resolved_dir) => {
                 let resolved_link_path = candidate_path.join(relative_resolved_dir);
                 if (version_path == resolved_link_path) && force {
                     remove_symlink_dir(&current_link_path).unwrap_or_else(|_| {
-                        remove_dir_all(current_link_path.to_owned()).expect(&format!(
-                            "cannot remove current directory for {}.",
-                            candidate
-                        ))
+                        remove_dir_all(&current_link_path).unwrap_or_else(|_| {
+                            panic!("cannot remove current directory for {}.", candidate)
+                        })
                     });
                 } else if (version_path == resolved_link_path) && !force {
                     eprintln!(
@@ -65,7 +64,7 @@ fn main() {
                 }
             }
             Err(e) => {
-                eprintln!("current link broken, stepping over: {}", e.to_string());
+                eprintln!("current link broken, stepping over: {}", e);
             }
         }
     }

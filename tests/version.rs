@@ -97,8 +97,8 @@ fn should_include_os_and_arch_info() -> Result<(), Box<dyn std::error::Error>> {
     let os = std::env::consts::OS;
     let arch = std::env::consts::ARCH;
 
-    let contains_os = predicate::str::contains(format!("{}", os));
-    let contains_arch = predicate::str::contains(format!("{}", arch));
+    let contains_os = predicate::str::contains(os.to_string());
+    let contains_arch = predicate::str::contains(arch.to_string());
 
     Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()

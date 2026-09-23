@@ -12,5 +12,5 @@ jobs:
       actions: read
     uses: sdkman/.github/.github/workflows/reusable-dependabot-digest.yml@main
     with:
-      pr_ci_workflow: "Pull Requests"
+      pr_ci_workflow: "Checks"
     secrets: inherit
