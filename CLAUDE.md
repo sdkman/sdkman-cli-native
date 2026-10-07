@@ -80,6 +80,28 @@ Tests use a virtual environment pattern where temporary SDKMAN directories are c
 
 Tests are marked `#[serial]` because they manipulate global environment variables and must run sequentially.
 
+## Verification Gate
+
+Run these commands in this order. Work is done only when every command exits with status 0:
+```bash
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo test
+```
+
+Snapshot rules:
+- When a change alters help text on purpose, accept the new snapshots with `cargo insta accept` and commit the `.snap` files with the change.
+- In every other case, a `.snap.new` file is a failure. Fix the code, not the snapshot.
+- Never run `cargo insta review`. It is interactive.
+
+## Boundaries
+
+- Never run `./install.sh`. It overwrites the binaries in the real `$SDKMAN_DIR/libexec/`.
+- Never create, change or delete files outside this repository.
+- Never push, switch branches, rebase or rewrite Git history.
+- Never start Docker containers. This project does not need a database.
+- Never edit `~/.sdkman/etc/config` or any other SDKMAN configuration.
+
 ## Release Process
 
 The project uses JReleaser for automated releases across multiple platforms:
