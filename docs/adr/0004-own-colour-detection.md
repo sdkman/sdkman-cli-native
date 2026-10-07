@@ -1,0 +1,3 @@
+# Colour is decided per stream, not by the colored crate's default
+
+The `colored` crate only checks whether stdout is a terminal. Because most of our output goes to stderr (see [ADR 0003](0003-conversational-output-on-stderr.md)), that default would write escape codes into redirected logs (`2> install.log`) and turn off colour on errors whenever stdout is captured. It also ignores the `sdkman_colour_enable` config. We decide styling for each stream ourselves instead: `CLICOLOR_FORCE` turns it on, `NO_COLOR` or `sdkman_colour_enable=false` turns it off, and otherwise a stream is styled only when it is a terminal. See [STYLE.md](../STYLE.md#when-to-use-colour).
