@@ -83,3 +83,12 @@ The project uses JReleaser for automated releases across multiple platforms:
 - Windows: x86_64
 
 Release configuration is in `jreleaser.yml` with conventional commits changelog generation.
+
+## User-Facing Text
+
+Every message, prompt and help page must follow `docs/STYLE.md` and use only the terms in `CONTEXT.md`. Check new or changed text against both when writing or reviewing it. The key rules are:
+- Say "SDK", never "candidate", in output. Code keeps `candidate` (ADR 0001).
+- Warm and plain voice: speak to "you", use active voice, no contractions, no filler, no exclamation marks (except in the name SDKMAN!).
+- Success messages reuse the command's verb: `✓ Uninstalled java 17.0.0 (Temurin)`.
+- Labels follow Rust and clap: `error:`, `warning:` and `hint:` are lowercase, and the text after them starts lowercase with no trailing full stop.
+- stdout is for data only. Everything conversational goes to stderr (ADR 0003).
