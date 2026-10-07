@@ -1,0 +1,39 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"install\")"
+---
+Install a version of an SDK
+
+Usage: sdk install <SDK> [VERSION] [PATH]
+
+Installs a version of an SDK on this machine. Without a version, installs the
+recommended version. For java, this is the latest LTS version.
+
+Add a path to make a local version: SDKMAN! points to the SDK in that
+directory instead of downloading it. The version must not clash with any other
+version of the SDK.
+
+Arguments:
+  <SDK>
+          The SDK, such as java
+
+  [VERSION]
+          The version to install
+
+  [PATH]
+          The directory of an SDK already on this machine
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: i
+
+Exit status:
+  Exits with a non-zero code if the version does not exist or the path is not
+  a directory.
+
+Examples:
+  sdk install java
+  sdk install java 21.0.2-tem
+  sdk install java 11-local /usr/lib/jvm/java-11-openjdk

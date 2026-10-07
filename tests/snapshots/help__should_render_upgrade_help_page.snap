@@ -1,0 +1,28 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"upgrade\")"
+---
+Upgrade SDKs to their recommended version
+
+Usage: sdk upgrade [SDK]
+
+Installs the recommended version of an SDK and makes it the default version,
+if it is newer than the default version you have. Without an SDK, upgrades
+every SDK that has a newer recommended version.
+
+Arguments:
+  [SDK]
+          The SDK to upgrade
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: ug
+
+Exit status:
+  Exits with a non-zero code if the SDK does not exist.
+
+Examples:
+  sdk upgrade
+  sdk upgrade java

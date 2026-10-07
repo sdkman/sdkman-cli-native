@@ -1,0 +1,18 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"update\")"
+---
+Update the list of SDKs and versions
+
+Usage: sdk update
+
+Downloads the newest list of SDKs and versions from the SDKMAN! servers. Other
+commands use this list to install, upgrade and list versions. Run it often to
+see new versions.
+
+Options:
+  -h, --help
+          Print help
+
+Examples:
+  sdk update

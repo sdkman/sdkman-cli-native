@@ -23,6 +23,16 @@ fn sdk_help_stdout(command: &str) -> String {
     String::from_utf8(output.stdout).expect("help output is not valid utf-8")
 }
 
+fn sdk_help_main() -> String {
+    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
+        .env("NO_COLOR", "1")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("CLICOLOR")
+        .output()
+        .expect("failed to run help binary");
+    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
+}
+
 #[test]
 fn should_render_current_help_page() {
     insta::assert_snapshot!(help_stdout(assert_cmd::cargo::cargo_bin!("current")));
@@ -118,5 +128,77 @@ fn sdk_help_resolves_an_alias_to_its_command() {
     assert_eq!(
         sdk_help_stdout("rm"),
         help_stdout(assert_cmd::cargo::cargo_bin!("uninstall"))
+    );
+}
+
+#[test]
+fn should_render_sdk_main_help_page() {
+    insta::assert_snapshot!(sdk_help_main());
+}
+
+#[test]
+fn should_render_install_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("install"));
+}
+
+#[test]
+fn should_render_list_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("list"));
+}
+
+#[test]
+fn should_render_use_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("use"));
+}
+
+#[test]
+fn should_render_env_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("env"));
+}
+
+#[test]
+fn should_render_upgrade_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("upgrade"));
+}
+
+#[test]
+fn should_render_update_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("update"));
+}
+
+#[test]
+fn should_render_selfupdate_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("selfupdate"));
+}
+
+#[test]
+fn should_render_flush_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("flush"));
+}
+
+#[test]
+fn should_render_config_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("config"));
+}
+
+#[test]
+fn should_render_help_help_page() {
+    insta::assert_snapshot!(sdk_help_stdout("help"));
+}
+
+#[test]
+fn should_report_unknown_command_with_suggestion() {
+    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
+        .arg("instal")
+        .env("NO_COLOR", "1")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("CLICOLOR")
+        .output()
+        .expect("failed to run help binary");
+    let stderr = String::from_utf8(output.stderr).expect("stderr is not valid utf-8");
+    assert_eq!(output.status.code(), Some(2));
+    assert_eq!(
+        stderr,
+        "error: unknown command instal\n  hint: did you mean install?\n"
     );
 }

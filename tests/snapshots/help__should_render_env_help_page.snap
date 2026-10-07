@@ -1,0 +1,35 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"env\")"
+---
+Use the versions in a project config
+
+Usage: sdk env [COMMAND]
+
+Without a command, puts the versions in the project config (.sdkmanrc) of this
+directory in use in this shell, and warns about any that are not installed.
+
+Commands:
+  init     Create a project config with the default version of java
+  install  Install the versions in the project config and use them
+  clear    Go back to the default versions
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: e
+
+Configuration:
+  Set sdkman_auto_env=true in the SDKMAN! config to use a project config
+  automatically whenever you change into its directory. A project config looks
+  like this:
+
+    # Add key=value pairs of SDKs to use below
+    java=21.0.2-tem
+
+Examples:
+  sdk env
+  sdk env init
+  sdk env install
+  sdk env clear
