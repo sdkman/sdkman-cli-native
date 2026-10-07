@@ -25,6 +25,7 @@ fn should_show_current_version_for_specific_candidate() -> Result<(), Box<dyn st
             versions: versions.clone(),
             current_version,
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -70,6 +71,7 @@ fn should_show_current_versions_for_all_candidates() -> Result<(), Box<dyn std::
                 current_version: kotlin_current_version,
             },
         ],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -102,6 +104,7 @@ fn should_show_error_for_non_existent_candidate() -> Result<(), Box<dyn std::err
         cli_version: "5.0.0".to_string(),
         native_version: "0.1.0".to_string(),
         candidates: vec![],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);

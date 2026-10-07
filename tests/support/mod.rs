@@ -16,6 +16,7 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidates: Vec<TestCandidate>,
+    pub config: Option<String>,
 }
 
 pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
@@ -52,6 +53,11 @@ pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
         "candidates",
         candidates_str,
     );
+
+    // Optional etc/config
+    if let Some(config) = virtual_env.config {
+        write_file(sdkman_dir.path(), Path::new("etc"), "config", config);
+    }
 
     // Process each candidate
     for candidate in &virtual_env.candidates {
