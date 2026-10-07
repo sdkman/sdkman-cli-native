@@ -1,6 +1,6 @@
 #[cfg(test)]
 use crate::support::TestCandidate;
-use sdkman_cli_native::helpers::known_candidates;
+use sdkman_cli_native::helpers::{closest_candidate, known_candidates};
 use serial_test::serial;
 use support::{prepare_sdkman_dir, VirtualEnv};
 
@@ -41,4 +41,27 @@ fn should_fail_if_candidate_file_is_missing() {
         error.message
     );
     assert!(error.message.contains("var/candidates"));
+}
+
+#[test]
+fn should_suggest_java_for_jav() {
+    let all_candidates = vec![
+        "java".to_string(),
+        "kotlin".to_string(),
+        "scala".to_string(),
+    ];
+    assert_eq!(
+        closest_candidate(&all_candidates, "jav"),
+        Some("java".to_string())
+    );
+}
+
+#[test]
+fn should_point_to_sdk_list_for_xyz() {
+    let all_candidates = vec![
+        "java".to_string(),
+        "kotlin".to_string(),
+        "scala".to_string(),
+    ];
+    assert_eq!(closest_candidate(&all_candidates, "xyz"), None);
 }
