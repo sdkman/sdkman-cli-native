@@ -276,6 +276,13 @@ pub mod ui {
         )
     }
 
+    pub fn brand(text: &str) -> impl Display {
+        styled(
+            Style::new().bold().fg_color(Some(AnsiColor::Yellow.into())),
+            text.to_string(),
+        )
+    }
+
     pub fn path(path: &Path) -> impl Display {
         match dirs::home_dir().and_then(|home| path.strip_prefix(home).ok()) {
             Some(rest) if rest.as_os_str().is_empty() => "~".to_string(),
