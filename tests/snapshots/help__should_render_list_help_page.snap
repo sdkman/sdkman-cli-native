@@ -1,0 +1,32 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"list\")"
+---
+List SDKs or the versions of an SDK
+
+Usage: sdk list [SDK]
+
+Without an SDK, lists every SDK with its website, a description and the
+command to install it.
+
+With an SDK, lists its versions and marks the ones on this machine:
+
+    +  local version
+    *  installed
+    >  in use
+
+For java, the list also shows the distribution of each version.
+
+Arguments:
+  [SDK]
+          The SDK whose versions to list
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: ls
+
+Examples:
+  sdk list
+  sdk list java
