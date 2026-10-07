@@ -1,3 +1,4 @@
+use std::io::Write;
 use std::process::ExitCode;
 
 use clap::Command;
@@ -16,10 +17,21 @@ fn main() -> ExitCode {
             None => report_unknown_command(&sdk, &name),
         },
         None => {
-            let _ = sdk.print_long_help();
+            print_main_help(&mut sdk);
             ExitCode::SUCCESS
         }
     }
+}
+
+/// clap writes a single command alias as `[alias: X]`, but the Help Catalogue
+/// lists every alias as `[aliases: X]`, so the plural form is restored here.
+fn print_main_help(sdk: &mut Command) {
+    let page = sdk
+        .render_long_help()
+        .ansi()
+        .to_string()
+        .replace("[alias: ", "[aliases: ");
+    let _ = write!(anstream::stdout(), "{page}");
 }
 
 fn report_unknown_command(sdk: &Command, name: &str) -> ExitCode {
