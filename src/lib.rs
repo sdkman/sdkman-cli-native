@@ -346,7 +346,11 @@ pub mod ui {
 
 pub mod cli {
     use clap::builder::styling::{AnsiColor, Style, Styles};
+    use clap::error::{ContextKind, ContextValue, ErrorKind};
     use clap::{Arg, ArgAction, Command};
+    use std::process::ExitCode;
+
+    use crate::ui::{self, CliError};
 
     const HELP_TEMPLATE: &str = "\
 {about-with-newline}
@@ -533,6 +537,97 @@ pub mod cli {
                      \x20\x20sdk version",
                 ),
         )
+    }
+
+    pub fn report_parse_error(command: &str, error: clap::Error) -> ExitCode {
+        if matches!(
+            error.kind(),
+            ErrorKind::DisplayHelp | ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand
+        ) {
+            let _ = error.print();
+            return ExitCode::SUCCESS;
+        }
+
+        let help_hint = format!("run {}", ui::cmd(&format!("sdk {command} --help")));
+        let cli_error = match error.kind() {
+            ErrorKind::UnknownArgument => {
+                let invalid = context_string(&error, ContextKind::InvalidArg).unwrap_or_default();
+                if invalid.starts_with('-') {
+                    let mut hints = Vec::new();
+                    if let Some(suggested) = context_string(&error, ContextKind::SuggestedArg) {
+                        hints.push(format!("did you mean {}?", ui::cmd(&suggested)));
+                    }
+                    hints.push(help_hint);
+                    CliError {
+                        message: format!("unknown option {invalid}"),
+                        hints,
+                    }
+                } else {
+                    CliError {
+                        message: format!("unexpected argument {invalid}"),
+                        hints: vec![help_hint],
+                    }
+                }
+            }
+            ErrorKind::MissingRequiredArgument => {
+                let missing = context_strings(&error, ContextKind::InvalidArg);
+                let message = if missing.len() == 1 {
+                    format!("missing argument {}", missing[0])
+                } else {
+                    format!("missing arguments {}", missing.join(" "))
+                };
+                CliError {
+                    message,
+                    hints: vec![help_hint],
+                }
+            }
+            _ => fallback_error(&error, help_hint),
+        };
+        cli_error.report();
+        ExitCode::from(2)
+    }
+
+    fn context_string(error: &clap::Error, kind: ContextKind) -> Option<String> {
+        match error.get(kind) {
+            Some(ContextValue::String(value)) => Some(value.clone()),
+            _ => None,
+        }
+    }
+
+    fn context_strings(error: &clap::Error, kind: ContextKind) -> Vec<String> {
+        match error.get(kind) {
+            Some(ContextValue::Strings(values)) => values.clone(),
+            Some(ContextValue::String(value)) => vec![value.clone()],
+            _ => Vec::new(),
+        }
+    }
+
+    fn fallback_error(error: &clap::Error, help_hint: String) -> CliError {
+        let rendered = error.render().to_string();
+        let mut message = String::new();
+        let mut hints = Vec::new();
+        for line in rendered.lines() {
+            if let Some(rest) = line.strip_prefix("error: ") {
+                message = clean_clap_text(rest);
+            } else if let Some(rest) = line.trim_start().strip_prefix("tip: ") {
+                hints.push(clean_clap_text(rest));
+            }
+        }
+        hints.push(help_hint);
+        CliError { message, hints }
+    }
+
+    fn clean_clap_text(text: &str) -> String {
+        let without_quotes: String = text
+            .chars()
+            .filter(|&character| character != '\'')
+            .collect();
+        let trimmed = without_quotes.trim().trim_end_matches('.');
+        let mut chars = trimmed.chars();
+        match chars.next() {
+            Some(first) => first.to_lowercase().chain(chars).collect(),
+            None => String::new(),
+        }
     }
 }
 

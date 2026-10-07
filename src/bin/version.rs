@@ -14,7 +14,7 @@ const NATIVE_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> ExitCode {
     if let Err(error) = cli::version().try_get_matches() {
-        error.exit();
+        return cli::report_parse_error("version", error);
     }
     match run() {
         Ok(()) => ExitCode::SUCCESS,
