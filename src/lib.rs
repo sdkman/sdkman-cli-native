@@ -93,8 +93,11 @@ pub mod helpers {
 
 pub mod ui {
     use anstream::ColorChoice;
+    use anstyle::{AnsiColor, Style};
     use std::env;
+    use std::fmt::{self, Display};
     use std::fs;
+    use std::io::Write;
     use std::path::Path;
 
     use crate::constants::{CONFIG_FILE, ETC_DIR};
@@ -147,6 +150,123 @@ pub mod ui {
             let (key, value) = line.split_once('=')?;
             (key.trim() == COLOUR_ENABLE_KEY).then(|| value.trim() != "false")
         })
+    }
+
+    pub fn success(text: impl Display) {
+        let check = Style::new().fg_color(Some(AnsiColor::Green.into()));
+        let mut out = anstream::stderr();
+        let _ = writeln!(out, "{}✓{} {text}", check.render(), check.render_reset());
+    }
+
+    pub fn info(text: impl Display) {
+        let mut out = anstream::stderr();
+        let _ = writeln!(out, "{text}");
+    }
+
+    pub fn warning(text: impl Display) {
+        let label = Style::new().fg_color(Some(AnsiColor::Yellow.into()));
+        let mut out = anstream::stderr();
+        let _ = writeln!(
+            out,
+            "{}warning:{} {text}",
+            label.render(),
+            label.render_reset()
+        );
+    }
+
+    pub fn error(text: impl Display) {
+        let label = Style::new().bold().fg_color(Some(AnsiColor::Red.into()));
+        let mut out = anstream::stderr();
+        let _ = writeln!(
+            out,
+            "{}error:{} {text}",
+            label.render(),
+            label.render_reset()
+        );
+    }
+
+    pub fn hint(text: impl Display) {
+        let label = Style::new().dimmed();
+        let mut out = anstream::stderr();
+        let _ = writeln!(
+            out,
+            "  {}hint:{} {text}",
+            label.render(),
+            label.render_reset()
+        );
+    }
+
+    pub fn value(text: impl Display) {
+        let mut out = anstream::stdout();
+        let _ = writeln!(out, "{text}");
+    }
+
+    pub fn table(title: &str, rows: &[(String, String)]) {
+        let bold = Style::new().bold();
+        let mut out = anstream::stdout();
+        let _ = writeln!(out, "{}{title}{}", bold.render(), bold.render_reset());
+        let width = rows.iter().map(|(name, _)| name.len()).max().unwrap_or(0);
+        for (name, version) in rows {
+            let _ = writeln!(out, "  {name:<width$}  {version}");
+        }
+    }
+
+    pub fn sdk(name: &str) -> impl Display {
+        styled(Style::new().bold(), name.to_string())
+    }
+
+    pub fn sdk_version(sdk: &str, version: &str) -> impl Display {
+        styled(Style::new().bold(), format!("{sdk} {version}"))
+    }
+
+    pub fn cmd(text: &str) -> impl Display {
+        styled(
+            Style::new().fg_color(Some(AnsiColor::Cyan.into())),
+            text.to_string(),
+        )
+    }
+
+    pub fn path(path: &Path) -> impl Display {
+        match dirs::home_dir().and_then(|home| path.strip_prefix(home).ok()) {
+            Some(rest) if rest.as_os_str().is_empty() => "~".to_string(),
+            Some(rest) => format!("~/{}", rest.display()),
+            None => path.display().to_string(),
+        }
+    }
+
+    fn styled(style: Style, inner: String) -> impl Display {
+        Styled { style, inner }
+    }
+
+    struct Styled {
+        style: Style,
+        inner: String,
+    }
+
+    impl Display for Styled {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(
+                f,
+                "{}{}{}",
+                self.style.render(),
+                self.inner,
+                self.style.render_reset()
+            )
+        }
+    }
+
+    pub struct CliError {
+        pub message: String,
+        pub hints: Vec<String>,
+    }
+
+    impl CliError {
+        pub fn report(&self) {
+            error(&self.message);
+            for line in &self.hints {
+                hint(line);
+            }
+        }
     }
 }
 
