@@ -4,6 +4,7 @@ use fs_extra::copy_items;
 use fs_extra::dir::CopyOptions;
 use std::fs;
 use std::fs::remove_dir_all;
+use std::process;
 use symlink::{remove_symlink_dir, symlink_dir};
 
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR};
@@ -29,7 +30,11 @@ fn main() {
     let version = args.version;
     let sdkman_dir = infer_sdkman_dir();
     let tmp_dir = sdkman_dir.join(TMP_DIR);
-    let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
+    let all_candidates = known_candidates(sdkman_dir.to_owned()).unwrap_or_else(|error| {
+        error.report();
+        process::exit(1);
+    });
+    let candidate = validate_candidate(all_candidates, &candidate);
     let version_path = validate_version_path(sdkman_dir.to_owned(), &candidate, &version);
     let current_link_path = sdkman_dir
         .join(CANDIDATES_DIR)

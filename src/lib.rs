@@ -14,11 +14,12 @@ pub mod helpers {
     use colored::Colorize;
     use directories::UserDirs;
     use std::path::PathBuf;
-    use std::{env, fs, process};
+    use std::{env, fs, io, process};
 
     use crate::constants::{
         CANDIDATES_DIR, CANDIDATES_FILE, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR,
     };
+    use crate::ui::{self, CliError};
 
     pub fn infer_sdkman_dir() -> PathBuf {
         match env::var(SDKMAN_DIR_ENV_VAR) {
@@ -50,25 +51,74 @@ pub mod helpers {
         .map(|s| s.trim().to_string())
     }
 
-    pub fn known_candidates<'a>(sdkman_dir: PathBuf) -> Vec<&'static str> {
+    pub fn known_candidates(sdkman_dir: PathBuf) -> Result<Vec<String>, CliError> {
         let absolute_path = sdkman_dir.join(VAR_DIR).join(CANDIDATES_FILE);
-        let verified_path = check_file_exists(absolute_path);
-        let panic = format!(
-            "the candidates file is missing: {}",
-            verified_path.to_str().unwrap()
-        );
-        let content = read_file_content(verified_path).expect(&panic);
-        let line_str: &'static str = Box::leak(content.into_boxed_str());
-        let mut fields = Vec::new();
-        for field in line_str.split(',') {
-            fields.push(field.trim());
+        let content = fs::read_to_string(&absolute_path).map_err(|error| CliError {
+            message: format!(
+                "cannot read {}: {}",
+                ui::path(&absolute_path),
+                os_reason(&error)
+            ),
+            hints: vec![format!("run {}", ui::cmd("sdk update"))],
+        })?;
+        let trimmed = content.trim();
+        if trimmed.is_empty() {
+            return Err(CliError {
+                message: format!("no SDKs found in {}", ui::path(&absolute_path)),
+                hints: vec![format!("run {}", ui::cmd("sdk update"))],
+            });
         }
-
-        fields
+        Ok(trimmed
+            .split(',')
+            .map(|field| field.trim().to_string())
+            .collect())
     }
 
-    pub fn validate_candidate(all_candidates: Vec<&str>, candidate: &str) -> String {
-        if !all_candidates.contains(&candidate) {
+    pub fn require_candidate(
+        all_candidates: &[String],
+        candidate: &str,
+    ) -> Result<String, CliError> {
+        if all_candidates.iter().any(|known| known == candidate) {
+            Ok(candidate.to_string())
+        } else {
+            Err(CliError {
+                message: format!("unknown SDK {}", ui::sdk(candidate)),
+                hints: vec![format!("run {} to see all SDKs", ui::cmd("sdk list"))],
+            })
+        }
+    }
+
+    pub fn require_version_path(
+        base_dir: PathBuf,
+        candidate: &str,
+        version: &str,
+    ) -> Result<PathBuf, CliError> {
+        let version_path = base_dir.join(CANDIDATES_DIR).join(candidate).join(version);
+        if version_path.exists() && version_path.is_dir() {
+            Ok(version_path)
+        } else {
+            Err(CliError {
+                message: format!("{} is not installed", ui::sdk_version(candidate, version)),
+                hints: vec![format!(
+                    "run {}",
+                    ui::cmd(&format!("sdk install {candidate} {version}"))
+                )],
+            })
+        }
+    }
+
+    fn os_reason(error: &io::Error) -> String {
+        let full = error.to_string();
+        let reason = full.split(" (os error ").next().unwrap_or(&full);
+        let mut chars = reason.chars();
+        match chars.next() {
+            Some(first) => first.to_lowercase().chain(chars).collect(),
+            None => String::new(),
+        }
+    }
+
+    pub fn validate_candidate(all_candidates: Vec<String>, candidate: &str) -> String {
+        if !all_candidates.iter().any(|known| known == candidate) {
             eprintln!("{} is not a valid candidate.", candidate.bold());
             process::exit(1);
         } else {
@@ -255,6 +305,7 @@ pub mod ui {
         }
     }
 
+    #[derive(Debug)]
     pub struct CliError {
         pub message: String,
         pub hints: Vec<String>,

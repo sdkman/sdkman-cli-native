@@ -21,7 +21,10 @@ struct Args {
 fn main() {
     let args = Args::parse();
     let sdkman_dir = infer_sdkman_dir();
-    let all_candidates = known_candidates(sdkman_dir.to_owned());
+    let all_candidates = known_candidates(sdkman_dir.to_owned()).unwrap_or_else(|error| {
+        error.report();
+        process::exit(1);
+    });
 
     match args.candidate {
         Some(candidate) => {
@@ -47,7 +50,7 @@ fn main() {
 
             // Collect all candidates with their versions first
             for candidate in all_candidates {
-                let current_version = get_current_version(sdkman_dir.to_owned(), candidate);
+                let current_version = get_current_version(sdkman_dir.to_owned(), &candidate);
                 if let Some(version) = current_version {
                     candidates_with_versions.push((candidate, version));
                     found_any = true;

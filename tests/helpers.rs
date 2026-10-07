@@ -20,18 +20,24 @@ fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error
     };
 
     let sdkman_dir = support::virtual_env(env);
-    let candidates = known_candidates(sdkman_dir.keep());
-    let expected_candidate = vec!["scala"];
+    let candidates =
+        known_candidates(sdkman_dir.keep()).expect("the candidates file should be readable");
+    let expected_candidates = vec!["scala".to_string()];
 
-    assert_eq!(candidates, expected_candidate);
+    assert_eq!(candidates, expected_candidates);
 
     Ok(())
 }
 
 #[test]
 #[serial]
-#[should_panic]
 fn should_fail_if_candidate_file_is_missing() {
     let sdkman_dir = prepare_sdkman_dir();
-    known_candidates(sdkman_dir.keep());
+    let error = known_candidates(sdkman_dir.keep()).expect_err("a missing file must be an error");
+    assert!(
+        error.message.contains("cannot read"),
+        "message was: {}",
+        error.message
+    );
+    assert!(error.message.contains("var/candidates"));
 }
