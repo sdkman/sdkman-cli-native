@@ -9,11 +9,11 @@ This is sdkman-cli-native, a Rust project containing native CLI subcommands for 
 ## Architecture
 
 ### Binary Structure
-The project follows a multi-binary Cargo workspace pattern:
+The project is a single Cargo package (not a workspace) that builds one binary per file in `src/bin/`:
 - `src/lib.rs` - Contains shared constants and helper functions used across all binaries
-- `src/bin/*/main.rs` - Individual subcommand implementations:
+- `src/bin/*.rs` - Individual subcommand implementations:
   - `current` - Shows current versions of SDK candidates
-  - `default` - Manages default SDK versions 
+  - `default` - Manages default SDK versions
   - `help` - Provides contextual help for all subcommands
   - `home` - Shows SDK installation directories
   - `uninstall` - Removes SDK installations
@@ -49,11 +49,16 @@ cargo test                     # Run all unit and integration tests
 cargo test --test current     # Run specific integration test file
 ```
 
-The project uses extensive integration testing with:
-- `assert_cmd` for CLI testing
+Test layout:
+- `tests/*.rs` - Integration tests, one file per binary, plus `tests/helpers.rs` for `src/lib.rs`
+- `tests/support/` - Custom test harness that creates virtual SDKMAN environments
+- `src/lib.rs` - Unit tests for the helpers in a `#[cfg(test)]` module
+- `src/bin/help.rs` - `insta` snapshot tests for help text formatting, with snapshots in `src/bin/snapshots/`
+
+The tests use:
+- `assert_cmd` and `predicates` for CLI testing
 - `serial_test` for tests requiring sequential execution
-- `insta` for snapshot testing (help text formatting)
-- Custom test harness in `tests/support/` that creates virtual SDKMAN environments
+- `insta` for snapshot testing (`cargo insta review` to accept changes)
 
 ### Installing for Local Development
 ```bash
@@ -79,10 +84,17 @@ Tests are marked `#[serial]` because they manipulate global environment variable
 
 The project uses JReleaser for automated releases across multiple platforms:
 - Linux: x86_64, i686, aarch64
-- macOS: x86_64, aarch64  
+- macOS: x86_64, aarch64
 - Windows: x86_64
 
-Release configuration is in `jreleaser.yml` with conventional commits changelog generation.
+Release configuration is in `jreleaser.yml` with conventional commits changelog generation. After a release, `bin/release-binary.sh` records the new version as the beta or stable native CLI version in the SDKMAN! MongoDB.
+
+## Documentation
+
+- `CONTEXT.md` - Glossary of user-facing terms
+- `docs/STYLE.md` - Output style guide
+- `docs/adr/` - Architecture decision records
+- `specs/` - Feature specifications
 
 ## User-Facing Text
 
