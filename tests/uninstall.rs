@@ -142,7 +142,7 @@ fn should_fail_if_candidate_is_invalid() -> Result<(), Box<dyn std::error::Error
         .assert()
         .failure()
         .stdout("")
-        .stderr("error: unknown SDK zcala\n  hint: run sdk list to see all SDKs\n")
+        .stderr("error: unknown SDK zcala\n  hint: did you mean scala?\n")
         .code(1);
     Ok(())
 }

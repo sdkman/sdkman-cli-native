@@ -81,11 +81,27 @@ pub mod helpers {
         if all_candidates.iter().any(|known| known == candidate) {
             Ok(candidate.to_string())
         } else {
+            let hint = match closest_candidate(all_candidates, candidate) {
+                Some(suggestion) => format!("did you mean {}?", ui::sdk(&suggestion)),
+                None => format!("run {} to see all SDKs", ui::cmd("sdk list")),
+            };
             Err(CliError {
                 message: format!("unknown SDK {}", ui::sdk(candidate)),
-                hints: vec![format!("run {} to see all SDKs", ui::cmd("sdk list"))],
+                hints: vec![hint],
             })
         }
+    }
+
+    pub fn closest_candidate(all_candidates: &[String], candidate: &str) -> Option<String> {
+        all_candidates
+            .iter()
+            .map(|known| (known, strsim::jaro(candidate, known)))
+            .filter(|(_, score)| *score > 0.7)
+            .fold(None, |best, (known, score)| match best {
+                Some((_, best_score)) if best_score >= score => best,
+                _ => Some((known, score)),
+            })
+            .map(|(known, _)| known.clone())
     }
 
     pub fn require_version_path(

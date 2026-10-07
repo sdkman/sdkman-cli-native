@@ -598,6 +598,7 @@ dependencies = [
  "predicates",
  "proc-macro2",
  "serial_test",
+ "strsim",
  "symlink",
  "tempfile",
  "textwrap",
