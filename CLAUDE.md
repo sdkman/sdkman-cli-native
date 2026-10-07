@@ -22,6 +22,8 @@ The project is a single Cargo package (not a workspace) that builds one binary p
 ### Core Components
 - `helpers` module - Provides shared utilities for SDKMAN directory inference, candidate validation, and file operations
 - `constants` module - Defines SDKMAN directory structure constants
+- `ui` module - The ui module is the only code that writes messages and applies styling: message types, data output, semantic tokens and `CliError`
+- `cli` module - The cli module holds the shared clap command definitions, so each command's help has a single source
 - All binaries use `clap` for command-line argument parsing with consistent patterns
 
 ### SDKMAN Integration
