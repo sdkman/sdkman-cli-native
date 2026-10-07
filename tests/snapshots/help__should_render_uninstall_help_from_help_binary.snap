@@ -1,0 +1,34 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"uninstall\")"
+---
+Uninstall a version of an SDK
+
+Usage: sdk uninstall [OPTIONS] <SDK> <VERSION>
+
+Uninstalls a version of an SDK from this machine. You cannot uninstall the
+default version unless you add --force.
+
+Arguments:
+  <SDK>
+          The SDK, such as java
+
+  <VERSION>
+          The installed version to uninstall
+
+Options:
+  -f, --force
+          Uninstall even if it is the default version
+
+  -h, --help
+          Print help
+
+Aliases: rm
+
+Exit status:
+  Exits with a non-zero code if the SDK or version is not installed, or if the
+  version is the default version and --force is not given.
+
+Examples:
+  sdk uninstall java 17.0.0-tem
+  sdk rm --force java 17.0.0-tem
