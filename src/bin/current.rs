@@ -10,7 +10,7 @@ use sdkman_cli_native::ui::{self, CliError};
 fn main() -> ExitCode {
     let matches = match cli::current().try_get_matches() {
         Ok(matches) => matches,
-        Err(error) => error.exit(),
+        Err(error) => return cli::report_parse_error("current", error),
     };
     let candidate = matches.get_one::<String>("candidate").cloned();
     match run(candidate) {
