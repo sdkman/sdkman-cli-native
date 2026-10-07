@@ -344,6 +344,198 @@ pub mod ui {
     }
 }
 
+pub mod cli {
+    use clap::builder::styling::{AnsiColor, Style, Styles};
+    use clap::{Arg, ArgAction, Command};
+
+    const HELP_TEMPLATE: &str = "\
+{about-with-newline}
+{usage-heading} {usage}
+
+{before-help}{all-args}{after-help}";
+
+    fn styles() -> Styles {
+        let bold = Style::new().bold();
+        let cyan = Style::new().fg_color(Some(AnsiColor::Cyan.into()));
+        Styles::styled()
+            .header(bold)
+            .usage(bold)
+            .literal(cyan)
+            .placeholder(Style::new())
+            .error(Style::new().bold().fg_color(Some(AnsiColor::Red.into())))
+            .valid(Style::new().fg_color(Some(AnsiColor::Green.into())))
+            .invalid(Style::new().fg_color(Some(AnsiColor::Yellow.into())))
+    }
+
+    fn configure(command: Command) -> Command {
+        command
+            .styles(styles())
+            .max_term_width(80)
+            .disable_version_flag(true)
+            .disable_help_flag(true)
+            .disable_help_subcommand(true)
+            .help_template(HELP_TEMPLATE)
+            .arg(
+                Arg::new("help")
+                    .short('h')
+                    .long("help")
+                    .help("Print help")
+                    .long_help("Print help")
+                    .action(ArgAction::Help),
+            )
+    }
+
+    fn sdk_arg() -> Arg {
+        Arg::new("candidate").value_name("SDK")
+    }
+
+    pub fn current() -> Command {
+        configure(
+            Command::new("current")
+                .bin_name("sdk current")
+                .visible_alias("c")
+                .about("Show the default version of one or all SDKs")
+                .before_long_help(
+                    "Without an SDK, lists every SDK that has a default version. With an SDK, shows\n\
+                     the default version of that SDK.",
+                )
+                .after_help("Aliases: c")
+                .after_long_help(
+                    "Aliases: c\n\
+                     \n\
+                     Exit status:\n\
+                     \x20\x20Exits with a non-zero code if the SDK does not exist or has no default\n\
+                     \x20\x20version.\n\
+                     \n\
+                     Examples:\n\
+                     \x20\x20sdk current\n\
+                     \x20\x20sdk current java",
+                )
+                .arg(sdk_arg().help("The SDK whose default version to show")),
+        )
+    }
+
+    pub fn default() -> Command {
+        configure(
+            Command::new("default")
+                .bin_name("sdk default")
+                .visible_alias("d")
+                .about("Set the default version of an SDK")
+                .before_long_help(
+                    "Makes an installed version the default version of its SDK, so every new shell\n\
+                     uses it.",
+                )
+                .after_help("Aliases: d")
+                .after_long_help(
+                    "Aliases: d\n\
+                     \n\
+                     Exit status:\n\
+                     \x20\x20Exits with a non-zero code if the SDK or version is not installed.\n\
+                     \n\
+                     Examples:\n\
+                     \x20\x20sdk default java 21.0.2-tem",
+                )
+                .arg(sdk_arg().required(true).help("The SDK, such as java"))
+                .arg(
+                    Arg::new("version")
+                        .value_name("VERSION")
+                        .required(true)
+                        .help("The installed version to make the default"),
+                ),
+        )
+    }
+
+    pub fn home() -> Command {
+        configure(
+            Command::new("home")
+                .bin_name("sdk home")
+                .visible_alias("h")
+                .about("Print the directory of an installed version")
+                .before_long_help(
+                    "Prints the absolute path of an installed version and nothing else, so that\n\
+                     scripts can use it.",
+                )
+                .after_help("Aliases: h")
+                .after_long_help(
+                    "Aliases: h\n\
+                     \n\
+                     Exit status:\n\
+                     \x20\x20Exits with a non-zero code if the SDK or version is not installed.\n\
+                     \n\
+                     Examples:\n\
+                     \x20\x20sdk home java 21.0.2-tem\n\
+                     \x20\x20export JAVA_HOME=$(sdk home java 21.0.2-tem)",
+                )
+                .arg(sdk_arg().required(true).help("The SDK, such as java"))
+                .arg(
+                    Arg::new("version")
+                        .value_name("VERSION")
+                        .required(true)
+                        .help("The installed version"),
+                ),
+        )
+    }
+
+    pub fn uninstall() -> Command {
+        configure(
+            Command::new("uninstall")
+                .bin_name("sdk uninstall")
+                .visible_alias("rm")
+                .about("Uninstall a version of an SDK")
+                .before_long_help(
+                    "Uninstalls a version of an SDK from this machine. You cannot uninstall the\n\
+                     default version unless you add --force.",
+                )
+                .after_help("Aliases: rm")
+                .after_long_help(
+                    "Aliases: rm\n\
+                     \n\
+                     Exit status:\n\
+                     \x20\x20Exits with a non-zero code if the SDK or version is not installed, or if the\n\
+                     \x20\x20version is the default version and --force is not given.\n\
+                     \n\
+                     Examples:\n\
+                     \x20\x20sdk uninstall java 17.0.0-tem\n\
+                     \x20\x20sdk rm --force java 17.0.0-tem",
+                )
+                .arg(
+                    Arg::new("force")
+                        .short('f')
+                        .long("force")
+                        .action(ArgAction::SetTrue)
+                        .help("Uninstall even if it is the default version"),
+                )
+                .arg(sdk_arg().required(true).help("The SDK, such as java"))
+                .arg(
+                    Arg::new("version")
+                        .value_name("VERSION")
+                        .required(true)
+                        .help("The installed version to uninstall"),
+                ),
+        )
+    }
+
+    pub fn version() -> Command {
+        configure(
+            Command::new("version")
+                .bin_name("sdk version")
+                .visible_alias("v")
+                .about("Show the SDKMAN! version")
+                .before_long_help(
+                    "Shows the versions of the core and of the native commands. The two are\n\
+                     released separately, so their versions differ.",
+                )
+                .after_help("Aliases: v")
+                .after_long_help(
+                    "Aliases: v\n\
+                     \n\
+                     Examples:\n\
+                     \x20\x20sdk version",
+                ),
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::env;

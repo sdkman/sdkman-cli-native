@@ -3,6 +3,7 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use sdkman_cli_native::{
+    cli,
     constants::VAR_DIR,
     helpers::{infer_sdkman_dir, os_reason},
     ui::{self, CliError},
@@ -12,6 +13,9 @@ const CLI_VERSION_FILE: &str = "version";
 const NATIVE_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> ExitCode {
+    if let Err(error) = cli::version().try_get_matches() {
+        error.exit();
+    }
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {

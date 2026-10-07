@@ -3,33 +3,29 @@ use std::fs::remove_dir_all;
 use std::io;
 use std::process::ExitCode;
 
-use clap::Parser;
 use fs_extra::copy_items;
 use fs_extra::dir::CopyOptions;
 use symlink::{remove_symlink_dir, symlink_dir};
 
+use sdkman_cli_native::cli;
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR, TMP_DIR};
 use sdkman_cli_native::helpers::{
     infer_sdkman_dir, known_candidates, os_reason, require_candidate, require_version_path,
 };
 use sdkman_cli_native::ui::{self, CliError};
 
-#[derive(Parser, Debug)]
-#[command(
-    bin_name = "sdk default",
-    about = "sdk subcommand to set the local default version of the candidate"
-)]
-struct Args {
-    #[arg(required(true))]
-    candidate: String,
-
-    #[arg(required(true))]
-    version: String,
-}
-
 fn main() -> ExitCode {
-    let args = Args::parse();
-    match run(&args.candidate, &args.version) {
+    let matches = match cli::default().try_get_matches() {
+        Ok(matches) => matches,
+        Err(error) => error.exit(),
+    };
+    let (Some(candidate), Some(version)) = (
+        matches.get_one::<String>("candidate"),
+        matches.get_one::<String>("version"),
+    ) else {
+        return ExitCode::from(1);
+    };
+    match run(candidate, version) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             error.report();

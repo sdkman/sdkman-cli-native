@@ -1,28 +1,23 @@
 use std::process::ExitCode;
 
-use clap::Parser;
-
+use sdkman_cli_native::cli;
 use sdkman_cli_native::helpers::{
     infer_sdkman_dir, known_candidates, require_candidate, require_version_path,
 };
 use sdkman_cli_native::ui::{self, CliError};
 
-#[derive(Parser, Debug)]
-#[command(
-    bin_name = "sdk home",
-    about = "sdk subcommand to output the path of a specific candidate version"
-)]
-struct Args {
-    #[arg(required(true))]
-    candidate: String,
-
-    #[arg(required(true))]
-    version: String,
-}
-
 fn main() -> ExitCode {
-    let args = Args::parse();
-    match run(&args.candidate, &args.version) {
+    let matches = match cli::home().try_get_matches() {
+        Ok(matches) => matches,
+        Err(error) => error.exit(),
+    };
+    let (Some(candidate), Some(version)) = (
+        matches.get_one::<String>("candidate"),
+        matches.get_one::<String>("version"),
+    ) else {
+        return ExitCode::from(1);
+    };
+    match run(candidate, version) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             error.report();
