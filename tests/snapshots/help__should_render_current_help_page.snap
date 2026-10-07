@@ -1,0 +1,28 @@
+---
+source: tests/help.rs
+expression: "help_stdout(assert_cmd::cargo::cargo_bin!(\"current\"))"
+---
+Show the default version of one or all SDKs
+
+Usage: sdk current [SDK]
+
+Without an SDK, lists every SDK that has a default version. With an SDK, shows
+the default version of that SDK.
+
+Arguments:
+  [SDK]
+          The SDK whose default version to show
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: c
+
+Exit status:
+  Exits with a non-zero code if the SDK does not exist or has no default
+  version.
+
+Examples:
+  sdk current
+  sdk current java

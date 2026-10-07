@@ -2,34 +2,28 @@ use std::fs;
 use std::fs::remove_dir_all;
 use std::process::ExitCode;
 
-use clap::Parser;
 use symlink::remove_symlink_dir;
 
+use sdkman_cli_native::cli;
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
 use sdkman_cli_native::helpers::{
     infer_sdkman_dir, known_candidates, os_reason, require_candidate, require_version_path,
 };
 use sdkman_cli_native::ui::{self, CliError};
 
-#[derive(Parser, Debug)]
-#[command(
-    bin_name = "sdk uninstall",
-    about = "sdk subcommand to remove a specific candidate version"
-)]
-struct Args {
-    #[arg(short = 'f', long = "force")]
-    force: bool,
-
-    #[arg(required(true))]
-    candidate: String,
-
-    #[arg(required(true))]
-    version: String,
-}
-
 fn main() -> ExitCode {
-    let args = Args::parse();
-    match run(&args.candidate, &args.version, args.force) {
+    let matches = match cli::uninstall().try_get_matches() {
+        Ok(matches) => matches,
+        Err(error) => error.exit(),
+    };
+    let force = matches.get_flag("force");
+    let (Some(candidate), Some(version)) = (
+        matches.get_one::<String>("candidate"),
+        matches.get_one::<String>("version"),
+    ) else {
+        return ExitCode::from(1);
+    };
+    match run(candidate, version, force) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             error.report();

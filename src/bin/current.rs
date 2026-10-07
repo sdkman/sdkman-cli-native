@@ -2,25 +2,18 @@ use std::fs;
 use std::path::Path;
 use std::process::ExitCode;
 
-use clap::Parser;
-
+use sdkman_cli_native::cli;
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
 use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, require_candidate};
 use sdkman_cli_native::ui::{self, CliError};
 
-#[derive(Parser, Debug)]
-#[command(
-    bin_name = "sdk current",
-    about = "sdk subcommand to display the current version in use for one or all candidates"
-)]
-struct Args {
-    #[arg(required(false))]
-    candidate: Option<String>,
-}
-
 fn main() -> ExitCode {
-    let args = Args::parse();
-    match run(args.candidate) {
+    let matches = match cli::current().try_get_matches() {
+        Ok(matches) => matches,
+        Err(error) => error.exit(),
+    };
+    let candidate = matches.get_one::<String>("candidate").cloned();
+    match run(candidate) {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             error.report();
