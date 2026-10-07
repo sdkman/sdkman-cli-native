@@ -10,20 +10,20 @@ SDKMAN! installs and manages versions of SDKs, such as java, maven and gradle,
 and sets which version each shell uses.
 
 Commands:
-  install     Install a version of an SDK [alias: i]
-  uninstall   Uninstall a version of an SDK [alias: rm]
-  list        List SDKs or the versions of an SDK [alias: ls]
-  use         Use a version of an SDK in this shell [alias: u]
-  default     Set the default version of an SDK [alias: d]
-  current     Show the default version of one or all SDKs [alias: c]
-  home        Print the directory of an installed version [alias: h]
-  env         Use the versions in a project config [alias: e]
-  upgrade     Upgrade SDKs to their recommended version [alias: ug]
+  install     Install a version of an SDK [aliases: i]
+  uninstall   Uninstall a version of an SDK [aliases: rm]
+  list        List SDKs or the versions of an SDK [aliases: ls]
+  use         Use a version of an SDK in this shell [aliases: u]
+  default     Set the default version of an SDK [aliases: d]
+  current     Show the default version of one or all SDKs [aliases: c]
+  home        Print the directory of an installed version [aliases: h]
+  env         Use the versions in a project config [aliases: e]
+  upgrade     Upgrade SDKs to their recommended version [aliases: ug]
   update      Update the list of SDKs and versions
   selfupdate  Replace SDKMAN! with a newer version
   flush       Flush temporary files and cached data
   config      Edit the SDKMAN! config
-  version     Show the SDKMAN! version [alias: v]
+  version     Show the SDKMAN! version [aliases: v]
   help        Show help for a command
 
 Options:
