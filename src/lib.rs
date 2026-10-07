@@ -11,10 +11,9 @@ pub mod constants {
 }
 
 pub mod helpers {
-    use colored::Colorize;
     use directories::UserDirs;
     use std::path::PathBuf;
-    use std::{env, fs, io, process};
+    use std::{env, fs, io};
 
     use crate::constants::{
         CANDIDATES_DIR, CANDIDATES_FILE, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR,
@@ -130,29 +129,6 @@ pub mod helpers {
         match chars.next() {
             Some(first) => first.to_lowercase().chain(chars).collect(),
             None => String::new(),
-        }
-    }
-
-    pub fn validate_candidate(all_candidates: Vec<String>, candidate: &str) -> String {
-        if !all_candidates.iter().any(|known| known == candidate) {
-            eprintln!("{} is not a valid candidate.", candidate.bold());
-            process::exit(1);
-        } else {
-            candidate.to_string()
-        }
-    }
-
-    pub fn validate_version_path(base_dir: PathBuf, candidate: &str, version: &str) -> PathBuf {
-        let version_path = base_dir.join(CANDIDATES_DIR).join(candidate).join(version);
-        if version_path.exists() && version_path.is_dir() {
-            version_path
-        } else {
-            eprintln!(
-                "{} {} is not installed on your system",
-                candidate.bold(),
-                version.bold()
-            );
-            process::exit(1)
         }
     }
 }
