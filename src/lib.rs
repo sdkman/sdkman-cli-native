@@ -1,8 +1,10 @@
 pub mod constants {
     pub const CANDIDATES_DIR: &str = "candidates";
     pub const CANDIDATES_FILE: &str = "candidates";
+    pub const CONFIG_FILE: &str = "config";
     pub const CURRENT_DIR: &str = "current";
     pub const DEFAULT_SDKMAN_HOME: &str = ".sdkman";
+    pub const ETC_DIR: &str = "etc";
     pub const SDKMAN_DIR_ENV_VAR: &str = "SDKMAN_DIR";
     pub const TMP_DIR: &str = "tmp";
     pub const VAR_DIR: &str = "var";
@@ -89,6 +91,65 @@ pub mod helpers {
     }
 }
 
+pub mod ui {
+    use anstream::ColorChoice;
+    use std::env;
+    use std::fs;
+    use std::path::Path;
+
+    use crate::constants::{CONFIG_FILE, ETC_DIR};
+
+    const CLICOLOR_FORCE_ENV_VAR: &str = "CLICOLOR_FORCE";
+    const NO_COLOR_ENV_VAR: &str = "NO_COLOR";
+    const CLICOLOR_ENV_VAR: &str = "CLICOLOR";
+    const COLOUR_ENABLE_KEY: &str = "sdkman_colour_enable";
+
+    pub fn colour_choice(
+        clicolor_force: Option<&str>,
+        no_color: Option<&str>,
+        clicolor: Option<&str>,
+        colour_enable: Option<bool>,
+    ) -> ColorChoice {
+        if clicolor_force.is_some_and(|value| value != "0") {
+            return ColorChoice::Always;
+        }
+        let no_color_set = no_color.is_some_and(|value| !value.is_empty());
+        let clicolor_off = clicolor == Some("0");
+        let colour_disabled = colour_enable == Some(false);
+        if no_color_set || clicolor_off || colour_disabled {
+            return ColorChoice::Never;
+        }
+        ColorChoice::Auto
+    }
+
+    pub fn init(sdkman_dir: &Path) {
+        let clicolor_force = env::var(CLICOLOR_FORCE_ENV_VAR).ok();
+        let no_color = env::var(NO_COLOR_ENV_VAR).ok();
+        let clicolor = env::var(CLICOLOR_ENV_VAR).ok();
+        let colour_enable = read_colour_enable(sdkman_dir);
+        colour_choice(
+            clicolor_force.as_deref(),
+            no_color.as_deref(),
+            clicolor.as_deref(),
+            colour_enable,
+        )
+        .write_global();
+    }
+
+    fn read_colour_enable(sdkman_dir: &Path) -> Option<bool> {
+        let config_path = sdkman_dir.join(ETC_DIR).join(CONFIG_FILE);
+        let content = fs::read_to_string(config_path).ok()?;
+        content.lines().find_map(|line| {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                return None;
+            }
+            let (key, value) = line.split_once('=')?;
+            (key.trim() == COLOUR_ENABLE_KEY).then(|| value.trim() != "false")
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::env;
@@ -136,5 +197,33 @@ mod tests {
         let path = file.path().to_path_buf();
         let maybe_version = read_file_content(path);
         assert_eq!(maybe_version, None);
+    }
+
+    #[test]
+    fn colour_choice_follows_r4_order() {
+        use crate::ui::colour_choice;
+        use anstream::ColorChoice;
+
+        let cases = [
+            (Some("1"), Some("1"), None, None, ColorChoice::Always),
+            (Some("1"), None, None, Some(false), ColorChoice::Always),
+            (Some("0"), None, None, None, ColorChoice::Auto),
+            (Some("0"), Some("1"), None, None, ColorChoice::Never),
+            (None, Some("1"), None, None, ColorChoice::Never),
+            (None, Some(""), None, None, ColorChoice::Auto),
+            (None, None, Some("0"), None, ColorChoice::Never),
+            (None, None, Some("1"), None, ColorChoice::Auto),
+            (None, None, None, Some(false), ColorChoice::Never),
+            (None, None, None, Some(true), ColorChoice::Auto),
+            (None, None, None, None, ColorChoice::Auto),
+        ];
+
+        for (clicolor_force, no_color, clicolor, colour_enable, expected) in cases {
+            assert_eq!(
+                colour_choice(clicolor_force, no_color, clicolor, colour_enable),
+                expected,
+                "force={clicolor_force:?} no_color={no_color:?} clicolor={clicolor:?} enable={colour_enable:?}"
+            );
+        }
     }
 }
