@@ -1,0 +1,29 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"use\")"
+---
+Use a version of an SDK in this shell
+
+Usage: sdk use <SDK> <VERSION>
+
+Puts a version in use in this shell only. Other shells and the default version
+stay as they are.
+
+Arguments:
+  <SDK>
+          The SDK, such as java
+
+  <VERSION>
+          The installed version to use
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: u
+
+Exit status:
+  Exits with a non-zero code if the SDK or version is not installed.
+
+Examples:
+  sdk use java 17.0.0-tem
