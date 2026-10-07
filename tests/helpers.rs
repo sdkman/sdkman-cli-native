@@ -17,6 +17,7 @@ fn should_fail_if_candidate_is_unknown() -> Result<(), Box<dyn std::error::Error
             versions: vec!["0.0.1"],
             current_version: "0.0.1",
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);

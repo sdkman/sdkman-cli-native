@@ -18,6 +18,7 @@ fn should_successfully_remove_unused_candidate_version() -> Result<(), Box<dyn s
             versions: vec!["0.0.1", "0.0.2"],
             current_version: "0.0.2",
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -56,6 +57,7 @@ fn should_successfully_remove_current_candidate_version_when_forced(
             versions: vec!["0.0.1", "0.0.2"],
             current_version: "0.0.2",
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -95,6 +97,7 @@ fn should_fail_if_candidate_version_is_current_when_not_forced(
             versions: vec!["0.0.1", "0.0.2"],
             current_version: "0.0.2",
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -123,6 +126,7 @@ fn should_fail_if_candidate_is_invalid() -> Result<(), Box<dyn std::error::Error
             versions: vec!["0.0.1"],
             current_version: "0.0.1",
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
@@ -151,6 +155,7 @@ fn should_fail_if_candidate_version_is_not_found() -> Result<(), Box<dyn std::er
             versions: vec!["0.0.1"],
             current_version: "0.0.1",
         }],
+        config: None,
     };
 
     let sdkman_dir = support::virtual_env(env);
