@@ -1,6 +1,5 @@
 #[cfg(test)]
 use assert_cmd::Command;
-use predicates::str::contains;
 use serial_test::serial;
 use std::{env, fs};
 use support::{TestCandidate, VirtualEnv};
@@ -25,13 +24,13 @@ fn should_set_an_installed_version_as_default() -> Result<(), Box<dyn std::error
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "setting scala 0.0.2 as the default version for all shells";
     Command::new(assert_cmd::cargo::cargo_bin!("default"))
         .arg("scala")
         .arg("0.0.2")
         .assert()
         .success()
-        .stdout(contains(expected_output))
+        .stdout("")
+        .stderr("✓ Set scala 0.0.2 as the default version\n")
         .code(0);
 
     let file = sdkman_dir
@@ -65,13 +64,13 @@ fn should_reset_the_current_default_version_as_default() -> Result<(), Box<dyn s
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "setting scala 0.0.1 as the default version for all shells";
     Command::new(assert_cmd::cargo::cargo_bin!("default"))
         .arg("scala")
         .arg("0.0.1")
         .assert()
         .success()
-        .stdout(contains(expected_output))
+        .stdout("")
+        .stderr("✓ Set scala 0.0.1 as the default version\n")
         .code(0);
 
     let file = sdkman_dir
@@ -105,13 +104,13 @@ fn should_not_set_an_uninstalled_version_as_default() -> Result<(), Box<dyn std:
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = "scala 0.0.2 is not installed on your system";
     Command::new(assert_cmd::cargo::cargo_bin!("default"))
         .arg("scala")
         .arg("0.0.2")
         .assert()
         .failure()
-        .stderr(contains(expected_output))
+        .stdout("")
+        .stderr("error: scala 0.0.2 is not installed\n  hint: run sdk install scala 0.0.2\n")
         .code(1);
     Ok(())
 }
