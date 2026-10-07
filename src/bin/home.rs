@@ -25,7 +25,11 @@ fn main() {
     let version = args.version;
     let sdkman_dir = infer_sdkman_dir();
 
-    let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
+    let all_candidates = known_candidates(sdkman_dir.to_owned()).unwrap_or_else(|error| {
+        error.report();
+        process::exit(1);
+    });
+    let candidate = validate_candidate(all_candidates, &candidate);
 
     let candidate_path = sdkman_dir
         .join(CANDIDATES_DIR)
