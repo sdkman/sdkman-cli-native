@@ -107,7 +107,7 @@ pub mod helpers {
         }
     }
 
-    fn os_reason(error: &io::Error) -> String {
+    pub fn os_reason(error: &io::Error) -> String {
         let full = error.to_string();
         let reason = full.split(" (os error ").next().unwrap_or(&full);
         let mut chars = reason.chars();
