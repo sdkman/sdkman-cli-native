@@ -53,7 +53,7 @@ Test layout:
 - `tests/*.rs` - Integration tests, one file per binary, plus `tests/helpers.rs` for `src/lib.rs`
 - `tests/support/` - Custom test harness that creates virtual SDKMAN environments
 - `src/lib.rs` - Unit tests for the helpers in a `#[cfg(test)]` module
-- `src/bin/help.rs` - `insta` snapshot tests for help text formatting, with snapshots in `src/bin/snapshots/`
+- `tests/help.rs` - `insta` snapshot tests for help text formatting, with snapshots in `tests/snapshots/`
 
 The tests use:
 - `assert_cmd` and `predicates` for CLI testing

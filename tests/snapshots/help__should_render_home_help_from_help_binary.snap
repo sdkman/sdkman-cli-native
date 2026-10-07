@@ -1,0 +1,30 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"home\")"
+---
+Print the directory of an installed version
+
+Usage: sdk home <SDK> <VERSION>
+
+Prints the absolute path of an installed version and nothing else, so that
+scripts can use it.
+
+Arguments:
+  <SDK>
+          The SDK, such as java
+
+  <VERSION>
+          The installed version
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: h
+
+Exit status:
+  Exits with a non-zero code if the SDK or version is not installed.
+
+Examples:
+  sdk home java 21.0.2-tem
+  export JAVA_HOME=$(sdk home java 21.0.2-tem)
