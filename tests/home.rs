@@ -24,13 +24,14 @@ fn should_successfully_display_current_candidate_home() -> Result<(), Box<dyn st
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = format!("{}/candidates/scala/0.0.1", dir_string);
+    let expected_output = format!("{}/candidates/scala/0.0.1\n", dir_string);
     Command::new(assert_cmd::cargo::cargo_bin!("home"))
         .arg("scala")
         .arg("0.0.1")
         .assert()
         .success()
-        .stdout(contains(expected_output))
+        .stdout(expected_output)
+        .stderr("")
         .code(0);
 
     Ok(())
@@ -53,13 +54,13 @@ fn should_fail_if_candidate_home_is_not_found() -> Result<(), Box<dyn std::error
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = format!("{} {} is not installed on your system", "scala", "0.0.2");
     Command::new(assert_cmd::cargo::cargo_bin!("home"))
         .arg("scala")
         .arg("0.0.2")
         .assert()
         .failure()
-        .stderr(contains(expected_output))
+        .stderr(contains("error: scala 0.0.2 is not installed"))
+        .stderr(contains("hint: run sdk install scala 0.0.2"))
         .code(1);
     Ok(())
 }
