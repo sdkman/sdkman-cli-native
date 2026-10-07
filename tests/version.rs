@@ -91,6 +91,32 @@ fn should_error_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
 
 #[test]
 #[serial]
+fn should_reject_extra_arguments() -> Result<(), Box<dyn std::error::Error>> {
+    Command::new(assert_cmd::cargo::cargo_bin!("version"))
+        .arg("extra")
+        .assert()
+        .failure()
+        .stderr(predicate::str::starts_with("error: "))
+        .stdout("")
+        .code(2);
+    Ok(())
+}
+
+#[test]
+#[serial]
+fn should_reject_unknown_option() -> Result<(), Box<dyn std::error::Error>> {
+    Command::new(assert_cmd::cargo::cargo_bin!("version"))
+        .arg("--bogus")
+        .assert()
+        .failure()
+        .stderr(predicate::str::starts_with("error: unknown option --bogus"))
+        .stdout("")
+        .code(2);
+    Ok(())
+}
+
+#[test]
+#[serial]
 fn should_include_os_and_arch_info() -> Result<(), Box<dyn std::error::Error>> {
     let cli_version = "5.0.0";
     let native_version = env!("CARGO_PKG_VERSION");
