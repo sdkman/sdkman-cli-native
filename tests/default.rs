@@ -114,3 +114,15 @@ fn should_not_set_an_uninstalled_version_as_default() -> Result<(), Box<dyn std:
         .code(1);
     Ok(())
 }
+
+#[test]
+#[serial]
+fn should_reject_missing_arguments() -> Result<(), Box<dyn std::error::Error>> {
+    Command::new(assert_cmd::cargo::cargo_bin!("default"))
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr("error: missing arguments <SDK> <VERSION>\n  hint: run sdk default --help\n")
+        .code(2);
+    Ok(())
+}
