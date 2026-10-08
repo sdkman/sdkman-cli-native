@@ -1,7 +1,7 @@
 name: "Triage: Fork PR"
 on:
   workflow_run:
-    workflows: ["Pull Requests"]
+    workflows: ["Checks"]
     types: [completed]
 jobs:
   triage:

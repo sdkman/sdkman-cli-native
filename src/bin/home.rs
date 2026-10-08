@@ -36,8 +36,8 @@ fn main() {
             "{}/{}/{}/{}",
             sdkman_dir.to_str().unwrap(),
             CANDIDATES_DIR,
-            &candidate,
-            &version
+            candidate,
+            version
         );
     } else {
         eprintln!(

@@ -83,7 +83,7 @@ echo Running {} {}
             .expect("cannot create current symlink");
     }
 
-    return sdkman_dir;
+    sdkman_dir
 }
 
 pub fn prepare_sdkman_dir() -> TempDir {
@@ -100,11 +100,11 @@ pub fn write_file(
     content: String,
 ) -> PathBuf {
     let absolute_path = temp_dir.join(relative_path);
-    create_dir_all(absolute_path.to_owned()).expect("could not create nested dirs");
+    create_dir_all(&absolute_path).expect("could not create nested dirs");
 
     let file_path = absolute_path.join(file_name);
     let mut file = File::create(&file_path).expect("could not create file");
-    write!(file, "{}", content.to_string()).expect("could not write to file");
+    write!(file, "{}", content).expect("could not write to file");
 
     file_path
 }

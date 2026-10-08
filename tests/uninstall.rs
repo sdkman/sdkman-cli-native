@@ -101,7 +101,8 @@ fn should_fail_if_candidate_version_is_current_when_not_forced(
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = format!("scala 0.0.2 is the current version and should not be removed.");
+    let expected_output =
+        "scala 0.0.2 is the current version and should not be removed.".to_string();
     Command::new(assert_cmd::cargo::cargo_bin!("uninstall"))
         .arg("scala")
         .arg("0.0.2")
