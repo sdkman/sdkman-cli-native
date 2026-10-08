@@ -96,7 +96,8 @@ fn should_reject_extra_arguments() -> Result<(), Box<dyn std::error::Error>> {
         .arg("extra")
         .assert()
         .failure()
-        .stderr(predicate::str::starts_with("error: "))
+        .stderr(predicate::str::contains("error: unexpected argument extra"))
+        .stderr(predicate::str::contains("hint: run sdk version --help"))
         .stdout("")
         .code(2);
     Ok(())
@@ -110,6 +111,7 @@ fn should_reject_unknown_option() -> Result<(), Box<dyn std::error::Error>> {
         .assert()
         .failure()
         .stderr(predicate::str::starts_with("error: unknown option --bogus"))
+        .stderr(predicate::str::contains("hint: run sdk version --help"))
         .stdout("")
         .code(2);
     Ok(())
