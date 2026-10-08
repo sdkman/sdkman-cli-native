@@ -12,8 +12,9 @@ pub mod constants {
 
 pub mod helpers {
     use directories::UserDirs;
-    use std::path::PathBuf;
+    use std::path::{Path, PathBuf};
     use std::{env, fs, io};
+    use symlink::remove_symlink_dir;
 
     use crate::constants::{
         CANDIDATES_DIR, CANDIDATES_FILE, DEFAULT_SDKMAN_HOME, SDKMAN_DIR_ENV_VAR, VAR_DIR,
@@ -114,6 +115,19 @@ pub mod helpers {
                 )],
             })
         }
+    }
+
+    pub fn remove_current_link(current_link_path: &Path) -> Result<(), CliError> {
+        remove_symlink_dir(current_link_path)
+            .or_else(|_| fs::remove_dir_all(current_link_path))
+            .map_err(|error| CliError {
+                message: format!(
+                    "cannot remove {}: {}",
+                    ui::path(current_link_path),
+                    os_reason(&error)
+                ),
+                hints: vec![],
+            })
     }
 
     pub fn os_reason(error: &io::Error) -> String {

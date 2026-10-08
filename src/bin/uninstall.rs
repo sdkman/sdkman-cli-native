@@ -2,12 +2,11 @@ use std::fs;
 use std::fs::remove_dir_all;
 use std::process::ExitCode;
 
-use symlink::remove_symlink_dir;
-
 use sdkman_cli_native::cli;
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
 use sdkman_cli_native::helpers::{
-    infer_sdkman_dir, known_candidates, os_reason, require_candidate, require_version_path,
+    infer_sdkman_dir, known_candidates, os_reason, remove_current_link, require_candidate,
+    require_version_path,
 };
 use sdkman_cli_native::ui::{self, CliError};
 
@@ -76,16 +75,7 @@ fn run(candidate: &str, version: &str, force: bool) -> Result<(), CliError> {
                             ],
                         });
                     }
-                    remove_symlink_dir(&current_link_path)
-                        .or_else(|_| remove_dir_all(&current_link_path))
-                        .map_err(|error| CliError {
-                            message: format!(
-                                "cannot remove {}: {}",
-                                ui::path(&current_link_path),
-                                os_reason(&error)
-                            ),
-                            hints: vec![],
-                        })?;
+                    remove_current_link(&current_link_path)?;
                     removed_default = true;
                 }
             }
