@@ -1,0 +1,21 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"help\")"
+---
+Show help for a command
+
+Usage: sdk help [COMMAND]
+
+Without a command, lists all commands. With a command, shows its full help.
+
+Arguments:
+  [COMMAND]
+          The command to show help for
+
+Options:
+  -h, --help
+          Print help
+
+Examples:
+  sdk help
+  sdk help install

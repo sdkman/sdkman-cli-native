@@ -1,0 +1,19 @@
+---
+source: tests/help.rs
+expression: "help_stdout(assert_cmd::cargo::cargo_bin!(\"version\"))"
+---
+Show the SDKMAN! version
+
+Usage: sdk version
+
+Shows the versions of the core and of the native commands. The two are
+released separately, so their versions differ.
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: v
+
+Examples:
+  sdk version

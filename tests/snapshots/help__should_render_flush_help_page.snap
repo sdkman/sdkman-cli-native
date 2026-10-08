@@ -1,0 +1,25 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"flush\")"
+---
+Flush temporary files and cached data
+
+Usage: sdk flush [COMMAND]
+
+Discards temporary files and cached data that SDKMAN! keeps for itself.
+Without a command, flushes everything.
+
+Commands:
+  tmp       Flush downloaded archives and leftover hook scripts
+  metadata  Flush cached metadata about SDKs
+  version   Flush the cached SDKMAN! versions
+
+Options:
+  -h, --help
+          Print help
+
+Examples:
+  sdk flush
+  sdk flush tmp
+  sdk flush metadata
+  sdk flush version

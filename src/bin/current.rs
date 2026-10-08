@@ -1,76 +1,68 @@
 use std::fs;
-use std::path::PathBuf;
-use std::process;
+use std::path::Path;
+use std::process::ExitCode;
 
-use clap::Parser;
-use colored::Colorize;
-
+use sdkman_cli_native::cli;
 use sdkman_cli_native::constants::{CANDIDATES_DIR, CURRENT_DIR};
-use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
+use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, require_candidate};
+use sdkman_cli_native::ui::{self, CliError};
 
-#[derive(Parser, Debug)]
-#[command(
-    bin_name = "sdk current",
-    about = "sdk subcommand to display the current version in use for one or all candidates"
-)]
-struct Args {
-    #[arg(required(false))]
-    candidate: Option<String>,
-}
-
-fn main() {
-    let args = Args::parse();
-    let sdkman_dir = infer_sdkman_dir();
-    let all_candidates = known_candidates(sdkman_dir.to_owned());
-
-    match args.candidate {
-        Some(candidate) => {
-            // Show current version for a specific candidate
-            let candidate = validate_candidate(all_candidates, &candidate);
-            let current_version = get_current_version(sdkman_dir.to_owned(), &candidate);
-            match current_version {
-                Some(version) => println!(
-                    "Current default {} version {}",
-                    candidate.bold(),
-                    version.bold()
-                ),
-                _ => {
-                    eprintln!("No current version of {} configured.", candidate.bold());
-                    process::exit(1);
-                }
-            }
-        }
-        _ => {
-            // Show current version for all candidates
-            let mut found_any = false;
-            let mut candidates_with_versions = Vec::new();
-
-            // Collect all candidates with their versions first
-            for candidate in all_candidates {
-                let current_version = get_current_version(sdkman_dir.to_owned(), candidate);
-                if let Some(version) = current_version {
-                    candidates_with_versions.push((candidate, version));
-                    found_any = true;
-                }
-            }
-
-            if found_any {
-                // Print header
-                println!("{}", "Current default versions:".bold());
-
-                // Print all candidate versions
-                for (candidate, version) in candidates_with_versions {
-                    println!("{} {}", candidate, version);
-                }
-            } else {
-                eprintln!("No candidates are in use.");
-                process::exit(0);
-            }
+fn main() -> ExitCode {
+    let matches = match cli::current().try_get_matches() {
+        Ok(matches) => matches,
+        Err(error) => return cli::report_parse_error("current", error),
+    };
+    let candidate = matches.get_one::<String>("candidate").cloned();
+    match run(candidate) {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            error.report();
+            ExitCode::from(1)
         }
     }
 }
 
-fn get_current_version(base_dir: PathBuf, candidate: &str) -> Option<String> {
+fn run(candidate: Option<String>) -> Result<(), CliError> {
+    let sdkman_dir = infer_sdkman_dir()?;
+    ui::init(&sdkman_dir);
+
+    let all_candidates = known_candidates(sdkman_dir.clone())?;
+
+    match candidate {
+        Some(candidate) => {
+            let candidate = require_candidate(&all_candidates, &candidate)?;
+            match get_current_version(&sdkman_dir, &candidate) {
+                Some(version) => ui::value(version),
+                None => {
+                    return Err(CliError {
+                        message: format!("{} has no default version", ui::sdk(&candidate)),
+                        hints: vec![format!(
+                            "run {}",
+                            ui::cmd(&format!("sdk default {candidate} <version>"))
+                        )],
+                    })
+                }
+            }
+        }
+        None => {
+            let rows: Vec<(String, String)> = all_candidates
+                .into_iter()
+                .filter_map(|candidate| {
+                    get_current_version(&sdkman_dir, &candidate).map(|version| (candidate, version))
+                })
+                .collect();
+            if rows.is_empty() {
+                ui::info("No SDK has a default version");
+                ui::hint(format!("run {}", ui::cmd("sdk install <sdk>")));
+            } else {
+                ui::table("Default versions", &rows);
+            }
+        }
+    }
+    Ok(())
+}
+
+fn get_current_version(base_dir: &Path, candidate: &str) -> Option<String> {
     // First check if the candidate is installed
     let candidate_dir = base_dir.join(CANDIDATES_DIR).join(candidate);
     if !candidate_dir.exists() || !candidate_dir.is_dir() {

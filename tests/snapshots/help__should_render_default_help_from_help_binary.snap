@@ -1,0 +1,29 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"default\")"
+---
+Set the default version of an SDK
+
+Usage: sdk default <SDK> <VERSION>
+
+Makes an installed version the default version of its SDK, so every new shell
+uses it.
+
+Arguments:
+  <SDK>
+          The SDK, such as java
+
+  <VERSION>
+          The installed version to make the default
+
+Options:
+  -h, --help
+          Print help
+
+Aliases: d
+
+Exit status:
+  Exits with a non-zero code if the SDK or version is not installed.
+
+Examples:
+  sdk default java 21.0.2-tem

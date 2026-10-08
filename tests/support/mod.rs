@@ -16,6 +16,7 @@ pub struct VirtualEnv {
     pub cli_version: String,
     pub native_version: String,
     pub candidates: Vec<TestCandidate>,
+    pub config: Option<String>,
 }
 
 pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
@@ -53,6 +54,11 @@ pub fn virtual_env(virtual_env: VirtualEnv) -> TempDir {
         candidates_str,
     );
 
+    // Optional etc/config
+    if let Some(config) = virtual_env.config {
+        write_file(sdkman_dir.path(), Path::new("etc"), "config", config);
+    }
+
     // Process each candidate
     for candidate in &virtual_env.candidates {
         for version in &candidate.versions {
@@ -83,7 +89,7 @@ echo Running {} {}
             .expect("cannot create current symlink");
     }
 
-    return sdkman_dir;
+    sdkman_dir
 }
 
 pub fn prepare_sdkman_dir() -> TempDir {
@@ -100,11 +106,11 @@ pub fn write_file(
     content: String,
 ) -> PathBuf {
     let absolute_path = temp_dir.join(relative_path);
-    create_dir_all(absolute_path.to_owned()).expect("could not create nested dirs");
+    create_dir_all(&absolute_path).expect("could not create nested dirs");
 
     let file_path = absolute_path.join(file_name);
     let mut file = File::create(&file_path).expect("could not create file");
-    write!(file, "{}", content.to_string()).expect("could not write to file");
+    write!(file, "{content}").expect("could not write to file");
 
     file_path
 }

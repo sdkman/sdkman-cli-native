@@ -1,0 +1,22 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"selfupdate\")"
+---
+Replace SDKMAN! with a newer version
+
+Usage: sdk selfupdate [COMMAND]
+
+Replaces the core and the native commands with the newest SDKMAN! version. The
+native commands are only replaced on supported platforms. If there is no newer
+version, nothing changes unless you add force.
+
+Commands:
+  force  Reinstall even if there is no newer version
+
+Options:
+  -h, --help
+          Print help
+
+Examples:
+  sdk selfupdate
+  sdk selfupdate force

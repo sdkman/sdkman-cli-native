@@ -1,50 +1,39 @@
-use std::process;
+use std::process::ExitCode;
 
-use clap::Parser;
-use colored::Colorize;
+use sdkman_cli_native::cli;
+use sdkman_cli_native::helpers::{
+    infer_sdkman_dir, known_candidates, require_candidate, require_version_path,
+};
+use sdkman_cli_native::ui::{self, CliError};
 
-use sdkman_cli_native::constants::CANDIDATES_DIR;
-use sdkman_cli_native::helpers::{infer_sdkman_dir, known_candidates, validate_candidate};
-
-#[derive(Parser, Debug)]
-#[command(
-    bin_name = "sdk home",
-    about = "sdk subcommand to output the path of a specific candidate version"
-)]
-struct Args {
-    #[arg(required(true))]
-    candidate: String,
-
-    #[arg(required(true))]
-    version: String,
+fn main() -> ExitCode {
+    let matches = match cli::home().try_get_matches() {
+        Ok(matches) => matches,
+        Err(error) => return cli::report_parse_error("home", error),
+    };
+    let (Some(candidate), Some(version)) = (
+        matches.get_one::<String>("candidate"),
+        matches.get_one::<String>("version"),
+    ) else {
+        return ExitCode::from(1);
+    };
+    match run(candidate, version) {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            error.report();
+            ExitCode::from(1)
+        }
+    }
 }
 
-fn main() {
-    let args = Args::parse();
-    let candidate = args.candidate;
-    let version = args.version;
-    let sdkman_dir = infer_sdkman_dir();
+fn run(candidate: &str, version: &str) -> Result<(), CliError> {
+    let sdkman_dir = infer_sdkman_dir()?;
+    ui::init(&sdkman_dir);
 
-    let candidate = validate_candidate(known_candidates(sdkman_dir.to_owned()), &candidate);
+    let all_candidates = known_candidates(sdkman_dir.clone())?;
+    let candidate = require_candidate(&all_candidates, candidate)?;
+    let version_path = require_version_path(sdkman_dir, &candidate, version)?;
 
-    let candidate_path = sdkman_dir
-        .join(CANDIDATES_DIR)
-        .join(&candidate)
-        .join(&version);
-    if candidate_path.exists() && candidate_path.is_dir() {
-        println!(
-            "{}/{}/{}/{}",
-            sdkman_dir.to_str().unwrap(),
-            CANDIDATES_DIR,
-            &candidate,
-            &version
-        );
-    } else {
-        eprintln!(
-            "{} {} is not installed on your system.",
-            candidate.bold(),
-            version.bold()
-        );
-        process::exit(1);
-    }
+    ui::value(version_path.display());
+    Ok(())
 }

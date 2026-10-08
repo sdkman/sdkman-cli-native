@@ -1,0 +1,36 @@
+---
+source: tests/help.rs
+expression: "sdk_help_stdout(\"config\")"
+---
+Edit the SDKMAN! config
+
+Usage: sdk config
+
+Opens the SDKMAN! config ($SDKMAN_DIR/etc/config) in the editor named by the
+EDITOR environment variable, or in vi if EDITOR is not set. Open a new shell
+for your changes to take effect.
+
+Options:
+  -h, --help
+          Print help
+
+Configuration:
+  The SDKMAN! config contains settings such as these:
+
+    sdkman_auto_answer=false
+    sdkman_auto_complete=true
+    sdkman_auto_env=false
+    sdkman_auto_update=true
+    sdkman_beta_channel=false
+    sdkman_checksum_enable=true
+    sdkman_colour_enable=true
+    sdkman_curl_connect_timeout=7
+    sdkman_curl_max_time=10
+    sdkman_debug_mode=false
+    sdkman_healthcheck_enable=true
+    sdkman_insecure_ssl=false
+    sdkman_native_enable=true
+    sdkman_selfupdate_feature=true
+
+Examples:
+  sdk config

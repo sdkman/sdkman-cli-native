@@ -109,3 +109,9 @@ target/
 *.pdb
 
 # End of https://www.toptal.com/developers/gitignore/api/rust,cargo,intellij+all
+IMPLEMENTATION_PLAN.md
+PROGRESS.md
+.ralph/
+PROMPT_plan.md
+PROMPT_build.md
+PROMPT_review.md

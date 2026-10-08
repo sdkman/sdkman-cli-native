@@ -1,0 +1,35 @@
+---
+source: tests/help.rs
+expression: sdk_help_main()
+---
+The command line interface for SDKMAN!
+
+Usage: sdk <COMMAND> [ARGUMENTS]
+
+SDKMAN! installs and manages versions of SDKs, such as java, maven and gradle,
+and sets which version each shell uses.
+
+Commands:
+  install     Install a version of an SDK [aliases: i]
+  uninstall   Uninstall a version of an SDK [aliases: rm]
+  list        List SDKs or the versions of an SDK [aliases: ls]
+  use         Use a version of an SDK in this shell [aliases: u]
+  default     Set the default version of an SDK [aliases: d]
+  current     Show the default version of one or all SDKs [aliases: c]
+  home        Print the directory of an installed version [aliases: h]
+  env         Use the versions in a project config [aliases: e]
+  upgrade     Upgrade SDKs to their recommended version [aliases: ug]
+  update      Update the list of SDKs and versions
+  selfupdate  Replace SDKMAN! with a newer version
+  flush       Flush temporary files and cached data
+  config      Edit the SDKMAN! config
+  version     Show the SDKMAN! version [aliases: v]
+  help        Show help for a command
+
+Options:
+  -h, --help
+          Print help
+
+Examples:
+  sdk install java
+  sdk help install

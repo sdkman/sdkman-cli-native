@@ -12,11 +12,9 @@ mod support;
 #[test]
 #[serial]
 fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>> {
-    let prefix = "SDKMAN!";
     let cli_version = "5.0.0";
     let native_version = env!("CARGO_PKG_VERSION");
 
-    let header = format!("\n{}", prefix);
     let env = VirtualEnv {
         cli_version: cli_version.to_string(),
         native_version: native_version.to_string(),
@@ -27,14 +25,19 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
-    let contains_header = predicate::str::starts_with(header);
-    let contains_version = predicate::str::contains(format!("script: {}", cli_version));
-    let contains_native_version = predicate::str::contains(format!("native: {}", native_version));
+    let expected = format!(
+        "\nSDKMAN!\ncore:   {}\nnative: {} ({} {})\n\n",
+        cli_version,
+        native_version,
+        std::env::consts::OS,
+        std::env::consts::ARCH,
+    );
 
     Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
         .success()
-        .stdout(contains_header.and(contains_version.and(contains_native_version)))
+        .stdout(expected)
+        .stderr("")
         .code(0);
 
     Ok(())
@@ -42,7 +45,7 @@ fn should_successfully_render_version() -> Result<(), Box<dyn std::error::Error>
 
 #[test]
 #[serial]
-fn should_panic_if_version_file_not_present() -> Result<(), Box<dyn std::error::Error>> {
+fn should_error_if_version_file_not_present() -> Result<(), Box<dyn std::error::Error>> {
     let sdkman_dir = support::prepare_sdkman_dir();
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
@@ -50,13 +53,17 @@ fn should_panic_if_version_file_not_present() -> Result<(), Box<dyn std::error::
     Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
         .failure()
-        .code(101);
+        .stderr(predicate::str::contains("error: cannot read"))
+        .stderr(predicate::str::contains("var/version"))
+        .stderr(predicate::str::contains("no such file or directory"))
+        .stdout("")
+        .code(1);
     Ok(())
 }
 
 #[test]
 #[serial]
-fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>> {
+fn should_error_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>> {
     let sdkman_dir = support::prepare_sdkman_dir();
     let var_path = Path::new("var");
 
@@ -74,7 +81,39 @@ fn should_panic_if_version_file_empty() -> Result<(), Box<dyn std::error::Error>
     Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
         .failure()
-        .code(101);
+        .stderr(predicate::str::contains("error: cannot read"))
+        .stderr(predicate::str::contains("var/version"))
+        .stderr(predicate::str::contains("file is empty"))
+        .stdout("")
+        .code(1);
+    Ok(())
+}
+
+#[test]
+#[serial]
+fn should_reject_extra_arguments() -> Result<(), Box<dyn std::error::Error>> {
+    Command::new(assert_cmd::cargo::cargo_bin!("version"))
+        .arg("extra")
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("error: unexpected argument extra"))
+        .stderr(predicate::str::contains("hint: run sdk version --help"))
+        .stdout("")
+        .code(2);
+    Ok(())
+}
+
+#[test]
+#[serial]
+fn should_reject_unknown_option() -> Result<(), Box<dyn std::error::Error>> {
+    Command::new(assert_cmd::cargo::cargo_bin!("version"))
+        .arg("--bogus")
+        .assert()
+        .failure()
+        .stderr(predicate::str::starts_with("error: unknown option --bogus"))
+        .stderr(predicate::str::contains("hint: run sdk version --help"))
+        .stdout("")
+        .code(2);
     Ok(())
 }
 
@@ -97,8 +136,8 @@ fn should_include_os_and_arch_info() -> Result<(), Box<dyn std::error::Error>> {
     let os = std::env::consts::OS;
     let arch = std::env::consts::ARCH;
 
-    let contains_os = predicate::str::contains(format!("{}", os));
-    let contains_arch = predicate::str::contains(format!("{}", arch));
+    let contains_os = predicate::str::contains(os.to_string());
+    let contains_arch = predicate::str::contains(arch.to_string());
 
     Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
