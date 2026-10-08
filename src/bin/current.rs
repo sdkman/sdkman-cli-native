@@ -23,7 +23,7 @@ fn main() -> ExitCode {
 }
 
 fn run(candidate: Option<String>) -> Result<(), CliError> {
-    let sdkman_dir = infer_sdkman_dir();
+    let sdkman_dir = infer_sdkman_dir()?;
     ui::init(&sdkman_dir);
 
     let all_candidates = known_candidates(sdkman_dir.clone())?;
