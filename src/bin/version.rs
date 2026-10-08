@@ -26,7 +26,7 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<(), CliError> {
-    let sdkman_dir = infer_sdkman_dir();
+    let sdkman_dir = infer_sdkman_dir()?;
     ui::init(&sdkman_dir);
 
     let cli_version_file = sdkman_dir.join(VAR_DIR).join(CLI_VERSION_FILE);

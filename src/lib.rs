@@ -20,17 +20,21 @@ pub mod helpers {
     };
     use crate::ui::{self, CliError};
 
-    pub fn infer_sdkman_dir() -> PathBuf {
+    pub fn infer_sdkman_dir() -> Result<PathBuf, CliError> {
         match env::var(SDKMAN_DIR_ENV_VAR) {
-            Ok(s) => PathBuf::from(s),
+            Ok(s) => Ok(PathBuf::from(s)),
             Err(_) => fallback_sdkman_dir(),
         }
     }
 
-    fn fallback_sdkman_dir() -> PathBuf {
-        UserDirs::new()
-            .map(|dir| dir.home_dir().join(DEFAULT_SDKMAN_HOME))
-            .unwrap()
+    fn fallback_sdkman_dir() -> Result<PathBuf, CliError> {
+        match UserDirs::new() {
+            Some(dir) => Ok(dir.home_dir().join(DEFAULT_SDKMAN_HOME)),
+            None => Err(CliError {
+                message: "cannot find your home directory".to_string(),
+                hints: vec![],
+            }),
+        }
     }
 
     pub fn check_file_exists(path: PathBuf) -> PathBuf {
@@ -941,7 +945,7 @@ mod tests {
     fn should_infer_sdkman_dir_from_env_var() {
         let sdkman_dir = PathBuf::from("/home/someone/.sdkman");
         env::set_var(SDKMAN_DIR_ENV_VAR, &sdkman_dir);
-        assert_eq!(sdkman_dir, infer_sdkman_dir());
+        assert_eq!(sdkman_dir, infer_sdkman_dir().unwrap());
     }
 
     #[test]
@@ -949,7 +953,7 @@ mod tests {
     fn should_infer_fallback_dir() {
         env::remove_var(SDKMAN_DIR_ENV_VAR);
         let actual_sdkman_dir = dirs::home_dir().unwrap().join(".sdkman");
-        assert_eq!(actual_sdkman_dir, infer_sdkman_dir());
+        assert_eq!(actual_sdkman_dir, infer_sdkman_dir().unwrap());
     }
 
     #[test]
