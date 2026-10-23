@@ -735,7 +735,7 @@ pub mod cli {
                 .about("Flush temporary files and cached data")
                 .before_long_help(
                     "Discards temporary files and cached data that SDKMAN! keeps for itself.\n\
-                     Without a command, flushes everything.",
+                     Without a command, flushes tmp and metadata.",
                 )
                 .after_long_help(
                     "Examples:\n\

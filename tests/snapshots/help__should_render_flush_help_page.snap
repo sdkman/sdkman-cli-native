@@ -7,7 +7,7 @@ Flush temporary files and cached data
 Usage: sdk flush [COMMAND]
 
 Discards temporary files and cached data that SDKMAN! keeps for itself.
-Without a command, flushes everything.
+Without a command, flushes tmp and metadata.
 
 Commands:
   tmp       Flush downloaded archives and leftover hook scripts
