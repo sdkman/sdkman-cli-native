@@ -457,3 +457,10 @@ fn sdk_help_version_long_matches_version_long_help() {
         native_stdout(assert_cmd::cargo::cargo_bin!("version"), "--help")
     );
 }
+
+#[test]
+fn sdk_help_l_matches_sdk_help_list() {
+    let list_page = sdk_help_stdout("list");
+    assert!(!list_page.is_empty());
+    assert_eq!(sdk_help_stdout("l"), list_page);
+}

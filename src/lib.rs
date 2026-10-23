@@ -569,6 +569,7 @@ pub mod cli {
             Command::new("list")
                 .bin_name("sdk list")
                 .visible_alias("ls")
+                .alias("l")
                 .about("List SDKs or the versions of an SDK")
                 .before_long_help(
                     "Without an SDK, lists every SDK with its website, a description and the\n\
