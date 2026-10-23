@@ -23,6 +23,18 @@ fn sdk_help_stdout(command: &str) -> String {
     String::from_utf8(output.stdout).expect("help output is not valid utf-8")
 }
 
+fn sdk_help_flag_stdout(command: &str, flag: &str) -> String {
+    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
+        .arg(command)
+        .arg(flag)
+        .env("NO_COLOR", "1")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("CLICOLOR")
+        .output()
+        .expect("failed to run help binary");
+    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
+}
+
 fn sdk_help_main() -> String {
     let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
         .env("NO_COLOR", "1")
@@ -214,4 +226,54 @@ fn should_report_unknown_command_with_suggestion() {
         stderr,
         "error: unknown command instal\n  hint: did you mean install?\n"
     );
+}
+
+#[test]
+fn should_render_install_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("install", "-h"));
+}
+
+#[test]
+fn should_render_list_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("list", "-h"));
+}
+
+#[test]
+fn should_render_use_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("use", "-h"));
+}
+
+#[test]
+fn should_render_env_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("env", "-h"));
+}
+
+#[test]
+fn should_render_upgrade_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("upgrade", "-h"));
+}
+
+#[test]
+fn should_render_update_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("update", "-h"));
+}
+
+#[test]
+fn should_render_selfupdate_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("selfupdate", "-h"));
+}
+
+#[test]
+fn should_render_flush_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("flush", "-h"));
+}
+
+#[test]
+fn should_render_config_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("config", "-h"));
+}
+
+#[test]
+fn should_render_help_short_help_page() {
+    insta::assert_snapshot!(sdk_help_flag_stdout("help", "-h"));
 }

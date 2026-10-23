@@ -1,0 +1,16 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"use\", \"-h\")"
+---
+Use a version of an SDK in this shell
+
+Usage: sdk use <SDK> <VERSION>
+
+Arguments:
+  <SDK>      The SDK, such as java
+  <VERSION>  The installed version to use
+
+Options:
+  -h, --help  Print help
+
+Aliases: u

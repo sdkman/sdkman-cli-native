@@ -1,0 +1,10 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"update\", \"-h\")"
+---
+Update the list of SDKs and versions
+
+Usage: sdk update
+
+Options:
+  -h, --help  Print help

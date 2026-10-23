@@ -1,0 +1,15 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"upgrade\", \"-h\")"
+---
+Upgrade SDKs to their recommended version
+
+Usage: sdk upgrade [SDK]
+
+Arguments:
+  [SDK]  The SDK to upgrade
+
+Options:
+  -h, --help  Print help
+
+Aliases: ug
