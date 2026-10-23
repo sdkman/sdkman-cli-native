@@ -287,20 +287,32 @@ fn should_render_help_help_page() {
     insta::assert_snapshot!(sdk_help_stdout("help"));
 }
 
+const INSTAL_ERROR: &str = "error: unknown command instal\n  hint: did you mean install?\n";
+
 #[test]
 fn should_report_unknown_command_with_suggestion() {
-    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
-        .arg("instal")
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run help binary");
-    let stderr = String::from_utf8(output.stderr).expect("stderr is not valid utf-8");
+    let output = help_output(&["instal"]);
     assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
+    assert_eq!(String::from_utf8(output.stderr).unwrap(), INSTAL_ERROR);
+}
+
+#[test]
+fn should_report_unknown_command_with_short_flag() {
+    let output = help_output(&["instal", "-h"]);
+    assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
+    assert_eq!(String::from_utf8(output.stderr).unwrap(), INSTAL_ERROR);
+}
+
+#[test]
+fn should_report_unknown_flag_as_unknown_command() {
+    let output = help_output(&["--foo"]);
+    assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
     assert_eq!(
-        stderr,
-        "error: unknown command instal\n  hint: did you mean install?\n"
+        String::from_utf8(output.stderr).unwrap(),
+        "error: unknown command --foo\n  hint: run sdk help to see all commands\n"
     );
 }
 
