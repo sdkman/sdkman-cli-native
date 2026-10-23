@@ -120,6 +120,12 @@ Release configuration is in `jreleaser.yml` with conventional commits changelog 
 - `docs/adr/` - Architecture decision records
 - `specs/` - Feature specifications
 
+### Spec ordering
+
+Specs are numbered in the order they were written: `001-output-style-alignment.md`, `002-help-flags-through-the-core.md`, and so on. Give a new spec the next number.
+
+A later spec overrides an earlier one wherever they differ. Do not edit an older spec to match a newer one. The specs are not a combined description of how the app behaves today. They are a narrative of how it got there, one step at a time. To learn current behaviour, read the code and tests, then the newest spec that touches the area.
+
 ## User-Facing Text
 
 Every message, prompt and help page must follow `docs/STYLE.md` and use only the terms in `CONTEXT.md`. Check new or changed text against both when writing or reviewing it. The key rules are:
