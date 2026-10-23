@@ -78,6 +78,49 @@ fn help_short_flag_prints_the_short_main_page() {
     assert_page(&["-h"], "should_render_sdk_main_short_help_page");
 }
 
+fn help_stdout_of(args: &[&str]) -> String {
+    String::from_utf8(help_output(args).stdout).expect("help output is not valid utf-8")
+}
+
+#[test]
+fn help_command_prints_the_full_page() {
+    assert_page(&["install"], "should_render_install_help_page");
+}
+
+#[test]
+fn help_command_long_flag_prints_the_full_page() {
+    assert_page(&["install", "--help"], "should_render_install_help_page");
+}
+
+#[test]
+fn help_command_short_flag_prints_the_short_page() {
+    assert_page(&["install", "-h"], "should_render_install_short_help_page");
+}
+
+#[test]
+fn help_flag_before_command_matches_flag_after_command() {
+    assert_eq!(
+        help_stdout_of(&["-h", "install"]),
+        help_stdout_of(&["install", "-h"])
+    );
+}
+
+#[test]
+fn help_ignores_arguments_after_the_command() {
+    assert_eq!(
+        help_stdout_of(&["env", "init", "-h"]),
+        help_stdout_of(&["env", "-h"])
+    );
+}
+
+#[test]
+fn help_last_flag_wins() {
+    assert_eq!(
+        help_stdout_of(&["install", "-h", "--help"]),
+        help_stdout_of(&["install"])
+    );
+}
+
 #[test]
 fn should_render_sdk_main_short_help_page() {
     let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
