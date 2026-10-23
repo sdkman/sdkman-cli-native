@@ -2,7 +2,7 @@
 
 ## Overview
 
-[`output-style-alignment.md`](output-style-alignment.md) gave every command a clap definition and made `<command> --help` and `sdk help <command>` print the same page. That holds for the five native commands, but only when the native binary is the one that sees the flag. Run through the bash core (`sdkman-cli`), help flags are broken everywhere else:
+[`001-output-style-alignment.md`](001-output-style-alignment.md) gave every command a clap definition and made `<command> --help` and `sdk help <command>` print the same page. That holds for the five native commands, but only when the native binary is the one that sees the flag. Run through the bash core (`sdkman-cli`), help flags are broken everywhere else:
 
 | Typed | Today |
 |---|---|
@@ -23,7 +23,7 @@ It also fixes one defect in the pages themselves: the `flush` page describes wha
 - For every command in the Help Catalogue, `-h` prints the short page and `--help` prints the full page, whichever binary prints it.
 - With native commands enabled, `sdk -h`, `sdk --help`, `sdk help -h` and `sdk help --help` all print the main `sdk` page.
 - With `sdkman_native_enable=false`, no native code runs, including `help`. Every help request gets the bash help.
-- This spec overrides `output-style-alignment.md` where they differ.
+- This spec overrides `001-output-style-alignment.md` where they differ.
 
 ## Context
 
@@ -74,7 +74,7 @@ Because `sdk -h` and `sdk help -h` both arrive as `help -h`, they must print the
 
 ### Help pages
 
-- **R4. clap's layout stands.** The short form lists each argument and option on one row. The full form keeps clap's long layout: the name on one line, its description indented on the next, with a blank line between rows. clap cannot render the full form any other way, and ADR 0005 keeps clap's layout. This overrides the one-row full pages in the Help Catalogue of `output-style-alignment.md`.
+- **R4. clap's layout stands.** The short form lists each argument and option on one row. The full form keeps clap's long layout: the name on one line, its description indented on the next, with a blank line between rows. clap cannot render the full form any other way, and ADR 0005 keeps clap's layout. This overrides the one-row full pages in the Help Catalogue of `001-output-style-alignment.md`.
 - **R5. `flush` description.** The `flush` page's description reads:
 
   ```
@@ -88,7 +88,7 @@ Because `sdk -h` and `sdk help -h` both arrive as `help -h`, they must print the
 ## Rules
 
 **Before implementing, read and internalise:**
-- [`output-style-alignment.md`](output-style-alignment.md): the Help Catalogue, R12 to R14 and the clap integration design.
+- [`001-output-style-alignment.md`](001-output-style-alignment.md): the Help Catalogue, R12 to R14 and the clap integration design.
 - [`docs/STYLE.md`](../docs/STYLE.md) and [`CONTEXT.md`](../CONTEXT.md) for any text touched.
 - The project `CLAUDE.md`: verification gate, snapshot rules and boundaries.
 
