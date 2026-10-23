@@ -1,58 +1,34 @@
 use std::path::Path;
 use std::process::{Command, Output};
 
-fn help_stdout(bin: &Path) -> String {
-    let output = Command::new(bin)
-        .arg("--help")
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run native binary");
-    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
-}
-
-fn sdk_help_stdout(command: &str) -> String {
-    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
-        .arg(command)
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run help binary");
-    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
-}
-
-fn sdk_help_flag_stdout(command: &str, flag: &str) -> String {
-    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
-        .arg(command)
-        .arg(flag)
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run help binary");
-    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
-}
-
-fn sdk_help_main() -> String {
-    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run help binary");
-    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
-}
-
-fn help_output(args: &[&str]) -> Output {
-    Command::new(assert_cmd::cargo::cargo_bin!("help"))
+fn bin_output(bin: &Path, args: &[&str]) -> Output {
+    Command::new(bin)
         .args(args)
         .env("NO_COLOR", "1")
         .env_remove("CLICOLOR_FORCE")
         .env_remove("CLICOLOR")
         .output()
-        .expect("failed to run help binary")
+        .expect("failed to run binary")
+}
+
+fn help_stdout(bin: &Path) -> String {
+    String::from_utf8(bin_output(bin, &["--help"]).stdout).expect("help output is not valid utf-8")
+}
+
+fn sdk_help_stdout(command: &str) -> String {
+    help_stdout_of(&[command])
+}
+
+fn sdk_help_flag_stdout(command: &str, flag: &str) -> String {
+    help_stdout_of(&[command, flag])
+}
+
+fn sdk_help_main() -> String {
+    help_stdout_of(&[])
+}
+
+fn help_output(args: &[&str]) -> Output {
+    bin_output(assert_cmd::cargo::cargo_bin!("help"), args)
 }
 
 fn assert_page(args: &[&str], snapshot_name: &str) {
@@ -123,19 +99,6 @@ fn help_last_flag_wins() {
         help_stdout_of(&["install", "--help", "-h"]),
         help_stdout_of(&["install", "-h"])
     );
-}
-
-#[test]
-fn should_render_sdk_main_short_help_page() {
-    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
-        .arg("-h")
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run help binary");
-    let stdout = String::from_utf8(output.stdout).expect("help output is not valid utf-8");
-    insta::assert_snapshot!(stdout);
 }
 
 #[test]
@@ -371,13 +334,7 @@ fn should_render_help_short_help_page() {
 }
 
 fn native_stdout(bin: &Path, flag: &str) -> String {
-    let output = Command::new(bin)
-        .arg(flag)
-        .env("NO_COLOR", "1")
-        .env_remove("CLICOLOR_FORCE")
-        .env_remove("CLICOLOR")
-        .output()
-        .expect("failed to run native binary");
+    let output = bin_output(bin, &[flag]);
     assert!(!output.stdout.is_empty(), "native help printed nothing");
     String::from_utf8(output.stdout).expect("help output is not valid utf-8")
 }
