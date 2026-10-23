@@ -365,3 +365,95 @@ fn should_render_config_short_help_page() {
 fn should_render_help_short_help_page() {
     insta::assert_snapshot!(sdk_help_flag_stdout("help", "-h"));
 }
+
+fn native_stdout(bin: &Path, flag: &str) -> String {
+    let output = Command::new(bin)
+        .arg(flag)
+        .env("NO_COLOR", "1")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("CLICOLOR")
+        .output()
+        .expect("failed to run native binary");
+    assert!(!output.stdout.is_empty(), "native help printed nothing");
+    String::from_utf8(output.stdout).expect("help output is not valid utf-8")
+}
+
+#[test]
+fn sdk_help_current_short_matches_current_short_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("current", "-h"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("current"), "-h")
+    );
+}
+
+#[test]
+fn sdk_help_current_long_matches_current_long_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("current", "--help"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("current"), "--help")
+    );
+}
+
+#[test]
+fn sdk_help_default_short_matches_default_short_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("default", "-h"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("default"), "-h")
+    );
+}
+
+#[test]
+fn sdk_help_default_long_matches_default_long_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("default", "--help"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("default"), "--help")
+    );
+}
+
+#[test]
+fn sdk_help_home_short_matches_home_short_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("home", "-h"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("home"), "-h")
+    );
+}
+
+#[test]
+fn sdk_help_home_long_matches_home_long_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("home", "--help"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("home"), "--help")
+    );
+}
+
+#[test]
+fn sdk_help_uninstall_short_matches_uninstall_short_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("uninstall", "-h"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("uninstall"), "-h")
+    );
+}
+
+#[test]
+fn sdk_help_uninstall_long_matches_uninstall_long_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("uninstall", "--help"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("uninstall"), "--help")
+    );
+}
+
+#[test]
+fn sdk_help_version_short_matches_version_short_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("version", "-h"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("version"), "-h")
+    );
+}
+
+#[test]
+fn sdk_help_version_long_matches_version_long_help() {
+    assert_eq!(
+        sdk_help_flag_stdout("version", "--help"),
+        native_stdout(assert_cmd::cargo::cargo_bin!("version"), "--help")
+    );
+}
