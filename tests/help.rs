@@ -34,6 +34,19 @@ fn sdk_help_main() -> String {
 }
 
 #[test]
+fn should_render_sdk_main_short_help_page() {
+    let output = Command::new(assert_cmd::cargo::cargo_bin!("help"))
+        .arg("-h")
+        .env("NO_COLOR", "1")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("CLICOLOR")
+        .output()
+        .expect("failed to run help binary");
+    let stdout = String::from_utf8(output.stdout).expect("help output is not valid utf-8");
+    insta::assert_snapshot!(stdout);
+}
+
+#[test]
 fn should_render_current_help_page() {
     insta::assert_snapshot!(help_stdout(assert_cmd::cargo::cargo_bin!("current")));
 }
