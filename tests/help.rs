@@ -1,5 +1,5 @@
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, Output};
 
 fn help_stdout(bin: &Path) -> String {
     let output = Command::new(bin)
@@ -43,6 +43,39 @@ fn sdk_help_main() -> String {
         .output()
         .expect("failed to run help binary");
     String::from_utf8(output.stdout).expect("help output is not valid utf-8")
+}
+
+fn help_output(args: &[&str]) -> Output {
+    Command::new(assert_cmd::cargo::cargo_bin!("help"))
+        .args(args)
+        .env("NO_COLOR", "1")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("CLICOLOR")
+        .output()
+        .expect("failed to run help binary")
+}
+
+fn assert_page(args: &[&str], snapshot_name: &str) {
+    let output = help_output(args);
+    assert_eq!(output.status.code(), Some(0));
+    assert!(output.stderr.is_empty());
+    let stdout = String::from_utf8(output.stdout).expect("help output is not valid utf-8");
+    insta::assert_snapshot!(snapshot_name, stdout);
+}
+
+#[test]
+fn help_without_arguments_prints_the_full_main_page() {
+    assert_page(&[], "should_render_sdk_main_help_page");
+}
+
+#[test]
+fn help_long_flag_prints_the_full_main_page() {
+    assert_page(&["--help"], "should_render_sdk_main_help_page");
+}
+
+#[test]
+fn help_short_flag_prints_the_short_main_page() {
+    assert_page(&["-h"], "should_render_sdk_main_short_help_page");
 }
 
 #[test]
