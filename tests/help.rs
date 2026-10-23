@@ -119,6 +119,10 @@ fn help_last_flag_wins() {
         help_stdout_of(&["install", "-h", "--help"]),
         help_stdout_of(&["install"])
     );
+    assert_eq!(
+        help_stdout_of(&["install", "--help", "-h"]),
+        help_stdout_of(&["install", "-h"])
+    );
 }
 
 #[test]
