@@ -1,0 +1,15 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"flush\", \"-h\")"
+---
+Flush temporary files and cached data
+
+Usage: sdk flush [COMMAND]
+
+Commands:
+  tmp       Flush downloaded archives and leftover hook scripts
+  metadata  Flush cached metadata about SDKs
+  version   Flush the cached SDKMAN! versions
+
+Options:
+  -h, --help  Print help

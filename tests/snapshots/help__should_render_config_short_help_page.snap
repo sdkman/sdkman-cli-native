@@ -1,0 +1,10 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"config\", \"-h\")"
+---
+Edit the SDKMAN! config
+
+Usage: sdk config
+
+Options:
+  -h, --help  Print help

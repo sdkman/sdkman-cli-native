@@ -1,0 +1,17 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"install\", \"-h\")"
+---
+Install a version of an SDK
+
+Usage: sdk install <SDK> [VERSION] [PATH]
+
+Arguments:
+  <SDK>      The SDK, such as java
+  [VERSION]  The version to install
+  [PATH]     The directory of an SDK already on this machine
+
+Options:
+  -h, --help  Print help
+
+Aliases: i

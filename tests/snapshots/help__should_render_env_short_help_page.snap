@@ -1,0 +1,17 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"env\", \"-h\")"
+---
+Use the versions in a project config
+
+Usage: sdk env [COMMAND]
+
+Commands:
+  init     Create a project config with the default version of java
+  install  Install the versions in the project config and use them
+  clear    Go back to the default versions
+
+Options:
+  -h, --help  Print help
+
+Aliases: e

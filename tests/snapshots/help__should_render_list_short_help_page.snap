@@ -1,0 +1,15 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"list\", \"-h\")"
+---
+List SDKs or the versions of an SDK
+
+Usage: sdk list [SDK]
+
+Arguments:
+  [SDK]  The SDK whose versions to list
+
+Options:
+  -h, --help  Print help
+
+Aliases: ls

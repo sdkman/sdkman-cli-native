@@ -1,0 +1,13 @@
+---
+source: tests/help.rs
+expression: "sdk_help_flag_stdout(\"selfupdate\", \"-h\")"
+---
+Replace SDKMAN! with a newer version
+
+Usage: sdk selfupdate [COMMAND]
+
+Commands:
+  force  Reinstall even if there is no newer version
+
+Options:
+  -h, --help  Print help
