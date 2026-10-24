@@ -50,12 +50,17 @@ fn should_error_if_version_file_not_present() -> Result<(), Box<dyn std::error::
 
     env::set_var("SDKMAN_DIR", sdkman_dir.path().as_os_str());
 
+    let missing_file_error = if cfg!(windows) {
+        "the system cannot find the path specified"
+    } else {
+        "no such file or directory"
+    };
     Command::new(assert_cmd::cargo::cargo_bin!("version"))
         .assert()
         .failure()
         .stderr(predicate::str::contains("error: cannot read"))
         .stderr(predicate::str::contains("var/version"))
-        .stderr(predicate::str::contains("no such file or directory"))
+        .stderr(predicate::str::contains(missing_file_error))
         .stdout("")
         .code(1);
     Ok(())
