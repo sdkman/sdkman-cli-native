@@ -286,8 +286,19 @@ pub mod ui {
     pub fn path(path: &Path) -> impl Display {
         match dirs::home_dir().and_then(|home| path.strip_prefix(home).ok()) {
             Some(rest) if rest.as_os_str().is_empty() => "~".to_string(),
-            Some(rest) => format!("~/{}", rest.display()),
-            None => path.display().to_string(),
+            Some(rest) => format!("~/{}", slashed(rest)),
+            None => slashed(path),
+        }
+    }
+
+    /// Renders a path with forward slashes on every platform. SDKMAN runs on
+    /// Windows under a Unix-like shell, so paths must not use backslashes.
+    pub fn slashed(path: &Path) -> String {
+        let text = path.display().to_string();
+        if cfg!(windows) {
+            text.replace('\\', "/")
+        } else {
+            text
         }
     }
 
@@ -946,6 +957,12 @@ mod tests {
     use crate::constants::SDKMAN_DIR_ENV_VAR;
     use crate::helpers::infer_sdkman_dir;
     use crate::helpers::read_file_content;
+
+    #[test]
+    fn should_render_path_with_forward_slashes() {
+        let path = PathBuf::from("sdkman").join("candidates").join("java");
+        assert_eq!("sdkman/candidates/java", crate::ui::slashed(&path));
+    }
 
     #[test]
     #[serial]

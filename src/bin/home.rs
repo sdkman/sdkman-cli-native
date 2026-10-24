@@ -34,6 +34,6 @@ fn run(candidate: &str, version: &str) -> Result<(), CliError> {
     let candidate = require_candidate(&all_candidates, candidate)?;
     let version_path = require_version_path(sdkman_dir, &candidate, version)?;
 
-    ui::value(version_path.display());
+    ui::value(ui::slashed(&version_path));
     Ok(())
 }
