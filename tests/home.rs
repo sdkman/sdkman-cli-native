@@ -26,7 +26,8 @@ fn should_successfully_display_current_candidate_home() -> Result<(), Box<dyn st
     let dir_string = sdkman_dir.path().to_str().unwrap();
 
     env::set_var("SDKMAN_DIR", dir_string);
-    let expected_output = format!("{}/candidates/scala/0.0.1\n", dir_string);
+    let expected_path = sdkman_dir.path().join("candidates").join("scala").join("0.0.1");
+    let expected_output = format!("{}\n", expected_path.display());
     Command::new(assert_cmd::cargo::cargo_bin!("home"))
         .arg("scala")
         .arg("0.0.1")
@@ -107,7 +108,8 @@ fn should_keep_value_plain_under_clicolor_force() {
     let dir_string = sdkman_dir.path().to_str().unwrap();
     env::set_var("SDKMAN_DIR", dir_string);
 
-    let expected_output = format!("{}/candidates/scala/0.0.1\n", dir_string);
+    let expected_path = sdkman_dir.path().join("candidates").join("scala").join("0.0.1");
+    let expected_output = format!("{}\n", expected_path.display());
     Command::new(assert_cmd::cargo::cargo_bin!("home"))
         .env("CLICOLOR_FORCE", "1")
         .env_remove("NO_COLOR")
