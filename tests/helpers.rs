@@ -57,7 +57,8 @@ fn should_fail_if_candidate_file_is_missing() {
         "message was: {}",
         error.message
     );
-    assert!(error.message.contains("var/candidates"));
+    let expected = std::path::Path::new("var").join("candidates");
+    assert!(error.message.contains(&expected.display().to_string()));
 }
 
 #[test]
