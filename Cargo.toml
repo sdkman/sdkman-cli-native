@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-anstream = "0.6.21"
+anstream = "1.0.0"
 anstyle = "1.0.13"
 assert_cmd = "2.2.1"
 proc-macro2 = "1.0.106"
